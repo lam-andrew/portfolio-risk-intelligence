@@ -46,37 +46,31 @@
 /* ---------------------------------------------------------------------------
    Landing page.
 
-   The marketing surface deliberately runs a richer, darker, more saturated
-   treatment than the application: it is selling, whereas the app is a tool and
-   stays calm so the data is the loud thing. Everything here is scoped under
-   `.landing` so none of it leaks into the product (ADR 0015).
+   The landing page uses the SAME palette as the application (ADR 0016). It is
+   the first thing a visitor sees, so it has to look like the product they are
+   about to be shown; a marketing page in its own colours reads as a different
+   piece of software.
 
-   The violet is not arbitrary. The app's logo mark already gradients from the
-   accent into #7c5cff, so the landing page leans on a colour the brand owns
-   rather than inventing one.
+   What differs is density, not hue: bigger type, more glow, more motion. Every
+   colour below resolves to an application token, so a change to the app's theme
+   moves the landing page with it and the two cannot drift apart.
    --------------------------------------------------------------------------- */
 .landing {
-  --lp-bg: #07050f;
-  --lp-violet: #7c5cff;
-  --lp-violet-bright: #a78bfa;
-  --lp-violet-deep: #4c1d95;
-  --lp-text: #f3f1ff;
-  --lp-muted: #a99fd0;
-  --lp-faint: #6f6796;
-  --lp-card: rgba(255, 255, 255, 0.028);
+  --lp-card: rgba(255, 255, 255, 0.026);
   --lp-line: rgba(255, 255, 255, 0.075);
+  --lp-glow: rgba(74, 147, 240, 0.5);
 
-  background: var(--lp-bg);
-  color: var(--lp-text);
+  background: var(--background);
+  color: var(--foreground);
 }
 
 .landing ::selection {
-  background: var(--lp-violet);
-  color: #fff;
+  background: var(--accent);
+  color: var(--accent-foreground);
 }
 
-/* Bento / feature card. The inset highlight along the top edge is what keeps a
-   near-black card from reading as a flat hole in the page. */
+/* The inset highlight along the top edge is what stops a near-black card from
+   reading as a hole punched in the page. */
 .lp-card {
   background: var(--lp-card);
   border: 1px solid var(--lp-line);
@@ -91,99 +85,83 @@
 }
 
 .lp-cta {
-  background: linear-gradient(135deg, var(--lp-violet), #9d6bff);
+  background: var(--accent);
+  color: var(--accent-foreground);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.09) inset,
-    0 8px 30px -6px rgba(124, 92, 255, 0.65);
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 8px 30px -8px var(--lp-glow);
 }
 
 .lp-cta:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.08);
 }
 
-/* The light-arc that separates sections: a huge, very wide ellipse whose glow
-   is clipped by its parent so only the crest shows, reading as a planet limb. */
+/* Planet-limb glow closing a section: a very wide ellipse whose halo is clipped
+   by its parent so only the crest shows. */
 .lp-horizon {
   background: radial-gradient(
     60% 100% at 50% 100%,
-    rgba(124, 92, 255, 0.55) 0%,
-    rgba(124, 92, 255, 0.14) 45%,
+    rgba(74, 147, 240, 0.42) 0%,
+    rgba(74, 147, 240, 0.1) 45%,
     transparent 72%
   );
 }
 
 .lp-grid-fade {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   background-size: 46px 46px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
 }
 
-/* Orbital rings. Each ring is an ellipse tilted in 3D, and the tiles riding it
-   are counter-rotated so they stay upright while the ring turns. */
-.lp-orbit {
-  animation: lp-spin linear infinite;
-  transform-style: preserve-3d;
+/* --- Orbiting bodies ------------------------------------------------------
+   Each body travels its own elliptical path with a CSS motion path. The path is
+   set per element as an inline `offset-path`, expressed in the SVG's own user
+   units, which is what makes the orbit scale with the diagram instead of being
+   pinned to pixels.
+
+   `offset-rotate: 0deg` keeps a body upright as it travels; without it the
+   browser turns each one to face along the tangent and the icons roll over.
+
+   Bodies are spread around their ring by NEGATIVE animation delay, so they
+   begin mid-orbit rather than stacked at the same start point. */
+.lp-body {
+  offset-rotate: 0deg;
+  animation-name: lp-travel;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
-.lp-orbit-tile {
-  animation: lp-spin-reverse linear infinite;
-}
-
-@keyframes lp-spin {
+@keyframes lp-travel {
   from {
-    transform: rotate(0deg);
+    offset-distance: 0%;
   }
   to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes lp-spin-reverse {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(-360deg);
+    offset-distance: 100%;
   }
 }
 
 @keyframes lp-pulse {
   0%,
   100% {
-    opacity: 0.55;
+    opacity: 0.6;
     transform: scale(1);
   }
   50% {
     opacity: 1;
-    transform: scale(1.06);
+    transform: scale(1.05);
   }
 }
 
 .lp-pulse {
-  animation: lp-pulse 5s ease-in-out infinite;
+  animation: lp-pulse 6s ease-in-out infinite;
 }
 
-@keyframes lp-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-9px);
-  }
-}
-
-.lp-float {
-  animation: lp-float 6s ease-in-out infinite;
-}
-
-/* Motion here is entirely decorative; the layout reads identically without it. */
+/* Motion is decorative. With it off, each body keeps the inline `offset-distance`
+   it was given, so they stay spread around their rings rather than piling up. */
 @media (prefers-reduced-motion: reduce) {
-  .lp-orbit,
-  .lp-orbit-tile,
-  .lp-float,
+  .lp-body,
   .lp-pulse {
     animation: none;
   }

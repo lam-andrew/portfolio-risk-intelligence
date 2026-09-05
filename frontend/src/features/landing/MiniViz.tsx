@@ -6,7 +6,7 @@
  * Hand-authored SVG, consistent with the application's own charts (ADR 0013).
  */
 
-const VIOLET = "#a78bfa";
+const ACCENT = "var(--accent)";
 
 /** Volatility: a return series with visible swing. */
 export function VolatilitySpark() {
@@ -16,12 +16,12 @@ export function VolatilitySpark() {
     <svg viewBox="0 0 200 76" className="h-full w-full" aria-hidden="true">
       <defs>
         <linearGradient id="mv-vol" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={VIOLET} stopOpacity="0.42" />
-          <stop offset="100%" stopColor={VIOLET} stopOpacity="0" />
+          <stop offset="0%" stopColor={ACCENT} stopOpacity="0.42" />
+          <stop offset="100%" stopColor={ACCENT} stopOpacity="0" />
         </linearGradient>
       </defs>
       <path d={`M ${d} L 200,76 L 0,76 Z`} fill="url(#mv-vol)" />
-      <path d={`M ${d}`} fill="none" stroke={VIOLET} strokeWidth="2" strokeLinejoin="round" />
+      <path d={`M ${d}`} fill="none" stroke={ACCENT} strokeWidth="2" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -45,7 +45,7 @@ export function CorrelationGrid() {
             width={24}
             height={24}
             rx={5}
-            fill={VIOLET}
+            fill={ACCENT}
             opacity={0.1 + v * 0.72}
           />
         )),
@@ -67,7 +67,7 @@ export function ConcentrationBars() {
           width={18}
           height={w * 1.55}
           rx={4}
-          fill={VIOLET}
+          fill={ACCENT}
           opacity={i === 0 ? 1 : 0.34}
         />
       ))}

@@ -26,7 +26,7 @@ import { OrbitHero } from "@/features/landing/OrbitHero";
 
 function Eyebrow({ children }: { children: string }) {
   return (
-    <span className="lp-pill inline-block px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-[color:var(--lp-muted)]">
+    <span className="lp-pill inline-block px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-[color:var(--muted-foreground)]">
       {children}
     </span>
   );
@@ -52,7 +52,7 @@ function Logo() {
     <span className="flex items-center gap-2.5">
       <span
         className="grid h-8 w-8 place-items-center rounded-[10px] text-white"
-        style={{ background: "linear-gradient(150deg, #7c5cff, #4a93f0)" }}
+        style={{ background: "linear-gradient(150deg, var(--accent), #1f5fb0)" }}
         aria-hidden="true"
       >
         <svg
@@ -140,7 +140,7 @@ export function LandingPage() {
       {/* ---------------- Nav ---------------- */}
       <header className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
         <Logo />
-        <nav className="hidden items-center gap-7 text-sm text-[color:var(--lp-muted)] md:flex">
+        <nav className="hidden items-center gap-7 text-sm text-[color:var(--muted-foreground)] md:flex">
           <a href="#features" className="transition-colors hover:text-white">
             Features
           </a>
@@ -157,7 +157,7 @@ export function LandingPage() {
         <div className="flex items-center gap-2.5">
           <Link
             to="/signin"
-            className="lp-pill px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--lp-muted)] transition-colors hover:text-white"
+            className="lp-pill px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors hover:text-white"
           >
             Log in
           </Link>
@@ -179,7 +179,7 @@ export function LandingPage() {
             <h1 className="text-[2.6rem] font-semibold leading-[1.06] tracking-tight md:text-[3.5rem]">
               Know what your portfolio is really doing.
             </h1>
-            <p className="max-w-lg text-[15px] leading-relaxed text-[color:var(--lp-muted)] md:text-base">
+            <p className="max-w-lg text-[15px] leading-relaxed text-[color:var(--muted-foreground)] md:text-base">
               {APP_NAME} measures the risk already sitting in your holdings and explains it in plain
               English. Not a forecast, not advice, and never your brokerage password. Just a clear
               picture of what you own and how it moves.
@@ -191,7 +191,7 @@ export function LandingPage() {
               >
                 Analyze my portfolio <Arrow />
               </Link>
-              <span className="text-sm text-[color:var(--lp-faint)]">
+              <span className="text-sm text-[color:var(--faint)]">
                 Free. No brokerage connection.
               </span>
             </div>
@@ -211,14 +211,14 @@ export function LandingPage() {
 
       {/* ---------------- Honest facts ---------------- */}
       <section className="relative z-10 mx-auto max-w-6xl px-5 pb-20">
-        <p className="text-center text-xs uppercase tracking-[0.16em] text-[color:var(--lp-faint)]">
+        <p className="text-center text-xs uppercase tracking-[0.16em] text-[color:var(--faint)]">
           Reads the CSV your brokerage already gives you
         </p>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-lg font-semibold text-white/45">
           <span>Schwab</span>
           <span>Fidelity</span>
           <span>Vanguard</span>
-          <span className="text-sm font-normal text-[color:var(--lp-faint)]">and most others</span>
+          <span className="text-sm font-normal text-[color:var(--faint)]">and most others</span>
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-3">
           {FACTS.map((fact) => (
@@ -226,7 +226,7 @@ export function LandingPage() {
               <p
                 className="text-4xl font-semibold"
                 style={{
-                  background: "linear-gradient(180deg,#fff,#a78bfa)",
+                  background: "linear-gradient(180deg,#fff,var(--accent))",
                   WebkitBackgroundClip: "text",
                   backgroundClip: "text",
                   color: "transparent",
@@ -234,7 +234,7 @@ export function LandingPage() {
               >
                 {fact.value}
               </p>
-              <p className="mt-1.5 text-sm text-[color:var(--lp-faint)]">{fact.label}</p>
+              <p className="mt-1.5 text-sm text-[color:var(--faint)]">{fact.label}</p>
             </div>
           ))}
         </div>
@@ -246,7 +246,7 @@ export function LandingPage() {
         <h2 className="mt-5 max-w-2xl text-3xl font-semibold leading-tight tracking-tight md:text-[2.5rem]">
           Four questions most investors cannot answer about their own portfolio
         </h2>
-        <p className="mt-4 max-w-2xl text-[color:var(--lp-muted)]">
+        <p className="mt-4 max-w-2xl text-[color:var(--muted-foreground)]">
           You can see what you own in any brokerage account. What you usually cannot see is how
           those holdings behave together.
         </p>
@@ -260,7 +260,7 @@ export function LandingPage() {
               <div className="h-24 overflow-hidden rounded-xl bg-white/[0.02] p-3">{f.viz}</div>
               <div>
                 <h3 className="text-lg font-semibold">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[color:var(--lp-muted)]">
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--muted-foreground)]">
                   {f.body}
                 </p>
               </div>
@@ -281,13 +281,15 @@ export function LandingPage() {
               <span
                 className="grid h-10 w-10 place-items-center rounded-xl text-sm font-semibold text-white"
                 style={{
-                  background: "linear-gradient(150deg, rgba(124,92,255,0.9), rgba(76,29,149,0.7))",
+                  background: "linear-gradient(150deg, rgba(74,147,240,0.9), rgba(18,57,95,0.7))",
                 }}
               >
                 {i + 1}
               </span>
               <h3 className="text-lg font-semibold">{step.title}</h3>
-              <p className="text-sm leading-relaxed text-[color:var(--lp-muted)]">{step.body}</p>
+              <p className="text-sm leading-relaxed text-[color:var(--muted-foreground)]">
+                {step.body}
+              </p>
             </li>
           ))}
         </ol>
@@ -299,7 +301,7 @@ export function LandingPage() {
         <h2 className="mt-5 text-3xl font-semibold tracking-tight md:text-[2.5rem]">
           What {APP_NAME} will not do
         </h2>
-        <p className="mt-4 max-w-2xl text-[color:var(--lp-muted)]">
+        <p className="mt-4 max-w-2xl text-[color:var(--muted-foreground)]">
           These are design decisions, not missing features. A tool that measures risk honestly has
           to be clear about where measurement stops.
         </p>
@@ -315,14 +317,14 @@ export function LandingPage() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.9"
-                  className="h-4 w-4 text-[color:var(--lp-faint)]"
+                  className="h-4 w-4 text-[color:var(--faint)]"
                 >
                   <circle cx="12" cy="12" r="9" />
                   <path d="M6.5 6.5l11 11" strokeLinecap="round" />
                 </svg>
               </span>
               <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[color:var(--lp-muted)]">
+              <p className="mt-2 text-sm leading-relaxed text-[color:var(--muted-foreground)]">
                 {item.body}
               </p>
             </div>
@@ -349,7 +351,7 @@ export function LandingPage() {
           className="lp-pulse pointer-events-none absolute left-1/2 top-1/2 h-[560px] w-[860px] -translate-x-1/2 -translate-y-1/2"
           aria-hidden="true"
           style={{
-            background: "radial-gradient(closest-side, rgba(124,92,255,0.32), transparent 70%)",
+            background: "radial-gradient(closest-side, rgba(74,147,240,0.32), transparent 70%)",
           }}
         />
         {/* An echo of the hero's orbits, so the page closes on the motif it opened with. */}
@@ -373,9 +375,9 @@ export function LandingPage() {
           ))}
           <defs>
             <linearGradient id="lp-close-ring" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="rgba(167,139,250,0)" />
-              <stop offset="50%" stopColor="rgba(167,139,250,0.5)" />
-              <stop offset="100%" stopColor="rgba(167,139,250,0)" />
+              <stop offset="0%" stopColor="rgba(74,147,240,0)" />
+              <stop offset="50%" stopColor="rgba(74,147,240,0.5)" />
+              <stop offset="100%" stopColor="rgba(74,147,240,0)" />
             </linearGradient>
           </defs>
         </svg>
@@ -383,7 +385,7 @@ export function LandingPage() {
           <h2 className="text-3xl font-semibold tracking-tight md:text-[2.75rem]">
             Put your portfolio in orbit
           </h2>
-          <p className="mx-auto mt-4 max-w-lg text-[color:var(--lp-muted)]">
+          <p className="mx-auto mt-4 max-w-lg text-[color:var(--muted-foreground)]">
             Add a few holdings and {APP_NAME} will show you how they move, where they overlap, and
             what your worst stretch would have looked like.
           </p>
@@ -404,12 +406,12 @@ export function LandingPage() {
           <div className="grid gap-10 sm:grid-cols-2">
             <div className="max-w-sm">
               <Logo />
-              <p className="mt-4 text-sm leading-relaxed text-[color:var(--lp-muted)]">
+              <p className="mt-4 text-sm leading-relaxed text-[color:var(--muted-foreground)]">
                 {APP_NAME} measures, contextualizes and explains the risk already present in a
                 portfolio. It is an educational project, not an investment adviser.
               </p>
             </div>
-            <div className="flex flex-col gap-2 text-sm text-[color:var(--lp-muted)] sm:items-end">
+            <div className="flex flex-col gap-2 text-sm text-[color:var(--muted-foreground)] sm:items-end">
               <Link to="/signin" className="transition-colors hover:text-white">
                 Sign in
               </Link>
@@ -425,7 +427,7 @@ export function LandingPage() {
             </div>
           </div>
 
-          <div className="mt-12 border-t border-[color:var(--lp-line)] py-6 text-xs text-[color:var(--lp-faint)]">
+          <div className="mt-12 border-t border-[color:var(--lp-line)] py-6 text-xs text-[color:var(--faint)]">
             <p>
               {APP_NAME} provides risk analysis, not investment advice, and does not execute trades.
               Market data is delayed and provided for informational purposes only.
@@ -439,7 +441,7 @@ export function LandingPage() {
           className="select-none whitespace-nowrap text-center font-semibold leading-[0.78] tracking-tighter"
           style={{
             fontSize: "clamp(5rem, 21vw, 17rem)",
-            background: "linear-gradient(180deg, rgba(167,139,250,0.20), rgba(167,139,250,0))",
+            background: "linear-gradient(180deg, rgba(74,147,240,0.20), rgba(74,147,240,0))",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
             color: "transparent",

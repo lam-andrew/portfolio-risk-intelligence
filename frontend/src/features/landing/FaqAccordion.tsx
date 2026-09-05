@@ -38,9 +38,9 @@ export function FaqAccordion() {
             key={item.q}
             className="overflow-hidden rounded-2xl border"
             style={{
-              borderColor: isOpen ? "rgba(167,139,250,0.45)" : "var(--lp-line)",
+              borderColor: isOpen ? "rgba(74,147,240,0.45)" : "var(--lp-line)",
               background: isOpen
-                ? "linear-gradient(120deg, rgba(124,92,255,0.9), rgba(76,29,149,0.55))"
+                ? "linear-gradient(120deg, rgba(74,147,240,0.9), rgba(18,57,95,0.55))"
                 : "var(--lp-card)",
             }}
           >
