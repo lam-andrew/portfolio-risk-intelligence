@@ -1,8 +1,12 @@
 """Top-level API router.
 
-Aggregates the versioned/feature routers that make up the backend's public contract. For
-the Sprint 1 skeleton this is just the health check; portfolio, market-data, and risk
-routes are added here as their user stories land.
+Aggregates the feature routers that make up the backend's public contract.
+
+Everything hangs off the ``/api`` prefix. That is what lets the built frontend and the API
+be served from a single origin in production: without it, a page route and an API route
+would compete for the same path (``/holdings`` was already both), and the browser would be
+handed JSON where it expected the application. Serving both from one origin is what keeps
+the session cookie same-site, so ``SameSite=Lax`` continues to hold (ADR 0017).
 """
 
 from __future__ import annotations
@@ -15,7 +19,7 @@ from app.api.schemas import HealthResponse
 from app.core.config import settings
 from app.core.database import check_database
 
-api_router = APIRouter()
+api_router = APIRouter(prefix="/api")
 api_router.include_router(auth.router)
 api_router.include_router(holdings.router)
 api_router.include_router(imports.router)

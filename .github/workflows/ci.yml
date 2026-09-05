@@ -55,7 +55,7 @@ jobs:
       - name: Wait for the backend to report healthy with a connected database
         run: |
           for i in $(seq 1 30); do
-            body="$(curl -sf http://localhost:8000/health || true)"
+            body="$(curl -sf http://localhost:8000/api/health || true)"
             echo "attempt $i: $body"
             if echo "$body" | grep -q '"database":"connected"'; then
               echo "Backend healthy and database connected."

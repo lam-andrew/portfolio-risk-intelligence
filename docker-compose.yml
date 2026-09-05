@@ -56,7 +56,7 @@ services:
       - backend
     environment:
       # The browser runs on the host, so it reaches the backend via the published port.
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api}
     ports:
       - "5173:5173"
     volumes:

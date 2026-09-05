@@ -11,7 +11,7 @@ from tests.fakes import FakeProvider
 
 def _add(client: TestClient, ticker: str, quantity: str) -> None:
     assert (
-        client.post("/holdings", json={"ticker": ticker, "quantity": quantity}).status_code == 201
+        client.post("/api/holdings", json={"ticker": ticker, "quantity": quantity}).status_code == 201
     )
 
 
@@ -23,7 +23,7 @@ def test_concentration_reports_hhi_and_effective_holdings(client: TestClient) ->
     _add(client, "MSFT", "10")
     _add(client, "VTI", "10")
 
-    body = client.get("/portfolio/concentration").json()
+    body = client.get("/api/portfolio/concentration").json()
 
     assert body["holdings_count"] == 3
     assert Decimal(body["hhi"]) > 0
@@ -40,7 +40,7 @@ def test_a_dominant_position_drives_effective_holdings_toward_one(client: TestCl
     _add(client, "MSFT", "1")
     _add(client, "VTI", "1")
 
-    body = client.get("/portfolio/concentration").json()
+    body = client.get("/api/portfolio/concentration").json()
 
     assert Decimal(body["effective_holdings"]) < Decimal("1.5")
     assert Decimal(body["top_1_pct"]) > Decimal("90")
@@ -55,18 +55,18 @@ def test_a_balanced_portfolio_flags_nothing_as_overweight(client: TestClient) ->
     _add(client, "NVDA", "10")
     _add(client, "VTI", "10")
 
-    body = client.get("/portfolio/concentration").json()
+    body = client.get("/api/portfolio/concentration").json()
     assert body["overweight"] == []
 
 
 def test_concentration_exposes_its_thresholds(client: TestClient) -> None:
-    body = client.get("/portfolio/concentration").json()
+    body = client.get("/api/portfolio/concentration").json()
     assert Decimal(body["overweight_multiple"]) == Decimal("2")
     assert Decimal(body["overlap_threshold"]) == Decimal("0.75")
 
 
 def test_concentration_of_an_empty_portfolio_does_not_fail(client: TestClient) -> None:
-    body = client.get("/portfolio/concentration").json()
+    body = client.get("/api/portfolio/concentration").json()
     assert body["holdings_count"] == 0
     assert body["hhi"] is None
     assert body["overweight"] == []
@@ -78,7 +78,7 @@ def test_overlaps_have_a_combined_weight_and_a_floor_correlation(client: TestCli
     for ticker in ("AAPL", "MSFT", "NVDA", "VTI"):
         _add(client, ticker, "10")
 
-    body = client.get("/portfolio/concentration").json()
+    body = client.get("/api/portfolio/concentration").json()
     threshold = Decimal(body["overlap_threshold"])
 
     for group in body["overlaps"]:
@@ -89,7 +89,7 @@ def test_overlaps_have_a_combined_weight_and_a_floor_correlation(client: TestCli
 
 
 def test_concentration_window_is_validated(client: TestClient) -> None:
-    assert client.get("/portfolio/concentration?days=10").status_code == 422
+    assert client.get("/api/portfolio/concentration?days=10").status_code == 422
 
 
 # --- US-8: drawdown ---------------------------------------------------------------
@@ -100,7 +100,7 @@ def test_drawdown_reports_max_current_and_a_series(client: TestClient) -> None:
     _add(client, "AAPL", "10")
     _add(client, "NVDA", "5")
 
-    body = client.get("/portfolio/drawdown").json()
+    body = client.get("/api/portfolio/drawdown").json()
 
     assert Decimal(body["max_drawdown_pct"]) < 0
     assert Decimal(body["current_drawdown_pct"]) <= 0
@@ -117,7 +117,7 @@ def test_drawdown_episodes_are_ordered_deepest_first(client: TestClient) -> None
     _add(client, "AAPL", "10")
     _add(client, "NVDA", "5")
 
-    episodes = client.get("/portfolio/drawdown").json()["episodes"]
+    episodes = client.get("/api/portfolio/drawdown").json()["episodes"]
     assert len(episodes) > 0
 
     depths = [Decimal(e["depth_pct"]) for e in episodes]
@@ -128,7 +128,7 @@ def test_each_episode_is_internally_consistent(client: TestClient) -> None:
     _add(client, "AAPL", "10")
     _add(client, "NVDA", "5")
 
-    for episode in client.get("/portfolio/drawdown").json()["episodes"]:
+    for episode in client.get("/api/portfolio/drawdown").json()["episodes"]:
         assert episode["peak_date"] <= episode["trough_date"]
         assert Decimal(episode["depth_pct"]) < 0
         assert episode["decline_days"] >= 0
@@ -144,20 +144,20 @@ def test_max_drawdown_matches_the_deepest_episode(client: TestClient) -> None:
     _add(client, "AAPL", "10")
     _add(client, "NVDA", "5")
 
-    body = client.get("/portfolio/drawdown").json()
+    body = client.get("/api/portfolio/drawdown").json()
     assert Decimal(body["episodes"][0]["depth_pct"]) == Decimal(body["max_drawdown_pct"])
 
 
 def test_max_drawdown_matches_the_worst_point_of_the_series(client: TestClient) -> None:
     _add(client, "AAPL", "10")
 
-    body = client.get("/portfolio/drawdown").json()
+    body = client.get("/api/portfolio/drawdown").json()
     worst = min(Decimal(p["drawdown_pct"]) for p in body["series"])
     assert worst == Decimal(body["max_drawdown_pct"])
 
 
 def test_drawdown_of_an_empty_portfolio_does_not_fail(client: TestClient) -> None:
-    body = client.get("/portfolio/drawdown").json()
+    body = client.get("/api/portfolio/drawdown").json()
     assert body["series"] == []
     assert body["episodes"] == []
     assert body["max_drawdown_pct"] is None
@@ -168,10 +168,10 @@ def test_drawdown_ignores_unpriceable_holdings(client: TestClient, provider: Fak
     _add(client, "MSFT", "5")
     provider.known = {"AAPL"}
 
-    body = client.get("/portfolio/drawdown").json()
+    body = client.get("/api/portfolio/drawdown").json()
     assert len(body["series"]) > 100  # still computed from what can be priced
 
 
 def test_drawdown_window_is_validated(client: TestClient) -> None:
-    assert client.get("/portfolio/drawdown?days=10").status_code == 422
-    assert client.get("/portfolio/drawdown?days=180").json()["window_days"] == 180
+    assert client.get("/api/portfolio/drawdown?days=10").status_code == 422
+    assert client.get("/api/portfolio/drawdown?days=180").json()["window_days"] == 180

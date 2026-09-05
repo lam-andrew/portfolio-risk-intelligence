@@ -23,7 +23,7 @@ from tests.fakes import FakeProvider
 def test_prices_are_retrieved_for_a_valid_ticker(
     client: TestClient, provider: FakeProvider
 ) -> None:
-    resp = client.get("/market-data/AAPL/prices?days=30")
+    resp = client.get("/api/market-data/AAPL/prices?days=30")
     assert resp.status_code == 200
     body = resp.json()
     assert body["ticker"] == "AAPL"
@@ -38,8 +38,8 @@ def test_prices_are_retrieved_for_a_valid_ticker(
 
 def test_second_request_is_served_from_cache(client: TestClient, provider: FakeProvider) -> None:
     """FR-6: analysis run again uses cached data instead of re-fetching."""
-    first = client.get("/market-data/AAPL/prices?days=30").json()
-    second = client.get("/market-data/AAPL/prices?days=30").json()
+    first = client.get("/api/market-data/AAPL/prices?days=30").json()
+    second = client.get("/api/market-data/AAPL/prices?days=30").json()
 
     assert first["source"] == "provider"
     assert second["source"] == "cache"
@@ -49,18 +49,18 @@ def test_second_request_is_served_from_cache(client: TestClient, provider: FakeP
 
 
 def test_unknown_ticker_is_rejected(client: TestClient) -> None:
-    resp = client.get("/market-data/ZZZZ/prices?days=30")
+    resp = client.get("/api/market-data/ZZZZ/prices?days=30")
     assert resp.status_code == 422
     assert "Unrecognized" in resp.json()["detail"]
 
 
 def test_ticker_is_normalized(client: TestClient) -> None:
-    assert client.get("/market-data/aapl/prices?days=10").json()["ticker"] == "AAPL"
+    assert client.get("/api/market-data/aapl/prices?days=10").json()["ticker"] == "AAPL"
 
 
 def test_days_window_is_validated(client: TestClient) -> None:
-    assert client.get("/market-data/AAPL/prices?days=0").status_code == 422
-    assert client.get("/market-data/AAPL/prices?days=99999").status_code == 422
+    assert client.get("/api/market-data/AAPL/prices?days=0").status_code == 422
+    assert client.get("/api/market-data/AAPL/prices?days=99999").status_code == 422
 
 
 # --- Service level -----------------------------------------------------------
@@ -168,10 +168,10 @@ def test_cached_values_round_trip_exactly(session_factory) -> None:  # type: ign
 
 
 def test_summary_prices_positions_and_totals(client: TestClient) -> None:
-    client.post("/holdings", json={"ticker": "AAPL", "quantity": "10"})
-    client.post("/holdings", json={"ticker": "MSFT", "quantity": "5"})
+    client.post("/api/holdings", json={"ticker": "AAPL", "quantity": "10"})
+    client.post("/api/holdings", json={"ticker": "MSFT", "quantity": "5"})
 
-    body = client.get("/portfolio/summary").json()
+    body = client.get("/api/portfolio/summary").json()
     assert body["priced"] is True
     assert [p["ticker"] for p in body["positions"]] == ["AAPL", "MSFT"]
 
@@ -191,7 +191,7 @@ def test_summary_prices_positions_and_totals(client: TestClient) -> None:
 
 
 def test_summary_is_empty_for_an_empty_portfolio(client: TestClient) -> None:
-    body = client.get("/portfolio/summary").json()
+    body = client.get("/api/portfolio/summary").json()
     assert body["positions"] == []
     assert body["priced"] is False
 
@@ -200,12 +200,12 @@ def test_summary_still_lists_a_position_when_pricing_fails(
     client: TestClient, provider: FakeProvider
 ) -> None:
     """One unpriceable symbol must not hide the rest of the portfolio."""
-    client.post("/holdings", json={"ticker": "AAPL", "quantity": "10"})
-    client.post("/holdings", json={"ticker": "MSFT", "quantity": "5"})
+    client.post("/api/holdings", json={"ticker": "AAPL", "quantity": "10"})
+    client.post("/api/holdings", json={"ticker": "MSFT", "quantity": "5"})
     # MSFT stops being priceable after the holdings were created.
     provider.known = {"AAPL"}
 
-    body = client.get("/portfolio/summary").json()
+    body = client.get("/api/portfolio/summary").json()
     by_ticker = {p["ticker"]: p for p in body["positions"]}
     assert by_ticker["AAPL"]["market_value"] is not None
     assert by_ticker["MSFT"]["market_value"] is None

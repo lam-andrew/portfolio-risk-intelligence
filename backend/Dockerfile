@@ -26,7 +26,7 @@ EXPOSE 8000
 
 # Report container health via the API's own /health endpoint (Trivy DS-0026).
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').getcode()==200 else 1)"
+    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/api/health').getcode()==200 else 1)"
 
 # Reload is enabled via compose for local dev; the image default is a plain server.
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
