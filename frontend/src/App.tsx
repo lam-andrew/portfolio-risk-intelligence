@@ -4,7 +4,7 @@
  * Portfolio data is loaded once here and shared across pages, so navigating between the
  * overview and holdings does not refetch prices, risk and correlation each time.
  */
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +17,7 @@ import { DashboardPage } from "@/pages/DashboardPage";
 import { DrawdownPage } from "@/pages/DrawdownPage";
 import { MethodologyPage } from "@/pages/MethodologyPage";
 import { HoldingsPage } from "@/pages/HoldingsPage";
+import { LandingPage } from "@/pages/LandingPage";
 
 function Loading() {
   return (
@@ -67,7 +68,15 @@ export default function App() {
     );
   }
   if (auth.kind === "signedOut") {
-    return <SignInPage onSignedIn={onSignedIn} />;
+    // Signed-out visitors get the marketing page by default and reach the form deliberately.
+    // Anything else (a bookmarked /holdings, say) also lands here rather than on a bare form
+    // with no explanation of what it belongs to.
+    return (
+      <Routes>
+        <Route path="/signin" element={<SignInPage onSignedIn={onSignedIn} />} />
+        <Route path="*" element={<LandingPage />} />
+      </Routes>
+    );
   }
 
   return <SignedInApp email={auth.user.email} onSignOut={signOut} />;
@@ -163,6 +172,7 @@ function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Pro
           </AppShell>
         }
       />
+      <Route path="/signin" element={<Navigate to="/" replace />} />
       <Route
         path="*"
         element={

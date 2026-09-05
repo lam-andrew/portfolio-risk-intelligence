@@ -42,3 +42,33 @@
     @apply bg-background text-foreground font-sans antialiased;
   }
 }
+
+/* Landing-page orbital diagram. The rings rotate about the SVG's centre; `transform-box:
+   view-box` is what makes `transform-origin` resolve against the viewBox rather than the
+   element's own bounding box, which for a <g> of scattered dots is not the centre at all. */
+@layer components {
+  .orbit-ring {
+    transform-box: view-box;
+    transform-origin: 200px 200px;
+    animation-name: orbit-spin;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+}
+
+@keyframes orbit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Motion is decorative here, so it goes away entirely for anyone who asked for less of it.
+   The diagram still reads correctly standing still. */
+@media (prefers-reduced-motion: reduce) {
+  .orbit-ring {
+    animation: none;
+  }
+}
