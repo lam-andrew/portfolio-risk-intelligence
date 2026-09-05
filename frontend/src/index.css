@@ -43,20 +43,95 @@
   }
 }
 
-/* Landing-page orbital diagram. The rings rotate about the SVG's centre; `transform-box:
-   view-box` is what makes `transform-origin` resolve against the viewBox rather than the
-   element's own bounding box, which for a <g> of scattered dots is not the centre at all. */
-@layer components {
-  .orbit-ring {
-    transform-box: view-box;
-    transform-origin: 200px 200px;
-    animation-name: orbit-spin;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-  }
+/* ---------------------------------------------------------------------------
+   Landing page.
+
+   The marketing surface deliberately runs a richer, darker, more saturated
+   treatment than the application: it is selling, whereas the app is a tool and
+   stays calm so the data is the loud thing. Everything here is scoped under
+   `.landing` so none of it leaks into the product (ADR 0015).
+
+   The violet is not arbitrary. The app's logo mark already gradients from the
+   accent into #7c5cff, so the landing page leans on a colour the brand owns
+   rather than inventing one.
+   --------------------------------------------------------------------------- */
+.landing {
+  --lp-bg: #07050f;
+  --lp-violet: #7c5cff;
+  --lp-violet-bright: #a78bfa;
+  --lp-violet-deep: #4c1d95;
+  --lp-text: #f3f1ff;
+  --lp-muted: #a99fd0;
+  --lp-faint: #6f6796;
+  --lp-card: rgba(255, 255, 255, 0.028);
+  --lp-line: rgba(255, 255, 255, 0.075);
+
+  background: var(--lp-bg);
+  color: var(--lp-text);
 }
 
-@keyframes orbit-spin {
+.landing ::selection {
+  background: var(--lp-violet);
+  color: #fff;
+}
+
+/* Bento / feature card. The inset highlight along the top edge is what keeps a
+   near-black card from reading as a flat hole in the page. */
+.lp-card {
+  background: var(--lp-card);
+  border: 1px solid var(--lp-line);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.lp-pill {
+  border: 1px solid var(--lp-line);
+  background: rgba(255, 255, 255, 0.035);
+  border-radius: 999px;
+}
+
+.lp-cta {
+  background: linear-gradient(135deg, var(--lp-violet), #9d6bff);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.09) inset,
+    0 8px 30px -6px rgba(124, 92, 255, 0.65);
+}
+
+.lp-cta:hover {
+  filter: brightness(1.1);
+}
+
+/* The light-arc that separates sections: a huge, very wide ellipse whose glow
+   is clipped by its parent so only the crest shows, reading as a planet limb. */
+.lp-horizon {
+  background: radial-gradient(
+    60% 100% at 50% 100%,
+    rgba(124, 92, 255, 0.55) 0%,
+    rgba(124, 92, 255, 0.14) 45%,
+    transparent 72%
+  );
+}
+
+.lp-grid-fade {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+}
+
+/* Orbital rings. Each ring is an ellipse tilted in 3D, and the tiles riding it
+   are counter-rotated so they stay upright while the ring turns. */
+.lp-orbit {
+  animation: lp-spin linear infinite;
+  transform-style: preserve-3d;
+}
+
+.lp-orbit-tile {
+  animation: lp-spin-reverse linear infinite;
+}
+
+@keyframes lp-spin {
   from {
     transform: rotate(0deg);
   }
@@ -65,10 +140,51 @@
   }
 }
 
-/* Motion is decorative here, so it goes away entirely for anyone who asked for less of it.
-   The diagram still reads correctly standing still. */
+@keyframes lp-spin-reverse {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes lp-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.lp-pulse {
+  animation: lp-pulse 5s ease-in-out infinite;
+}
+
+@keyframes lp-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+.lp-float {
+  animation: lp-float 6s ease-in-out infinite;
+}
+
+/* Motion here is entirely decorative; the layout reads identically without it. */
 @media (prefers-reduced-motion: reduce) {
-  .orbit-ring {
+  .lp-orbit,
+  .lp-orbit-tile,
+  .lp-float,
+  .lp-pulse {
     animation: none;
   }
 }
