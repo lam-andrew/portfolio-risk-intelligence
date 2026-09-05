@@ -1,51 +1,59 @@
 /**
- * The landing page's centrepiece: holdings riding tilted orbits around a glowing core.
+ * The landing page's centrepiece: bodies genuinely orbiting a core.
  *
- * The rings are ellipses rotated in the plane, which is what sells depth without any real
- * 3D: a circle seen at an angle *is* an ellipse, so three ellipses at different rotations
- * read as three orbital planes around one body.
+ * Depth comes from three ellipses at different rotations. A circle seen at an angle *is* an
+ * ellipse, so three of them read as three orbital planes around one body, with no real 3D.
  *
- * Tile positions are computed rather than eyeballed. A point at angle `t` on an ellipse
- * that has been rotated by `theta` is the ellipse point run through a rotation matrix, so
- * every tile sits exactly on its ring instead of approximately near it.
+ * The motion is a CSS motion path rather than a rotation. Rotating a group would only work
+ * for a circle centred on the origin: these orbits are tilted ellipses, so a body has to
+ * follow the actual curve. Each one gets an `offset-path` built from the same geometry that
+ * draws its ring, expressed in the SVG's user units so the orbit scales with the diagram
+ * instead of being pinned to pixels.
  *
- * Hand-authored SVG and CSS, no animation or charting library (ADR 0013).
+ * Two details that are easy to get wrong. `offset-rotate: 0deg` keeps a body upright as it
+ * travels; without it the browser turns it to face along the tangent and the icons roll
+ * over. And bodies are spread around a ring with NEGATIVE animation delay, so they begin
+ * part-way round rather than stacked at the start point.
+ *
+ * Hand-authored SVG and CSS, no animation library (ADR 0013).
  */
+import type { CSSProperties } from "react";
 
 const SIZE = 560;
-const CENTRE = SIZE / 2;
-const RX = 248;
-const RY = 92;
+const C = SIZE / 2;
+const RX = 246;
+const RY = 90;
 
-/** The three orbital planes, by how far each is rotated. */
-const PLANES = [-20, 30, 78];
-
-/** A point on ellipse (RX, RY) at parameter `t`, after the plane is rotated by `theta`. */
-function pointOn(theta: number, t: number): { x: number; y: number } {
-  const th = (theta * Math.PI) / 180;
-  const a = (t * Math.PI) / 180;
-  const ex = RX * Math.cos(a);
-  const ey = RY * Math.sin(a);
-  return {
-    x: CENTRE + ex * Math.cos(th) - ey * Math.sin(th),
-    y: CENTRE + ex * Math.sin(th) + ey * Math.cos(th),
-  };
-}
-
-type Glyph = "wave" | "grid" | "share" | "drop" | "shield" | "clock";
-
-/** Each tile is one thing the system measures, parked on one of the orbits. */
-const TILES: { plane: number; t: number; glyph: Glyph; label: string; delay: number }[] = [
-  { plane: 0, t: 178, glyph: "wave", label: "Volatility", delay: 0 },
-  { plane: 0, t: 8, glyph: "grid", label: "Correlation", delay: 1.4 },
-  { plane: 1, t: 200, glyph: "share", label: "Concentration", delay: 2.6 },
-  { plane: 1, t: 20, glyph: "drop", label: "Drawdown", delay: 0.7 },
-  { plane: 2, t: 190, glyph: "shield", label: "No credentials required", delay: 3.3 },
-  { plane: 2, t: 5, glyph: "clock", label: "Cached price history", delay: 2 },
+/** The three orbital planes: how far each is tilted, and how long one lap takes. */
+const PLANES = [
+  { tilt: -20, seconds: 30 },
+  { tilt: 30, seconds: 42 },
+  { tilt: 78, seconds: 56 },
 ];
 
-/** Each glyph is drawn in full rather than a shared path plus a conditionally appended
- *  circle, which made "concentration" and "cached history" both read as clocks. */
+/** An ellipse as a closed path, tilted by `deg`, in SVG user units. */
+function ellipsePath(deg: number): string {
+  const th = (deg * Math.PI) / 180;
+  const ax = C + RX * Math.cos(th);
+  const ay = C + RX * Math.sin(th);
+  const bx = C - RX * Math.cos(th);
+  const by = C - RX * Math.sin(th);
+  return `M ${ax} ${ay} A ${RX} ${RY} ${deg} 0 1 ${bx} ${by} A ${RX} ${RY} ${deg} 0 1 ${ax} ${ay}`;
+}
+
+/** Put a body on a ring at `phase` (0–1) of its lap, travelling for `seconds`. */
+function orbit(plane: number, phase: number): CSSProperties {
+  const { tilt, seconds } = PLANES[plane];
+  return {
+    offsetPath: `path("${ellipsePath(tilt)}")`,
+    offsetDistance: `${phase * 100}%`,
+    animationDuration: `${seconds}s`,
+    animationDelay: `-${(phase * seconds).toFixed(2)}s`,
+  } as CSSProperties;
+}
+
+type Glyph = "wave" | "grid" | "pie" | "drop" | "shield" | "clock";
+
 const GLYPHS: Record<Glyph, JSX.Element> = {
   wave: <path d="M3 12c2.5-6 4.5 6 7 0s4.5-6 7 0" />,
   grid: (
@@ -56,7 +64,7 @@ const GLYPHS: Record<Glyph, JSX.Element> = {
       <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.4" />
     </>
   ),
-  share: (
+  pie: (
     <>
       <circle cx="12" cy="12" r="8.5" />
       <path d="M12 3.5V12l7.4 4.2" />
@@ -73,109 +81,110 @@ const GLYPHS: Record<Glyph, JSX.Element> = {
   ),
 };
 
-function Tile({
-  glyph,
-  label,
-  delay,
-  x,
-  y,
-}: {
-  glyph: Glyph;
-  label: string;
-  delay: number;
-  x: number;
-  y: number;
-}) {
-  return (
-    <div
-      className="lp-float absolute -translate-x-1/2 -translate-y-1/2"
-      style={{
-        left: `${(x / SIZE) * 100}%`,
-        top: `${(y / SIZE) * 100}%`,
-        animationDelay: `${delay}s`,
-      }}
-    >
-      <span
-        title={label}
-        className="grid h-11 w-11 place-items-center rounded-[14px] border border-white/10 text-white/90 backdrop-blur-sm md:h-12 md:w-12"
-        style={{
-          background: "linear-gradient(150deg, rgba(124,92,255,0.85), rgba(60,40,130,0.75))",
-          boxShadow: "0 8px 26px -8px rgba(124,92,255,0.9), inset 0 1px 0 rgba(255,255,255,0.18)",
-        }}
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-5 w-5"
-        >
-          {GLYPHS[glyph]}
-        </svg>
-      </span>
-    </div>
-  );
-}
+/** One thing the system measures, riding one of the orbits. */
+const BODIES: { plane: number; phase: number; glyph: Glyph; label: string }[] = [
+  { plane: 0, phase: 0.0, glyph: "wave", label: "Volatility" },
+  { plane: 0, phase: 0.5, glyph: "grid", label: "Correlation" },
+  { plane: 1, phase: 0.18, glyph: "pie", label: "Concentration" },
+  { plane: 1, phase: 0.68, glyph: "drop", label: "Drawdown" },
+  { plane: 2, phase: 0.34, glyph: "shield", label: "No credentials required" },
+  { plane: 2, phase: 0.84, glyph: "clock", label: "Cached price history" },
+];
+
+/** Smaller unlabelled bodies, for the sense of a populated system. */
+const MOTES = [
+  { plane: 0, phase: 0.22 },
+  { plane: 0, phase: 0.74 },
+  { plane: 1, phase: 0.05 },
+  { plane: 1, phase: 0.44 },
+  { plane: 1, phase: 0.9 },
+  { plane: 2, phase: 0.14 },
+  { plane: 2, phase: 0.58 },
+];
 
 export function OrbitHero({ className }: { className?: string }) {
   return (
     <div className={`relative aspect-square ${className ?? ""}`} aria-hidden="true">
-      {/* Ambient glow behind the whole system. */}
       <div
         className="lp-pulse absolute inset-0"
         style={{
           background:
-            "radial-gradient(closest-side, rgba(124,92,255,0.42), rgba(124,92,255,0.10) 55%, transparent 72%)",
+            "radial-gradient(closest-side, rgba(74,147,240,0.34), rgba(74,147,240,0.08) 55%, transparent 72%)",
         }}
       />
 
       <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="absolute inset-0 h-full w-full">
         <defs>
-          <radialGradient id="lp-core">
-            <stop offset="0%" stopColor="#e9e2ff" />
-            <stop offset="45%" stopColor="#9d6bff" />
-            <stop offset="100%" stopColor="#4c1d95" />
+          <radialGradient id="lp-core" cx="38%" cy="34%">
+            <stop offset="0%" stopColor="#dcebff" />
+            <stop offset="45%" stopColor="var(--accent)" />
+            <stop offset="100%" stopColor="#12395f" />
           </radialGradient>
           <linearGradient id="lp-ring" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="rgba(167,139,250,0.65)" />
-            <stop offset="50%" stopColor="rgba(167,139,250,0.14)" />
-            <stop offset="100%" stopColor="rgba(167,139,250,0.55)" />
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.55" />
+            <stop offset="50%" stopColor="var(--accent)" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.5" />
+          </linearGradient>
+          <linearGradient id="lp-tile-fill" x1="0" y1="0" x2="0.35" y2="1">
+            <stop offset="0%" stopColor="var(--surface-2)" />
+            <stop offset="100%" stopColor="var(--surface)" />
           </linearGradient>
         </defs>
 
-        {PLANES.map((theta) => (
+        {PLANES.map(({ tilt }) => (
           <ellipse
-            key={theta}
-            cx={CENTRE}
-            cy={CENTRE}
+            key={tilt}
+            cx={C}
+            cy={C}
             rx={RX}
             ry={RY}
             fill="none"
             stroke="url(#lp-ring)"
             strokeWidth="1.15"
-            transform={`rotate(${theta} ${CENTRE} ${CENTRE})`}
+            transform={`rotate(${tilt} ${C} ${C})`}
           />
         ))}
 
-        {/* Small bodies scattered along the rings, for density. */}
-        {PLANES.flatMap((theta, i) =>
-          [58, 132, 246, 320].map((t) => {
-            const { x, y } = pointOn(theta, t);
-            return <circle key={`${i}-${t}`} cx={x} cy={y} r={2.4} fill="rgba(199,180,255,0.75)" />;
-          }),
-        )}
+        <circle cx={C} cy={C} r={90} fill="var(--accent)" opacity="0.13" />
+        <circle cx={C} cy={C} r={54} fill="url(#lp-core)" />
 
-        <circle cx={CENTRE} cy={CENTRE} r={92} fill="rgba(124,92,255,0.16)" />
-        <circle cx={CENTRE} cy={CENTRE} r={56} fill="url(#lp-core)" />
-        <circle cx={CENTRE - 16} cy={CENTRE - 20} r={16} fill="rgba(255,255,255,0.30)" />
+        {MOTES.map((m, i) => (
+          <circle
+            key={i}
+            className="lp-body"
+            style={orbit(m.plane, m.phase)}
+            r={2.6}
+            fill="var(--accent)"
+            opacity="0.75"
+          />
+        ))}
+
+        {BODIES.map((b) => (
+          <g key={b.label} className="lp-body" style={orbit(b.plane, b.phase)}>
+            <title>{b.label}</title>
+            <rect
+              x={-23}
+              y={-23}
+              width={46}
+              height={46}
+              rx={14}
+              fill="url(#lp-tile-fill)"
+              stroke="var(--accent)"
+              strokeOpacity="0.4"
+            />
+            <g
+              transform="translate(-11.5 -11.5) scale(0.958)"
+              fill="none"
+              stroke="var(--accent)"
+              strokeWidth="1.9"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              {GLYPHS[b.glyph]}
+            </g>
+          </g>
+        ))}
       </svg>
-
-      {TILES.map((tile) => {
-        const { x, y } = pointOn(PLANES[tile.plane], tile.t);
-        return <Tile key={tile.label} {...tile} x={x} y={y} />;
-      })}
     </div>
   );
 }

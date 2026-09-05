@@ -1,6 +1,6 @@
 # 0015. The landing page runs its own visual treatment, scoped away from the app
 
-- **Status:** Accepted
+- **Status:** Superseded by [0016](0016-landing-page-uses-the-application-palette.md)
 - **Date:** 2026-09-05
 - **Relates to:** [0009](0009-ui-styling-tailwind-shadcn-tremor.md) (Tailwind + shadcn/ui,
   which remains in force for the application), [0013](0013-hand-authored-charts.md)

@@ -76,7 +76,7 @@ export function Sidebar({
       <div className="flex items-center gap-2.5 px-1.5 pt-1">
         <span
           className="grid h-8 w-8 flex-none place-items-center rounded-lg text-white"
-          style={{ background: "linear-gradient(150deg, var(--accent), #7c5cff)" }}
+          style={{ background: "linear-gradient(150deg, var(--accent), #1f5fb0)" }}
           aria-hidden="true"
         >
           <svg

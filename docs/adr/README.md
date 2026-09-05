@@ -35,4 +35,5 @@ capture an architecturally significant decision, its context, and its consequenc
 | [0012](0012-risk-methodology.md) | Risk engine methodology and conventions | Accepted |
 | [0013](0013-hand-authored-charts.md) | Hand-authored SVG charts instead of a charting library | Accepted |
 | [0014](0014-authentication.md) | Authentication: in-app sessions with Argon2id | Accepted |
-| [0015](0015-landing-page-visual-treatment.md) | Landing page runs its own visual treatment, scoped from the app | Accepted |
+| [0015](0015-landing-page-visual-treatment.md) | Landing page runs its own visual treatment, scoped from the app | Superseded by 0016 |
+| [0016](0016-landing-page-uses-the-application-palette.md) | Landing page uses the application palette; density, not hue, carries the difference | Accepted |

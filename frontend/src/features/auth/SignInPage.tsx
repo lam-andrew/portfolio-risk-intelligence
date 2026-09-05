@@ -47,7 +47,7 @@ export function SignInPage({ onSignedIn }: { onSignedIn: (user: User) => void })
         <div className="flex flex-col items-center gap-2 text-center">
           <span
             className="grid h-11 w-11 place-items-center rounded-xl text-white"
-            style={{ background: "linear-gradient(150deg, var(--accent), #7c5cff)" }}
+            style={{ background: "linear-gradient(150deg, var(--accent), #1f5fb0)" }}
             aria-hidden="true"
           >
             <svg
