@@ -11,7 +11,8 @@ from tests.fakes import FakeProvider
 
 def _add(client: TestClient, ticker: str, quantity: str) -> None:
     assert (
-        client.post("/api/holdings", json={"ticker": ticker, "quantity": quantity}).status_code == 201
+        client.post("/api/holdings", json={"ticker": ticker, "quantity": quantity}).status_code
+        == 201
     )
 
 

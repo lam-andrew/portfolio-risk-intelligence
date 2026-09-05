@@ -87,7 +87,9 @@ def test_edit_quantity_is_saved(client: TestClient) -> None:
 def test_edit_rejects_non_positive_quantity(client: TestClient) -> None:
     holding_id = _add(client, "AAPL", "10")
     for bad in ("0", "-2"):
-        assert client.patch(f"/api/holdings/{holding_id}", json={"quantity": bad}).status_code == 422
+        assert (
+            client.patch(f"/api/holdings/{holding_id}", json={"quantity": bad}).status_code == 422
+        )
     # unchanged
     assert Decimal(str(client.get("/api/holdings").json()[0]["quantity"])) == Decimal("10")
 

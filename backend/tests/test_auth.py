@@ -205,7 +205,8 @@ def test_portfolio_routes_require_a_session(anon_client: TestClient) -> None:
         assert getattr(anon_client, method)(path).status_code == 401, path
 
     assert (
-        anon_client.post("/api/holdings", json={"ticker": "AAPL", "quantity": "1"}).status_code == 401
+        anon_client.post("/api/holdings", json={"ticker": "AAPL", "quantity": "1"}).status_code
+        == 401
     )
     assert anon_client.patch("/api/holdings/1", json={"quantity": "1"}).status_code == 401
     assert anon_client.delete("/api/holdings/1").status_code == 401
@@ -217,31 +218,42 @@ def test_health_stays_public(anon_client: TestClient) -> None:
 
 
 def test_one_account_cannot_see_anothers_holdings(anon_client: TestClient) -> None:
-    anon_client.post("/api/auth/register", json={"email": "a@example.com", "password": GOOD_PASSWORD})
+    anon_client.post(
+        "/api/auth/register", json={"email": "a@example.com", "password": GOOD_PASSWORD}
+    )
     anon_client.post("/api/holdings", json={"ticker": "AAPL", "quantity": "10"})
     a_holding_id = anon_client.get("/api/holdings").json()[0]["id"]
     anon_client.post("/api/auth/logout")
 
-    anon_client.post("/api/auth/register", json={"email": "b@example.com", "password": GOOD_PASSWORD})
+    anon_client.post(
+        "/api/auth/register", json={"email": "b@example.com", "password": GOOD_PASSWORD}
+    )
     assert anon_client.get("/api/holdings").json() == []
     assert anon_client.get("/api/portfolio/summary").json()["positions"] == []
 
     # And cannot reach it by id — that would be an IDOR.
     assert (
-        anon_client.patch(f"/api/holdings/{a_holding_id}", json={"quantity": "99"}).status_code == 404
+        anon_client.patch(f"/api/holdings/{a_holding_id}", json={"quantity": "99"}).status_code
+        == 404
     )
     assert anon_client.delete(f"/api/holdings/{a_holding_id}").status_code == 404
 
 
 def test_each_account_gets_its_own_portfolio(anon_client: TestClient) -> None:
-    anon_client.post("/api/auth/register", json={"email": "one@example.com", "password": GOOD_PASSWORD})
+    anon_client.post(
+        "/api/auth/register", json={"email": "one@example.com", "password": GOOD_PASSWORD}
+    )
     anon_client.post("/api/holdings", json={"ticker": "AAPL", "quantity": "5"})
     anon_client.post("/api/auth/logout")
 
-    anon_client.post("/api/auth/register", json={"email": "two@example.com", "password": GOOD_PASSWORD})
+    anon_client.post(
+        "/api/auth/register", json={"email": "two@example.com", "password": GOOD_PASSWORD}
+    )
     anon_client.post("/api/holdings", json={"ticker": "MSFT", "quantity": "3"})
     assert [h["ticker"] for h in anon_client.get("/api/holdings").json()] == ["MSFT"]
 
     anon_client.post("/api/auth/logout")
-    anon_client.post("/api/auth/login", json={"email": "one@example.com", "password": GOOD_PASSWORD})
+    anon_client.post(
+        "/api/auth/login", json={"email": "one@example.com", "password": GOOD_PASSWORD}
+    )
     assert [h["ticker"] for h in anon_client.get("/api/holdings").json()] == ["AAPL"]
