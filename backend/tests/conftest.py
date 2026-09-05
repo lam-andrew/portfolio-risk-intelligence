@@ -77,7 +77,7 @@ def _build_client(provider: FakeProvider, *, sign_in: bool) -> Iterator[TestClie
         # registered and authenticated. The cookie persists on the TestClient.
         if sign_in:
             registered = test_client.post(
-                "/auth/register",
+                "/api/auth/register",
                 json={"email": "owner@example.com", "password": "correct-horse-battery"},
             )
             assert registered.status_code == 201, registered.text

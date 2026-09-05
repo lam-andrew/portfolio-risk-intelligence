@@ -8,7 +8,9 @@
  */
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+// Includes the /api prefix: in production the built frontend and the API are served from
+// the same origin, so this is a bare path and the browser resolves it against the host.
+const baseURL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api";
 
 // withCredentials is required for the session cookie to travel: the frontend and API are
 // different origins in development, and cookies are not sent cross-origin without it.

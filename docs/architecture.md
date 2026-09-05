@@ -193,8 +193,8 @@ form of AR-2 and NFR-1.
  │                                 ▼                                │
  │ ┌──────────────────────────────────────────────────────────────┐ │
  │ │ Risk and exposure routes             [Component: FastAPI]    │ │
- │ │ The public API contract: /portfolio/risk, /correlation,      │ │
- │ │ /concentration, /drawdown                                    │ │
+ │ │ The public API contract, all served under /api:              │ │
+ │ │ /portfolio/risk, /correlation, /concentration, /drawdown     │ │
  │ └──┬───────────────────────────────────────────────────────────┘ │
  │    │ requests aligned series and weights                         │
  │    ▼                                                             │

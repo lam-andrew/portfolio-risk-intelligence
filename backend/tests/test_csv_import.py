@@ -25,7 +25,7 @@ def load(name: str) -> bytes:
 
 def upload(client: TestClient, name: str, data: bytes | None = None):  # type: ignore[no-untyped-def]
     payload = load(name) if data is None else data
-    return client.post("/holdings/import", files={"file": (name, payload, "text/csv")})
+    return client.post("/api/holdings/import", files={"file": (name, payload, "text/csv")})
 
 
 # --- parser: real brokerage shapes --------------------------------------------
@@ -145,7 +145,7 @@ def test_import_adds_holdings_and_they_appear_in_the_portfolio(client: TestClien
     assert sorted(body["added"]) == ["BND", "VTI"]
     assert body["problems"] == []
 
-    listed = {h["ticker"] for h in client.get("/holdings").json()}
+    listed = {h["ticker"] for h in client.get("/api/holdings").json()}
     assert {"VTI", "BND"} <= listed
 
 
@@ -158,17 +158,17 @@ def test_import_reports_bad_rows_while_importing_good_ones(client: TestClient) -
     assert all({"row", "reason", "content"} <= set(p) for p in body["problems"])
 
     # The good row really landed.
-    assert "AAPL" in {h["ticker"] for h in client.get("/holdings").json()}
+    assert "AAPL" in {h["ticker"] for h in client.get("/api/holdings").json()}
 
 
 def test_import_updates_an_existing_holding(client: TestClient) -> None:
     """An export is a snapshot of current positions, so it replaces the quantity."""
-    client.post("/holdings", json={"ticker": "VTI", "quantity": "1"})
+    client.post("/api/holdings", json={"ticker": "VTI", "quantity": "1"})
 
     body = upload(client, "vanguard_positions.csv").json()
     assert "VTI" in body["updated"]
 
-    held = {h["ticker"]: Decimal(h["quantity"]) for h in client.get("/holdings").json()}
+    held = {h["ticker"]: Decimal(h["quantity"]) for h in client.get("/api/holdings").json()}
     assert held["VTI"] == Decimal("150.234")
 
 
