@@ -303,7 +303,7 @@ describe("Authentication gate (US-13)", () => {
 
   it("shows the sign-in screen when there is no session", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
-    renderAt("/");
+    renderAt("/signin");
 
     expect(await screen.findByRole("heading", { name: /sign in/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
@@ -314,7 +314,7 @@ describe("Authentication gate (US-13)", () => {
   it("does not request portfolio data before a session exists", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
     const summary = vi.spyOn(client, "getPortfolioSummary");
-    renderAt("/");
+    renderAt("/signin");
 
     await screen.findByRole("heading", { name: /sign in/i });
     expect(summary).not.toHaveBeenCalled();
@@ -341,7 +341,7 @@ describe("Authentication gate (US-13)", () => {
     vi.spyOn(client, "getPortfolioConcentration").mockResolvedValue(concentration);
     vi.spyOn(client, "getPortfolioDrawdown").mockResolvedValue(drawdown);
 
-    renderAt("/");
+    renderAt("/signin");
     await screen.findByRole("heading", { name: /sign in/i });
 
     fireEvent.change(screen.getByLabelText(/email/i), {
@@ -359,7 +359,7 @@ describe("Authentication gate (US-13)", () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
     vi.spyOn(client, "login").mockRejectedValue(new Error("nope"));
 
-    renderAt("/");
+    renderAt("/signin");
     await screen.findByRole("heading", { name: /sign in/i });
 
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "a@b.com" } });
@@ -369,7 +369,7 @@ describe("Authentication gate (US-13)", () => {
     expect(await screen.findByRole("alert")).toBeInTheDocument();
   });
 
-  it("signs out back to the sign-in screen", async () => {
+  it("signs out back to the public landing page", async () => {
     mockAll();
     vi.spyOn(client, "logout").mockResolvedValue(undefined);
 
@@ -378,7 +378,11 @@ describe("Authentication gate (US-13)", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /sign out/i }));
 
-    expect(await screen.findByRole("heading", { name: /sign in/i })).toBeInTheDocument();
+    // Signing out returns to "/", which for a signed-out visitor is the landing page.
+    expect(
+      await screen.findByRole("heading", { name: /know what your portfolio is really doing/i }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Portfolio value")).not.toBeInTheDocument();
   });
 
   it("shows the signed-in account in the sidebar", async () => {
@@ -386,5 +390,78 @@ describe("Authentication gate (US-13)", () => {
     renderAt("/");
     await screen.findByText("Portfolio value");
     expect(screen.getByTitle("owner@example.com")).toBeInTheDocument();
+  });
+});
+
+describe("Public landing page", () => {
+  beforeEach(() => vi.restoreAllMocks());
+
+  it("greets a signed-out visitor at the root instead of a bare sign-in form", async () => {
+    vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
+    renderAt("/");
+
+    expect(
+      await screen.findByRole("heading", { name: /know what your portfolio is really doing/i }),
+    ).toBeInTheDocument();
+    // The form belongs on its own route, not here.
+    expect(screen.queryByLabelText(/password/i)).not.toBeInTheDocument();
+  });
+
+  it("routes an unknown signed-out path to the landing page, not a dead end", async () => {
+    vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
+    renderAt("/holdings");
+
+    expect(
+      await screen.findByRole("heading", { name: /know what your portfolio is really doing/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("offers a route to sign in", async () => {
+    vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
+    renderAt("/");
+    await screen.findByRole("heading", { name: /know what your portfolio is really doing/i });
+
+    const links = screen.getAllByRole("link", {
+      name: /sign in|analyze my portfolio|get started/i,
+    });
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) expect(link).toHaveAttribute("href", "/signin");
+  });
+
+  it("fetches no portfolio data for an anonymous visitor", async () => {
+    vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
+    const summary = vi.spyOn(client, "getPortfolioSummary");
+    renderAt("/");
+
+    await screen.findByRole("heading", { name: /know what your portfolio is really doing/i });
+    expect(summary).not.toHaveBeenCalled();
+  });
+
+  it("states the product boundaries a risk tool has to be explicit about", async () => {
+    vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
+    renderAt("/");
+    await screen.findByRole("heading", { name: /know what your portfolio is really doing/i });
+
+    // EX-1, EX-3 and EX-4 in the SRS are requirements, so they are asserted, not assumed.
+    expect(screen.getByRole("heading", { name: /predict prices/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /tell you what to buy/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /brokerage login/i })).toBeInTheDocument();
+  });
+
+  it("uses the configured product name rather than a hard-coded one", async () => {
+    vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
+    renderAt("/");
+    await screen.findByRole("heading", { name: /know what your portfolio is really doing/i });
+
+    expect(
+      screen.getByRole("heading", { name: new RegExp(`what ${APP_NAME} will not do`, "i") }),
+    ).toBeInTheDocument();
+  });
+
+  it("sends a signed-in user who lands on /signin to the dashboard", async () => {
+    mockAll();
+    renderAt("/signin");
+
+    expect(await screen.findByText("Portfolio value")).toBeInTheDocument();
   });
 });
