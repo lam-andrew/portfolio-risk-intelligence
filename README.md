@@ -193,6 +193,9 @@ Full user stories with Given-When-Then acceptance criteria live in the GitHub Is
 Saved design reference: [Orbi mascot prototype and integration handoff](docs/design/orbi/README.md)
 (design only; not yet integrated into the application).
 
+Current academic sprint evidence: [Sprint 1 backlog and Definition of Done](docs/sprint1-plan.md)
+(working artifact for Weeks 3-5; it does not replace the submitted Week 2 report).
+
 - **Branching:** feature branches → PR → CI must pass → merge to `main`.
 - **Issues:** each user story is an issue, labeled by tier (`core`, `secondary`, `stretch`, `architectural`) and sprint; tracked on the GitHub Project board.
 - **Engines stay decoupled:** the frontend and other engines call the risk engine **only** through the API contract, never internal code.
