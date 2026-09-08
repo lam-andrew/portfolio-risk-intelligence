@@ -39,8 +39,8 @@ Testing is organized as a pyramid, weighted toward fast, deterministic tests at 
 
 ## 2. What the automated suite covers today
 
-As of 2026-09-02: **228 automated tests** (182 backend, 46 frontend), all passing, all run in CI
-on every push and pull request.
+As of 2026-09-07: **236 automated tests** (183 backend, 53 frontend), all passing locally in
+the current working tree. The same suites run in CI on every push and pull request.
 
 | Requirement | Covered by |
 |---|---|
@@ -119,3 +119,4 @@ Methodological conventions being tested against are fixed in
 | Date | Change |
 |---|---|
 | 2026-09-02 | Initial testing report created as a living document. |
+| 2026-09-07 | Updated test count after the current backend and frontend suites passed: 183 backend and 53 frontend tests. |

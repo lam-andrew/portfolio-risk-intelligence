@@ -28,6 +28,17 @@ needed for acceptance, testing, and sprint closeout.
 | Git history | Implementation commits exist for all six stories, mostly dated August 28-30 |
 | Current conclusion | Sprint 1 scope is consistent; implementation was completed before Week 3, so reports must distinguish implementation date from academic sprint evidence date |
 
+## Current evidence snapshot
+
+- Backend suite: **183 tests passed** on September 7, 2026.
+- Frontend suite: **53 tests passed** on September 7, 2026.
+- Automated coverage includes the Sprint 1 functional paths and the AR-1/AR-2 checks
+  documented in [the testing report](testing.md).
+- Manual UAT, the course traceability matrix with timestamps, and the burndown
+  evidence still need to be assembled for the weekly report.
+- The local verification used the repository's deterministic test setup; it is not a
+  substitute for demonstrating the running application in the Week 5 closeout.
+
 ## Sprint 1 backlog
 
 | Order | Story | Requirement | Points | Board state | Implementation evidence |
