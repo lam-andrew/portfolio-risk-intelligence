@@ -145,7 +145,7 @@ Goal: a running, deployable app that ingests a portfolio and shows a real risk m
 - US-4 Retrieve + cache market data (5)
 - US-5 Volatility (holding + portfolio) (3)
 
-### Sprint 2 (Wks 6–8) — full risk core + dashboard → **Product Demo I** · 18 pts
+### Sprint 2 (Wks 6–8) — full risk core + dashboard → **Product Demo I** · 21 pts
 - US-2 Upload portfolio via CSV (3)
 - US-13 Authenticate (3)
 - US-7 Concentration/exposure (3)
@@ -195,6 +195,11 @@ Saved design reference: [Orbi mascot prototype and integration handoff](docs/des
 
 Current academic sprint evidence: [Sprint 1 backlog and Definition of Done](docs/sprint1-plan.md)
 (working artifact for Weeks 3-5; it does not replace the submitted Week 2 report).
+
+[Sprint 1 acceptance test specifications](docs/sprint1-tests.md) record the
+September 8 evidence snapshot. The Sprint 2 subtotal was corrected from
+18 to 21 on September 8 (arithmetic only; no story estimates or assignments changed).
+The estimated Sprint 1-3 baseline totals 62 points, excluding unestimated additions.
 
 - **Branching:** feature branches → PR → CI must pass → merge to `main`.
 - **Issues:** each user story is an issue, labeled by tier (`core`, `secondary`, `stretch`, `architectural`) and sprint; tracked on the GitHub Project board.

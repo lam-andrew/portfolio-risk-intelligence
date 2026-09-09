@@ -39,8 +39,16 @@ Testing is organized as a pyramid, weighted toward fast, deterministic tests at 
 
 ## 2. What the automated suite covers today
 
-As of 2026-09-07: **236 automated tests** (183 backend, 53 frontend), all passing locally in
-the current working tree. The same suites run in CI on every push and pull request.
+As of 2026-09-08: **236 automated tests** (183 backend, 53 frontend), all passing locally
+at source revision `c065aef`. The same suites run in CI on every push and pull request.
+The local backend used Python 3.13, SQLite test databases, and FakeProvider; CI uses
+the Python 3.12 container image. A Starlette/httpx TestClient deprecation warning was
+emitted locally. No coverage percentage or manual UAT result was measured in this run.
+
+[Sprint 1 test specifications](sprint1-tests.md) provide 18 initial specifications,
+requirement/acceptance mappings, exact automation references, and pending acceptance
+procedures for all six Sprint 1 stories. Specification IDs were created September 8; the
+automated tests themselves are existing tests, not newly written for the report.
 
 | Requirement | Covered by |
 |---|---|
@@ -54,8 +62,8 @@ the current working tree. The same suites run in CI on every push and pull reque
 | FR-10 (drawdown) | Synthetic peak/trough/recovery series; unrecovered episodes reported rather than dropped |
 | FR-12 (dashboard) | Frontend component and routing tests; loading, empty, and error states |
 | FR-15 (authenticate) | Unauthenticated rejection on every portfolio route; session lifecycle; logout revocation; ownership isolation; uniform response for unknown email vs wrong password |
-| AR-1 (containerized) | CI integration job boots the full Compose stack and asserts services communicate |
-| AR-2 (decoupled engines) | Engine modules import no database, HTTP, or provider code — checked directly |
+| AR-1 (containerized) | CI starts Compose and asserts backend/database connectivity via /api/health; browser-to-API UAT remains pending |
+| AR-2 (decoupled engines) | Engine imports inspected September 8; API namespace regression passes; new-engine extension demonstration remains pending |
 
 ### Not yet covered
 
@@ -94,8 +102,8 @@ Rationale and the decision to adopt these gates are in
 
 ## 4. Verifying the risk mathematics
 
-The risk engine is the graded algorithmic component, so its correctness is established three
-independent ways rather than by unit tests alone:
+The risk engine is the graded algorithmic component. Verification combines the following
+approaches; planned acceptance evidence is distinguished from executed automated tests:
 
 1. **Mathematical properties.** A series correlated with itself is exactly 1.0; a correlation
    matrix is symmetric with a unit diagonal; portfolio volatility computed from the covariance
@@ -103,11 +111,11 @@ independent ways rather than by unit tests alone:
    perfectly correlated.
 2. **Independent implementations.** Results are compared against NumPy's own routines and
    against values computed by hand, not against previously recorded output of the same code.
-3. **Financial plausibility.** Metrics are checked against real market data for ordering that
-   must hold in reality: a bond fund must show lower volatility than a broad equity index,
-   which must show lower volatility than a single speculative stock. This catches whole
-   classes of error that unit tests on synthetic data cannot, such as a wrong annualization
-   factor.
+3. **Financial plausibility (planned acceptance evidence).** Compare results with independently
+   calculated values for the same dates and adjusted-price inputs. Relative real-market
+   volatility depends on the selected assets and window; a fixed bond/equity ordering is
+   not a universal correctness assertion. The September 8 automated run used synthetic
+   prices and does not establish live-market plausibility or manual acceptance.
 
 Methodological conventions being tested against are fixed in
 [ADR 0012](adr/0012-risk-methodology.md).
@@ -120,3 +128,4 @@ Methodological conventions being tested against are fixed in
 |---|---|
 | 2026-09-02 | Initial testing report created as a living document. |
 | 2026-09-07 | Updated test count after the current backend and frontend suites passed: 183 backend and 53 frontend tests. |
+| 2026-09-08 | Reran both suites at c065aef; added Week 3 specification traceability and explicit environment, CI-probe, architecture-review, and UAT limitations. Corrected unsupported live-market ordering claim. |

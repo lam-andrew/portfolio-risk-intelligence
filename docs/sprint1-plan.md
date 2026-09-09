@@ -14,9 +14,11 @@ checklist for the Sprint 1 weekly reports. It does not rewrite the Week 2 submis
 or change the historical dates of work completed before the academic sprint.
 
 The six stories below are the authoritative Sprint 1 scope. The GitHub Project board
-currently places all six in its **Done** column. For course reporting, Done means the
-implementation is present; the evidence checklist below records the remaining proof
-needed for acceptance, testing, and sprint closeout.
+already places all six in its **Done** column (inspected September 8). No board items
+were moved during this reconciliation. This is an observed status, not a substitute
+for acceptance: the checklist below is a completion standard, not a claim all tasks
+have passed. The [Sprint 1 test specifications](sprint1-tests.md) record per-story
+implementation evidence, pending acceptance tasks, and 18 mapped test specifications.
 
 ## Reconciliation result
 
@@ -30,12 +32,13 @@ needed for acceptance, testing, and sprint closeout.
 
 ## Current evidence snapshot
 
-- Backend suite: **183 tests passed** on September 7, 2026.
-- Frontend suite: **53 tests passed** on September 7, 2026.
+- Backend suite: **183 tests passed** on September 8, 2026, at c065aef.
+- Frontend suite: **53 tests passed** on September 8, 2026, at c065aef.
 - Automated coverage includes the Sprint 1 functional paths and the AR-1/AR-2 checks
   documented in [the testing report](testing.md).
-- Manual UAT, the course traceability matrix with timestamps, and the burndown
-  evidence still need to be assembled for the weekly report.
+- Initial specifications, requirement mapping, and creation/review dates are maintained
+  in the test specifications. Six acceptance procedures remain pending:
+  TC-14-01, TC-15-03, TC-1-03, TC-3-03, TC-4-03, and TC-5-03.
 - The local verification used the repository's deterministic test setup; it is not a
   substitute for demonstrating the running application in the Week 5 closeout.
 
@@ -126,26 +129,39 @@ complete before the story is considered fully accepted for the sprint report.
 - [ ] The calculation uses the documented return and annualization methodology.
 - [ ] Insufficient-history behavior is tested and understandable to the user.
 - [ ] UAT verifies the metric is visible in the risk dashboard.
-- [ ] The methodology reference is linked from the relevant metric when the final
-      user-facing review is completed.
+- Metric-to-methodology navigation belongs to US-19; do not add it retroactively
+  to US-5 acceptance criteria. Methodology documentation remains relevant to testing.
 
-## Evidence still needed for the Week 3 report
+## Acceptance evidence inventory
 
-The implementation evidence is already in the repository, but the Week 3 report
-should assemble it into one coherent record:
+Maintain the following project evidence in living documentation. Professor-facing
+assignment reports are prepared separately outside the repository:
 
-- A screenshot or export of the Sprint 1 board.
+- A dated board observation (all six Sprint 1 stories Done, September 8).
 - The six-story backlog with points and dependency order.
 - The DoD checklist above, showing current task status.
 - A short explanation that implementation occurred before the academic Sprint 1
   window and is being reported as historical work.
 - A list of recent commits mapped to stories and spikes.
 - The repository and project-board links.
-- A burndown chart that starts from 20 Sprint 1 points and reflects the actual
-  completion history.
+- An issue-status burndown: original scope 20, but actual open-issue points are zero
+  at September 7-8 because all six closed before the sprint. No future actuals or
+  invented within-sprint velocity. Six acceptance procedures are tracked separately
+  as pending at the September 8 first task snapshot; final sign-off follows review.
 - Initial UAT specifications for every Sprint 1 story.
 - A backlog-grooming statement. Current result: no Sprint 1 scope change is needed;
-  the board now matches the Week 2 plan. Sprint 2 stories remain separate.
+  the board already matches the Week 2 plan. Sprint 2 stories remain separate.
+
+The test specifications record story-specific evidence status; manual UAT and
+the engine-extension acceptance exercise have not been executed. Andrew Lam owns
+those procedures and must record revision, timestamp, actual outcomes, sanitized
+evidence, and defects before final DoD sign-off. Unchecked criteria above are the
+standard to assess, not an assertion that existing implementation is absent.
+
+Grooming correction, September 8: Sprint 2's unchanged estimates sum to 21, not 18;
+the estimated Sprint 1-3 baseline is 62. README is corrected; the submitted Week 2
+report is preserved. Unestimated US-19 (issue #62, Sprint 2) and idea #49 are outside
+that total and Sprint 1. No architecture change was made; no new ADR is needed.
 
 ## Reporting boundary
 

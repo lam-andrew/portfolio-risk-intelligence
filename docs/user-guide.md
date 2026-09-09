@@ -43,7 +43,20 @@ A note on brokerage exports: some brokerages export *transactions* rather than *
 Orbit needs positions, meaning what you currently hold. If your export lists individual buys
 and sells, enter your positions manually instead.
 
-### 3. Read your risk
+### 3. Keep your holdings current
+
+Open **Holdings** to view and manage existing positions. Use a row's edit control,
+enter a positive share quantity, and save; cancel leaves the previous value unchanged.
+Fractional shares are supported. A rejected update shows an error and keeps the row.
+
+Use the delete control only for a position you intend to remove. Confirm the deletion
+to proceed, or cancel to keep the holding. After a successful change, the application
+refreshes portfolio data and analysis. Deleting a holding removes it from subsequent
+analysis, not merely from the displayed table. Recorded end-to-end acceptance of this
+workflow is tracked in [Sprint 1 specification TC-3-03](sprint1-tests.md); this guide describes intended use,
+not a completed UAT result.
+
+### 4. Read your risk
 
 Once you have holdings, Orbit fetches historical prices and computes:
 
@@ -88,3 +101,4 @@ As the remaining features ship, this guide will gain:
 | Date | Change |
 |---|---|
 | 2026-09-02 | Initial user guide created as a living document. |
+| 2026-09-08 | Documented edit/save/cancel and confirmed deletion for US-3; distinguished usage instructions from pending UAT evidence. |
