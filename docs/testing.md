@@ -45,9 +45,9 @@ The local backend used Python 3.13, SQLite test databases, and FakeProvider; CI 
 the Python 3.12 container image. A Starlette/httpx TestClient deprecation warning was
 emitted locally. No coverage percentage or manual UAT result was measured in this run.
 
-[Week 3 report](week3-report.md), Sections 7-12, provides 18 initial specifications,
+[Sprint 1 test specifications](sprint1-tests.md) provide 18 initial specifications,
 requirement/acceptance mappings, exact automation references, and pending acceptance
-procedures for all six Sprint 1 stories. Report IDs were created September 8; the
+procedures for all six Sprint 1 stories. Specification IDs were created September 8; the
 automated tests themselves are existing tests, not newly written for the report.
 
 | Requirement | Covered by |

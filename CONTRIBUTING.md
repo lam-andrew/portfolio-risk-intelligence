@@ -138,6 +138,15 @@ workflow is a manual-only placeholder until then.
   go to the backlog, not the current sprint (see
   [ADR 0005](docs/adr/0005-scope-tiers.md)).
 
+## Academic report delivery
+
+- Prepare professor-facing weekly assessment reports as editable **DOCX** files.
+  Andrew edits them and converts them to PDF for Canvas submission himself.
+- Keep those reports, report-only drafts, and export tooling outside the repository
+  (for example, the corresponding week under the local SWENG 894 course folder).
+- Only relevant living project documentation belongs in the codebase. Do not commit
+  assignment reports or generate a deliverable PDF unless Andrew explicitly asks.
+
 ## Data & secrets hygiene
 
 - **Never commit secrets.** All credentials/config come from environment variables via `.env`

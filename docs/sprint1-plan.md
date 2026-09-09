@@ -17,7 +17,7 @@ The six stories below are the authoritative Sprint 1 scope. The GitHub Project b
 already places all six in its **Done** column (inspected September 8). No board items
 were moved during this reconciliation. This is an observed status, not a substitute
 for acceptance: the checklist below is a completion standard, not a claim all tasks
-have passed. The [Week 3 report](week3-report.md), Sections 7-12, records per-story
+have passed. The [Sprint 1 test specifications](sprint1-tests.md) record per-story
 implementation evidence, pending acceptance tasks, and 18 mapped test specifications.
 
 ## Reconciliation result
@@ -36,8 +36,8 @@ implementation evidence, pending acceptance tasks, and 18 mapped test specificat
 - Frontend suite: **53 tests passed** on September 8, 2026, at c065aef.
 - Automated coverage includes the Sprint 1 functional paths and the AR-1/AR-2 checks
   documented in [the testing report](testing.md).
-- Initial specifications, requirement mapping, creation/review dates, and issue-status
-  burndown are assembled in the Week 3 report. Six acceptance procedures remain pending:
+- Initial specifications, requirement mapping, and creation/review dates are maintained
+  in the test specifications. Six acceptance procedures remain pending:
   TC-14-01, TC-15-03, TC-1-03, TC-3-03, TC-4-03, and TC-5-03.
 - The local verification used the repository's deterministic test setup; it is not a
   substitute for demonstrating the running application in the Week 5 closeout.
@@ -132,12 +132,12 @@ complete before the story is considered fully accepted for the sprint report.
 - Metric-to-methodology navigation belongs to US-19; do not add it retroactively
   to US-5 acceptance criteria. Methodology documentation remains relevant to testing.
 
-## Week 3 evidence inventory
+## Acceptance evidence inventory
 
-The implementation evidence is already in the repository, but the Week 3 report
-should assemble it into one coherent record:
+Maintain the following project evidence in living documentation. Professor-facing
+assignment reports are prepared separately outside the repository:
 
-- A dated board observation (recorded September 8 in the Week 3 report).
+- A dated board observation (all six Sprint 1 stories Done, September 8).
 - The six-story backlog with points and dependency order.
 - The DoD checklist above, showing current task status.
 - A short explanation that implementation occurred before the academic Sprint 1
@@ -152,7 +152,7 @@ should assemble it into one coherent record:
 - A backlog-grooming statement. Current result: no Sprint 1 scope change is needed;
   the board already matches the Week 2 plan. Sprint 2 stories remain separate.
 
-The report supplies these items and story-specific evidence status; manual UAT and
+The test specifications record story-specific evidence status; manual UAT and
 the engine-extension acceptance exercise have not been executed. Andrew Lam owns
 those procedures and must record revision, timestamp, actual outcomes, sanitized
 evidence, and defects before final DoD sign-off. Unchecked criteria above are the

@@ -196,8 +196,8 @@ Saved design reference: [Orbi mascot prototype and integration handoff](docs/des
 Current academic sprint evidence: [Sprint 1 backlog and Definition of Done](docs/sprint1-plan.md)
 (working artifact for Weeks 3-5; it does not replace the submitted Week 2 report).
 
-[Week 3 progress report and initial test specifications](docs/week3-report.md)
-records the September 8 evidence snapshot. The Sprint 2 subtotal was corrected from
+[Sprint 1 acceptance test specifications](docs/sprint1-tests.md) record the
+September 8 evidence snapshot. The Sprint 2 subtotal was corrected from
 18 to 21 on September 8 (arithmetic only; no story estimates or assignments changed).
 The estimated Sprint 1-3 baseline totals 62 points, excluding unestimated additions.
 

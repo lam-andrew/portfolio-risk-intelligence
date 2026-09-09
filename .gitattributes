@@ -1,2 +1,0 @@
-# PDF exports are binary artifacts; review their Markdown sources and rendered pages.
-*.pdf binary

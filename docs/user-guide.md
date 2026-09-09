@@ -53,7 +53,7 @@ Use the delete control only for a position you intend to remove. Confirm the del
 to proceed, or cancel to keep the holding. After a successful change, the application
 refreshes portfolio data and analysis. Deleting a holding removes it from subsequent
 analysis, not merely from the displayed table. Recorded end-to-end acceptance of this
-workflow is tracked in Week 3 specification TC-3-03; this guide describes intended use,
+workflow is tracked in [Sprint 1 specification TC-3-03](sprint1-tests.md); this guide describes intended use,
 not a completed UAT result.
 
 ### 4. Read your risk
