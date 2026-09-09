@@ -102,8 +102,8 @@ Rationale and the decision to adopt these gates are in
 
 ## 4. Verifying the risk mathematics
 
-The risk engine is the graded algorithmic component, so its correctness is established three
-independent ways rather than by unit tests alone:
+The risk engine is the graded algorithmic component. Verification combines the following
+approaches; planned acceptance evidence is distinguished from executed automated tests:
 
 1. **Mathematical properties.** A series correlated with itself is exactly 1.0; a correlation
    matrix is symmetric with a unit diagonal; portfolio volatility computed from the covariance

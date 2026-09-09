@@ -1,7 +1,9 @@
 # Orbit | Week 3 Progress Report I
 
 **Andrew Lam | Group 5**  
+
 **SWENG 894 Capstone Experience | Penn State World Campus**  
+
 **Instructor: Dr. Raghu Sangwan**
 
 Sprint 1: Weeks 3-5, September 7-27, 2026. Reporting period: September 7-8, 2026. Evidence cutoff: September 8, 2026, Pacific time. Assignment due: September 13, 2026, at 11:59 p.m., as displayed in Canvas.
@@ -127,7 +129,7 @@ The [repository](https://github.com/lam-andrew/portfolio-risk-intelligence) and 
 
 - September 7: [92a3d84](https://github.com/lam-andrew/portfolio-risk-intelligence/commit/92a3d84) assembled the Sprint 1 backlog/DoD working document; [811222a](https://github.com/lam-andrew/portfolio-risk-intelligence/commit/811222a) refreshed the testing record. This report refines their evidence wording and removes unsupported completion implications.
 - September 8: [PR #80](https://github.com/lam-andrew/portfolio-risk-intelligence/pull/80), merged as [c065aef](https://github.com/lam-andrew/portfolio-risk-intelligence/commit/c065aef), added root AGENTS.md instructions. Its diff was reviewed and all reported CI, integration, and security checks passed before GitHub merge.
-- September 8: existing regression suites were rerun; this report specifies 18 initial tests and the common/story-specific DoD. No new application functionality or automated test code was added for this assessment.
+- September 8: existing regression suites were rerun; [6e643ff](https://github.com/lam-andrew/portfolio-risk-intelligence/commit/6e643ff) assembles this report's 18 initial test specifications and DoD in [PR #81](https://github.com/lam-andrew/portfolio-risk-intelligence/pull/81). The user guide is also refined for holding management. No new application functionality or automated test code was added for this assessment.
 
 **Process exception and correction.** The September 7 documentation changes reached main without the required PR workflow. That is recorded as a process deviation, not retroactively described as reviewed. PR #80 makes the workflow explicit for agents; this assessment's source is maintained on a separate documentation branch for PR review.
 
@@ -323,7 +325,7 @@ AC3.1: Editing an existing holding's quantity saves the change and reflects it i
 
 - Provide view, inline edit/save/cancel, and delete-confirmation interaction: present in holding components; interaction tests pass.
 - Persist changes through PATCH/DELETE and validate quantities/missing identifiers: implemented and covered by passing API tests.
-- Document the interaction in the living user guide; retain implementation/test links: existing documentation and links available.
+- Document the interaction in the living user guide; retain implementation/test links: management instructions are refined in this Week 3 documentation change, with links below.
 - Demonstrate changed quantities affect analysis inputs and deleted holdings disappear from fresh analysis: pending TC-3-03. Existing API CRUD tests inspect the holdings list, not the full subsequent risk response. Do not overstate their coverage.
 
 ### TC-3-01 | Save an edited quantity
@@ -344,7 +346,7 @@ Setup: AAPL quantity 10 and MSFT quantity 4 in test fixtures. Action: DELETE the
 
 Setup: disposable account with AAPL 10 and MSFT 4, cached prices for a fixed lookback. Actions: record baseline holdings and analysis; change AAPL to 12.5 and reload; reanalyze; request deletion of MSFT and cancel; confirm it remains; delete again and confirm; reload and reanalyze. Expected: the saved quantity and position value reflect 12.5 at the same price; analysis uses the updated portfolio inputs (not necessarily a visibly different rounded volatility); cancel preserves MSFT, while confirmation removes it from both holdings and the new risk response. Retain sanitized responses and UI evidence.
 
-**Traceability:** implementation/API and interaction tests 09cc471 (PR #53); API paths updated 24d39ef (PR #79). [User guide](https://github.com/lam-andrew/portfolio-risk-intelligence/blob/c065aef/docs/user-guide.md). Report IDs created/reviewed September 8.
+**Traceability:** implementation/API and interaction tests 09cc471 (PR #53); API paths updated 24d39ef (PR #79). [User guide update in PR #81](https://github.com/lam-andrew/portfolio-risk-intelligence/pull/81). Report IDs created/reviewed September 8.
 
 <!-- pagebreak -->
 
