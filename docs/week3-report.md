@@ -1,8 +1,8 @@
 # Orbit | Week 3 Progress Report I
 
-**Andrew Lam | Group 5**  
+**Andrew Lam | Group 5**
 
-**SWENG 894 Capstone Experience | Penn State World Campus**  
+**SWENG 894 Capstone Experience | Penn State World Campus**
 
 **Instructor: Dr. Raghu Sangwan**
 
@@ -200,7 +200,7 @@ Execute the six pending procedures and address any demonstrated acceptance gap; 
 
 ## 7. US-14 | Containerized deployment
 
-**AR-1 | Must | 5 points | Owner: Andrew Lam**  
+**AR-1 | Must | 5 points | Owner: Andrew Lam**
 [Authoritative issue #14](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/14)
 
 ### Acceptance criteria
@@ -238,7 +238,7 @@ Setup: TestClient, stub database connectivity as unavailable. Action: GET /api/h
 
 ## 8. US-15 | Decoupled analysis API
 
-**AR-2 | Must | 3 points | Owner: Andrew Lam**  
+**AR-2 | Must | 3 points | Owner: Andrew Lam**
 [Authoritative issue #15](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/15)
 
 ### Acceptance criteria
@@ -276,7 +276,7 @@ Setup: disposable branch/worktree with baseline tests passing. Actions: add a tr
 
 ## 9. US-1 | Add a holding manually
 
-**FR-1 | Must | 2 points | Owner: Andrew Lam**  
+**FR-1 | Must | 2 points | Owner: Andrew Lam**
 [Authoritative issue #1](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/1)
 
 ### Acceptance criteria
@@ -314,7 +314,7 @@ Setup: isolated running stack, disposable signed-in user, provider configured an
 
 ## 10. US-3 | Manage holdings
 
-**FR-4 | Must | 2 points | Owner: Andrew Lam**  
+**FR-4 | Must | 2 points | Owner: Andrew Lam**
 [Authoritative issue #3](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/3)
 
 ### Acceptance criteria
@@ -352,7 +352,7 @@ Setup: disposable account with AAPL 10 and MSFT 4, cached prices for a fixed loo
 
 ## 11. US-4 | Retrieve and cache market data
 
-**FR-5, FR-6 | Must | 5 points | Owner: Andrew Lam**  
+**FR-5, FR-6 | Must | 5 points | Owner: Andrew Lam**
 [Authoritative issue #4](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/4)
 
 ### Acceptance criteria
@@ -390,7 +390,7 @@ Setup: disposable stack/test database with no cached AAPL prices, valid server-s
 
 ## 12. US-5 | Holding and portfolio volatility
 
-**FR-7 | Must | 3 points | Owner: Andrew Lam**  
+**FR-7 | Must | 3 points | Owner: Andrew Lam**
 [Authoritative issue #5](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/5)
 
 ### Acceptance criteria
