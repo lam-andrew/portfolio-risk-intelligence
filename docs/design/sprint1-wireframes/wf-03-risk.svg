@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="720pt" height="504pt" viewBox="0 0 720 504" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-15T20:58:10.745617</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 504
+L 720 504
+L 720 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 10.8 10.8
+L 709.2 10.8
+L 709.2 320.4
+L 10.8 320.4
+z
+" clip-path="url(#p15d2a7416a)" style="fill: #ffffff; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 10.8 10.8
+L 709.2 10.8
+L 709.2 41.76
+L 10.8 41.76
+z
+" clip-path="url(#p15d2a7416a)" style="fill: #eeeeee; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 10.8 41.76
+L 122.4 41.76
+L 122.4 320.4
+L 10.8 320.4
+z
+" clip-path="url(#p15d2a7416a)" style="fill: #f5f5f5; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 140.4 90.72
+L 691.2 90.72
+L 691.2 223.2
+L 140.4 223.2
+z
+" clip-path="url(#p15d2a7416a)" style="fill: #ffffff; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 295.2 165.6
+L 406.8 165.6
+L 406.8 192.96
+L 295.2 192.96
+z
+" clip-path="url(#p15d2a7416a)" style="fill: #eeeeee; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 14.4 363.6
+L 340.56 363.6
+L 340.56 446.4
+L 14.4 446.4
+z
+" clip-path="url(#p15d2a7416a)" style="fill: #ffffff; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 374.4 363.6
+L 705.6 363.6
+L 705.6 446.4
+L 374.4 446.4
+z
+" clip-path="url(#p15d2a7416a)" style="fill: #ffffff; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="21.6" y="37.89625" transform="rotate(-0 21.6 37.89625)">Orbit   /   Risk overview</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="21.6" y="73.427813" transform="rotate(-0 21.6 73.427813)">PORTFOLIO</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; fill: #222222" transform="translate(21.6 103.909375)">Overview</text>
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; fill: #222222" transform="translate(21.6 120.39)"/>
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; fill: #222222" transform="translate(21.6 145.953125)">Holdings</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="140.4" y="82.71625" transform="rotate(-0 140.4 82.71625)">Risk overview</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="154.08" y="120.039531" transform="rotate(-0 154.08 120.039531)">Portfolio volatility</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="529.2" y="118.782188" transform="rotate(-0 529.2 118.782188)">252 trading days</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="154.08" y="141.822187" transform="rotate(-0 154.08 141.822187)">Annualized standard deviation of daily returns</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 32px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="154.8" y="196.2875" transform="rotate(-0 154.8 196.2875)">17.5%</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="302.4" y="187.721562" transform="rotate(-0 302.4 187.721562)">Moderate</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="140.4" y="253.371406" transform="rotate(-0 140.4 253.371406)">Holding                     Volatility                     Risk band</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="140.4" y="278.869375" transform="rotate(-0 140.4 278.869375)">AAPL                           20.0%                          Moderate</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="140.4" y="307.669375" transform="rotate(-0 140.4 307.669375)">MSFT                           18.0%                          Moderate</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="14.4" y="355.8725" transform="rotate(-0 14.4 355.8725)">Loading</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="25.92" y="399.135" transform="rotate(-0 25.92 399.135)">Loading portfolio...</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="374.4" y="355.8725" transform="rotate(-0 374.4 355.8725)">Insufficient history</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; fill: #222222" transform="translate(387.36 394.484062)">Not enough price history</text>
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; fill: #222222" transform="translate(387.36 417.734062)">yet to measure volatility.</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="14.4" y="481.190625" transform="rotate(-0 14.4 481.190625)">WF-03  |  FR-5, FR-6, FR-7  |  Example risk figures only</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p15d2a7416a">
+   <rect x="0" y="0" width="720" height="504"/>
+  </clipPath>
+ </defs>
+</svg>

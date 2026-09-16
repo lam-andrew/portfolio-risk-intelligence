@@ -174,3 +174,17 @@ The following work is not Sprint 1 scope and should remain separate in reporting
 
 Those items may be mentioned as early implementation or future backlog context, but
 they should not inflate the Sprint 1 velocity or burndown.
+
+## September 15 checkpoint
+
+Live GitHub issue records still show all six original Sprint 1 stories closed,
+with zero open issue points against the unchanged 20-point scope. The six
+acceptance procedures recorded September 8 remain pending; no new execution
+evidence closes them. Current Project board state was not refreshed because the
+CLI token lacks `read:project`; the last documented board observation is September 8.
+
+Week 4 adds [wireframes](design/sprint1-wireframes.md) and
+[unit/system specifications](sprint1-unit-system-tests.md), plus a fresh passing
+236-test regression. This is design and verification evidence for existing scope,
+not new functional story throughput. The product backlog and sprint assignments
+were not changed. The estimated baseline remains 62 points across Sprints 1–3.

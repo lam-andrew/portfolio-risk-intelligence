@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="720pt" height="504pt" viewBox="0 0 720 504" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-15T20:58:10.645740</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 504
+L 720 504
+L 720 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 10.8 10.8
+L 709.2 10.8
+L 709.2 320.4
+L 10.8 320.4
+z
+" clip-path="url(#p1b4f720a65)" style="fill: #ffffff; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 10.8 10.8
+L 709.2 10.8
+L 709.2 41.76
+L 10.8 41.76
+z
+" clip-path="url(#p1b4f720a65)" style="fill: #eeeeee; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 10.8 41.76
+L 122.4 41.76
+L 122.4 320.4
+L 10.8 320.4
+z
+" clip-path="url(#p1b4f720a65)" style="fill: #f5f5f5; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 140.4 95.04
+L 691.2 95.04
+L 691.2 131.04
+L 140.4 131.04
+z
+" clip-path="url(#p1b4f720a65)" style="fill: #eeeeee; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 140.4 213.84
+L 691.2 213.84
+L 691.2 214.56
+L 140.4 214.56
+z
+" clip-path="url(#p1b4f720a65)" style="fill: #ffffff; stroke: #cccccc; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 14.4 360
+L 705.6 360
+L 705.6 398.16
+L 14.4 398.16
+z
+" clip-path="url(#p1b4f720a65)" style="fill: #ffffff; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 14.4 439.2
+L 705.6 439.2
+L 705.6 477.36
+L 14.4 477.36
+z
+" clip-path="url(#p1b4f720a65)" style="fill: #ffffff; stroke: #5a5a5a; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="21.6" y="36.9125" transform="rotate(-0 21.6 36.9125)">Orbit   /   Holdings</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="21.6" y="73.427813" transform="rotate(-0 21.6 73.427813)">PORTFOLIO</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; fill: #222222" transform="translate(21.6 103.909375)">Overview</text>
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; fill: #222222" transform="translate(21.6 120.39)"/>
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; fill: #222222" transform="translate(21.6 145.953125)">Holdings</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="140.4" y="80.700625" transform="rotate(-0 140.4 80.700625)">Holdings</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="149.04" y="118.89375" transform="rotate(-0 149.04 118.89375)">Ticker</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="226.8" y="118.89375" transform="rotate(-0 226.8 118.89375)">Shares</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="291.6" y="118.89375" transform="rotate(-0 291.6 118.89375)">Price</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="379.44" y="118.89375" transform="rotate(-0 379.44 118.89375)">Value</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="475.2" y="117.684375" transform="rotate(-0 475.2 117.684375)">Volatility</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="586.8" y="118.89375" transform="rotate(-0 586.8 118.89375)">Actions</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="149.04" y="161.274375" transform="rotate(-0 149.04 161.274375)">AAPL</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="226.8" y="161.267813" transform="rotate(-0 226.8 161.267813)">10</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="291.6" y="160.576875" transform="rotate(-0 291.6 160.576875)">$150.00</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="379.44" y="160.576875" transform="rotate(-0 379.44 160.576875)">$1,500.00</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="475.2" y="161.267813" transform="rotate(-0 475.2 161.267813)">20.0%</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="586.8" y="161.37375" transform="rotate(-0 586.8 161.37375)">Edit  Delete</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="149.04" y="197.987813" transform="rotate(-0 149.04 197.987813)">MSFT</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="226.8" y="197.994375" transform="rotate(-0 226.8 197.994375)">4</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="291.6" y="197.296875" transform="rotate(-0 291.6 197.296875)">$375.00</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="379.44" y="197.296875" transform="rotate(-0 379.44 197.296875)">$1,500.00</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="475.2" y="197.987813" transform="rotate(-0 475.2 197.987813)">18.0%</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="586.8" y="198.09375" transform="rotate(-0 586.8 198.09375)">Edit  Delete</text>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="149.04" y="245.113125" transform="rotate(-0 149.04 245.113125)">Total portfolio value                          $3,000.00</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="140.4" y="291.582188" transform="rotate(-0 140.4 291.582188)">Select Edit or Delete on the position you want to change.</text>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="14.4" y="353.885" transform="rotate(-0 14.4 353.885)">Edit state</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="26.64" y="387.854766" transform="rotate(-0 26.64 387.854766)">AAPL     Shares  [ 12.5 ]       [ Save ]       [ Cancel ]</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="14.4" y="433.085" transform="rotate(-0 14.4 433.085)">Delete confirmation state</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="26.64" y="467.054766" transform="rotate(-0 26.64 467.054766)">AAPL     Remove AAPL?          [ Confirm ]       [ Cancel ]</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222222" x="14.4" y="500.311406" transform="rotate(-0 14.4 500.311406)">WF-02  |  FR-4  |  Illustrative positions and prices</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p1b4f720a65">
+   <rect x="0" y="0" width="720" height="504"/>
+  </clipPath>
+ </defs>
+</svg>
