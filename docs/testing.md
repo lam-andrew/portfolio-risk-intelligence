@@ -164,3 +164,13 @@ checks the configured Python 3.12 and Node 20 containers. Traceability, expected
 controlled browser evidence and remaining acceptance procedures are in
 [US-9 test specifications](us9-stress-tests.md). No live-provider or instructor acceptance,
 production deployment, coverage percentage or Sprint 1 throughput is claimed.
+
+
+### Stress-test visualization follow-up
+
+Initial user feedback added a waterfall value comparison and up to five ranked loss bars.
+Five new chart tests bring the frontend suite to **67 passing** (277 combined with the
+unchanged 210 backend cases). Lint, formatting, type check and build passed. Controlled
+browser checks were repeated, including desktop dark and mobile light visual inspection.
+See ST-10 in [the stress specifications](us9-stress-tests.md). No new financial calculation
+or dependency was introduced; the existing SVG-chart decision (ADR 0013) applies.

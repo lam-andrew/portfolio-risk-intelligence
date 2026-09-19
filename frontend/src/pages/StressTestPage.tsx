@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatTile } from "@/components/ui/stat-tile";
 import { formatCurrency } from "@/features/holdings/format";
+import { StressImpactChart } from "@/features/risk/StressImpactChart";
 import { ExplainLink } from "@/features/methodology/ExplainLink";
 
 type Result =
@@ -176,6 +177,7 @@ function StressResults({ data }: { data: PortfolioStress }) {
         />
         <StatTile label="Value after scenario" value={formatCurrency(data.stressed_value)} />
       </div>
+      <StressImpactChart data={data} />
       <Card>
         <CardHeader>
           <CardTitle>Loss by holding</CardTitle>

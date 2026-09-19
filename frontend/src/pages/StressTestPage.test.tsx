@@ -53,6 +53,9 @@ describe("Stress tests (US-9)", () => {
     await run();
     const results = await screen.findByRole("region", { name: "Stress test results" });
     expect(client.getPortfolioStress).toHaveBeenCalledWith("decline-20");
+    expect(
+      within(results).getByRole("img", { name: /Starting value.*estimated loss.*remaining value/ }),
+    ).toBeInTheDocument();
     expect(within(results).getByText("$300.00")).toBeInTheDocument();
     expect(within(results).getByText("20.00% of baseline value")).toBeInTheDocument();
     expect(within(results).getByText(/2026-09-18/)).toBeInTheDocument();

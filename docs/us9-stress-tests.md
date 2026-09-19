@@ -116,3 +116,26 @@ sanitized evidence and any defect. Do not mark the story Done solely on automate
 Status: pending user acceptance and normal-stack/live-provider confirmation. No issue closure
 or board movement is implied. The CLI token lacks `read:project`; issue scope is verified,
 but current Project board status was not refreshed or changed.
+
+
+## Visual feedback iteration — ST-10
+
+September 18: added a waterfall comparison and ranked holding-loss bars after initial user
+feedback. These are presentation-only views of API results, covered by ADR 0013; no scenario
+math, API, dependencies or sprint assignment changed.
+
+Preconditions: the ST-01 $1,500 baseline / $300 loss / $1,200 remainder response. Render the
+charts and inspect heights, labels and ranking. Expected: zero-based baseline, a 20% loss
+step and 80% remaining bar; AAPL's $200 contribution is twice MSFT's $100. Ranking must not
+mutate input order. With more than five holdings, show the largest five with an explicit
+limit label. Zero-cent losses produce zero-width/height marks without NaN; unavailable data
+produces no plot. Every plotted dollar value remains available as text, and the chart states
+that it is not a time series.
+
+Automation: `frontend/src/features/risk/StressImpactChart.test.tsx` (5 cases), plus the
+existing screen test now asserts graph presence. **67 frontend tests passed**, along with
+lint, formatting, type checks and production build. Backend code is unchanged (210 tests
+in the preceding run). The isolated browser flow was repeated with the charts: all three
+scenarios, empty state, quantity edit, keyboard Run and methodology link passed. Desktop dark
+and 390px mobile light screenshots were inspected; no page errors or page-wide overflow.
+ST-09 live-provider/user acceptance remains pending.

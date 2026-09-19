@@ -95,6 +95,11 @@ select **Run stress test**. Read the baseline value, estimated dollar and percen
 value after the scenario, and the loss contributed by each holding. The same decline applies
 to every holding, so larger positions contribute more dollars of loss.
 
+The **From baseline to stressed value** chart shows the starting amount, a hatched loss
+step, and the remaining amount on a shared zero-based scale. It compares values rather than
+showing a path over time. **What contributes most to the loss?** ranks up to five holdings
+by dollar loss; the complete holdings table remains below the charts.
+
 Check the **pricing date** above the results: all holdings use the latest shared date in
 the last 30 days, at current share quantities. Prices are adjusted closing prices from the
 market-data cache, not live quotes, and may be stale. The baseline can differ from Overview,
