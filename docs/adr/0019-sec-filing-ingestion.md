@@ -2,6 +2,8 @@
 
 - **Status:** Accepted
 - **Date:** 2026-09-19
+- **Extension:** [ADR 0021](0021-automatic-filing-following.md) adds automatic scheduling and
+  watchlist-based authorization. The original decision below records the initial slice.
 
 ## Context
 

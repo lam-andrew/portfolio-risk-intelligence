@@ -164,7 +164,9 @@ One worker per database obtains an advisory lock; don't launch separate uncoordi
 SEC clients against a shared outbound IP. Cached corpus data stays in the database.
 
 The backend starts with Alembic migrations; the worker waits for backend health. Migration
-0005 adds three filing tables and a native full-text index without changing existing data.
+0005 adds three filing tables and a native full-text index; 0006 adds private watchlists.
+The worker discovers committed holdings/watchlist entries at startup and on subsequent
+scans. No manual backfill script or portfolio-write hook is required.
 Regular pytest is network-free. The integration workflow also runs
 `APP_TEST_POSTGRES=1 pytest tests/test_filings_postgres.py` against its disposable migrated
 PostgreSQL database. Do not point this opt-in test at production. Live SEC UAT is separate

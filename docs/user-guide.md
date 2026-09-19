@@ -119,7 +119,20 @@ execution. Use **How this is calculated** for the formula and limitations.
 
 ## Retrieve and search SEC filings
 
-Open **SEC filings** under Insights, choose a holding, and select **Retrieve filings**.
+Open **SEC filings** under Insights. Orbit automatically retrieves filings for all your
+holdings, including ones saved before this feature and positions added by CSV import.
+You do not need to open this screen or select each company to start retrieval. The worker
+looks for new companies on startup and every 30 seconds between jobs; a busy queue can
+delay retrieval. Choose a company to inspect its sources.
+
+The **Watchlist** lets you follow up to 100 companies without owning them. Enter a ticker
+and select **Add to watchlist**; its filings join the same automatic process. A watchlist
+works even with an empty portfolio and never changes quantities or risk calculations.
+**Remove** stops your watch. If you also hold the company, it remains followed through
+your holdings. Removing it from both lists revokes your access; cached public documents
+remain shared, and an already running download may finish. A company still followed by
+another account continues receiving refreshes without exposing either account's list.
+
 The status reports finding the company, finding filings, downloading and indexing. Once
 the catalogue is known, the progress bar counts indexed documents. Work continues if you
 leave the page; returning reads the stored status. A job can remain queued while the worker
@@ -138,8 +151,12 @@ No match means this search found no indexed passage, not that the company has no
 These are original excerpts, not generated answers. Financial tables may lose layout during
 text extraction; consult the source before interpreting their numbers.
 
-Refresh checks for new filings and reuses indexed documents. Completed refreshes are
-limited to once every 15 minutes; partial/failed attempts can retry after one minute.
+Orbit checks successfully indexed companies for new filings daily, retries failed/partial
+downloads hourly and rechecks unsupported tickers weekly. These checks run while the
+worker is running, including when you are offline. They are not real-time filing alerts.
+**Retrieve filings** / **Refresh filings** also lets you request an earlier check. Manual
+completed refreshes are limited to once every 15 minutes; partial/failed attempts can retry
+after one minute. Indexed documents are reused rather than downloaded again.
 Previously indexed filings remain available after failures and accumulate over time. The
 source list shows up to 50 newest filings; search includes all retained filings. Cached
 accessions are not periodically re-downloaded to detect later SEC corrections.

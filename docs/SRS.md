@@ -141,6 +141,7 @@ release. *Could* = stretch tier. *Won't (this release)* = deliberately excluded.
 | FR-13 | The system shall ingest SEC filings (10-K, 10-Q, 8-K) for a user's holdings and index them for retrieval. | US-11 | 5 | Should |
 | FR-14 | The system shall answer a user's natural-language question about a holding with an explanation grounded in and citing the retrieved filing text. | US-12 | 8 | Should |
 | FR-15 | The system shall allow a user to authenticate before accessing their portfolio. | US-13 | 3 | Must |
+| FR-16 | The system shall automatically retrieve and refresh supported filings for existing/new holdings and a private ticker watchlist; removing a watch shall not change portfolio positions or risk calculations. | US-21 ([#90](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/90)) | Unestimated | Should |
 
 FR-3 and FR-6 are delivered by the same story as FR-2 and FR-5 respectively, so their
 points are counted once, against the parent story.
@@ -279,3 +280,18 @@ Every requirement traces to a story, a sprint, and the tests that verify it.
 | Date | Change |
 |---|---|
 | 2026-09-02 | Initial SRS created as a living document (Week 2 deliverable guidance). |
+
+## User-requested filing-following extension — September 19, 2026
+
+US-21 / FR-16 is a secondary extension requested during US-11 testing. It is implemented
+early without a sprint assignment or estimate; existing Sprint 3 history and US-11's five
+points remain unchanged. Customer value is removing a per-company download step before
+exploring evidence. Dependencies are US-11's durable queue, cache and ownership checks;
+key risks are duplicate requests, account isolation and coupling research interests to
+portfolio risk. ADR 0021 and tests address those risks. No pre-trade recommendations,
+notifications or real-time filing alerts are included.
+
+Traceability: **FR-16 → US-21 / issue #90 → AF-01–AF-06** in
+[automatic-following test specifications](us21-following-tests.md), including results and
+remaining user acceptance. FR-13 / US-11 continues to cover bounded filing extraction and
+retrieval. FR-14 / US-12 grounded Q&A remains separate and unimplemented.

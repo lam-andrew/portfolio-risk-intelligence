@@ -83,7 +83,7 @@ C4Container
         Container(web, "Frontend", "React / TypeScript", "Risk screens, filing progress and source search")
         Container(api, "Backend", "FastAPI", "Auth, ownership, risk orchestration, filing queue and retrieval API")
         Container(worker, "Filing worker", "Python / same backend image", "Serial durable ingestion, pure text extraction and indexing")
-        ContainerDb(db, "Database", "PostgreSQL 16 / pgvector", "Holdings, price cache, public filings, passages, queue; vectors planned")
+        ContainerDb(db, "Database", "PostgreSQL 16 / pgvector", "Holdings, private watchlists, price cache, public filings, passages, queue; vectors planned")
     }
     Rel(investor, web, "Uses", "HTTPS")
     Rel(web, api, "Requests / polls", "REST / JSON")
@@ -433,11 +433,16 @@ the consequences accepted. The full index is in [`adr/README.md`](adr/README.md)
 
 [ADR 0019](adr/0019-sec-filing-ingestion.md) records durable ingestion and bounded coverage;
 [ADR 0020](adr/0020-filing-retrieval-staging.md) stages keyword retrieval before embeddings.
+[ADR 0021](adr/0021-automatic-filing-following.md) extends scheduling and authorization to
+existing/new holdings and private ticker watchlists (US-21 / FR-16).
 
 ```mermaid
 flowchart LR
-    Screen[Authenticated Filings screen] --> API[Ownership-scoped API]
-    API --> Queue[(Ticker sync queue)]
+    Screen[Authenticated Filings screen] --> API[Held-or-watched authorization]
+    API --> Membership[(Holdings and private watchlists)]
+    Membership --> Scheduler[Worker: discover due tracked tickers]
+    Scheduler --> Queue[(Ticker sync queue)]
+    API -->|Manual refresh| Queue
     Queue --> Worker[Single worker / advisory lock]
     Worker --> SEC[SEC adapter: exact issuer and recent catalogue]
     SEC --> Parser[Pure HTML-to-text and passage extractor]
@@ -447,9 +452,11 @@ flowchart LR
     Search --> Screen
 ```
 
-API routes: GET `/api/filings/{ticker}`, POST `/api/filings/{ticker}/ingest`, GET
-`/api/filings/{ticker}/search?q=...`. Every route checks that the caller still owns a
-holding with that ticker. Public documents are shared by CIK/accession, while a job reveals
+API routes: GET `/api/filings` lists the caller's held/watched companies and statuses;
+GET/POST `/api/watchlist` and DELETE `/api/watchlist/{ticker}` manage private preferences.
+GET `/api/filings/{ticker}`, POST `/api/filings/{ticker}/ingest`, and GET
+`/api/filings/{ticker}/search?q=...` check that the caller still holds or watches the ticker.
+Public documents are shared by CIK/accession, while a job reveals
 no requesting user. No holdings, quantities or credentials are sent to SEC. The configured
 application operator contact is sent in the User-Agent; it is not returned by the API.
 
@@ -469,3 +476,12 @@ preserves offsets into normalized text, not DOM coordinates or original table la
 The RAG engine does not perform HTTP or SQL operations. Adapters and the worker own I/O;
 this clarifies the earlier planned-component shorthand in this document. Hosted model
 calls and embeddings remain unimplemented US-12 work. No risk-engine code changed.
+
+The advisory-lock owner scans committed holdings/watchlists at startup and every 30 seconds
+between jobs, in batches of at most 100 due tickers. Ready jobs become due after 24 hours,
+failed/partial after one hour, unsupported after seven days. Conditional PostgreSQL upserts
+preserve jobs queued concurrently by manual requests. Queue selection skips globally
+untracked tickers, retaining their cached public corpus. New watchlists use migration 0006,
+with a composite user/ticker key, account deletion cascade and a per-account 100-entry cap.
+Per-account row locks serialize additions. Portfolio-write routes and risk engines have no
+SEC dependency; the database-backed scan supplies reconciliation without an event broker.
