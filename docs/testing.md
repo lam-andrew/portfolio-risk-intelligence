@@ -129,3 +129,22 @@ Methodological conventions being tested against are fixed in
 | 2026-09-02 | Initial testing report created as a living document. |
 | 2026-09-07 | Updated test count after the current backend and frontend suites passed: 183 backend and 53 frontend tests. |
 | 2026-09-08 | Reran both suites at c065aef; added Week 3 specification traceability and explicit environment, CI-probe, architecture-review, and UAT limitations. Corrected unsupported live-market ordering claim. |
+
+## Week 4 regression evidence
+
+On September 15, 2026, at 20:49 PDT, the unchanged application revision `83716a2`
+passed 183 backend tests and 53 frontend tests (236 total; zero failures or skips).
+Backend: Python 3.13.7, SQLite, FakeProvider; frontend: Vitest 2.1.9 with mocked APIs.
+The backend emitted a Starlette/httpx TestClient deprecation warning. No coverage
+percentage, live-provider acceptance, or browser UAT was measured.
+
+Commands: `cd backend && .venv/bin/pytest -q --junitxml=<evidence-dir>/backend-results.xml`;
+from frontend, Node invoked `node_modules/vitest/vitest.mjs run --reporter=default
+--reporter=junit --outputFile=<evidence-dir>/frontend-results.xml`.
+
+[Thirty unit/system specifications](sprint1-unit-system-tests.md) and
+[four wireframe plates](design/sprint1-wireframes.md) now map the six Sprint 1
+stories and seven requirement IDs. Twenty-five specifications are supported by
+this local run; one uses prior passing CI evidence and four remain unexecuted.
+The original six Week 3 acceptance procedures remain pending. No story was
+reassigned or newly accepted by creating these documents.
