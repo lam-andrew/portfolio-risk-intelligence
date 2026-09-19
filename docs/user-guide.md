@@ -65,6 +65,7 @@ Once you have holdings, Orbit fetches historical prices and computes:
 | **Volatility** | How much does this swing, in a typical year? |
 | **Correlation** | Which of my holdings move together, and which are genuinely different? |
 | **Concentration** | How much of my money rides on my largest positions? |
+| **Stress test** | What would an assumed equal decline mean in dollars? |
 | **Drawdown** | How far has this portfolio fallen from a peak, and how long did recovery take? |
 
 ---
@@ -79,18 +80,42 @@ Two things worth knowing before you interpret anything:
 
 - **Volatility measures dispersion, not danger.** A high figure means a wide range of outcomes,
   up as well as down. It is not a prediction of loss.
-- **All of this is backward-looking.** Every metric describes how your holdings have behaved
-  historically. Correlations in particular tend to rise during market stress, which is exactly
+- **Historical metrics are backward-looking.** Volatility, correlation and drawdown describe
+  historical behavior. Stress tests instead apply explicit hypothetical assumptions.
+  Correlations in particular tend to rise during market stress, which is exactly
   when diversification is most needed. Past behavior constrains your expectations; it does not
   determine the future.
 
 ---
 
+## Run a stress test
+
+Open **Stress test** in Risk & Exposure, choose a broad decline of 10%, 20% or 35%, and
+select **Run stress test**. Read the baseline value, estimated dollar and percentage loss,
+value after the scenario, and the loss contributed by each holding. The same decline applies
+to every holding, so larger positions contribute more dollars of loss.
+
+Check the **pricing date** above the results: all holdings use the latest shared date in
+the last 30 days, at current share quantities. Prices are adjusted closing prices from the
+market-data cache, not live quotes, and may be stale. The baseline can differ from Overview,
+which uses each holding's individually latest price. Dollar amounts round per holding and
+the totals sum the displayed rows.
+
+Changing the scenario clears the old estimate; run again to calculate the new selection.
+After editing/importing/deleting holdings, return to Stress test and run again. Empty
+portfolios show an Add holdings prompt. If prices are missing or have no shared date, no
+partial total is shown. Resolve the pricing problem and retry. Request failures provide a
+retry path; a new calculation never silently retains an old result.
+
+These scenarios are **assumptions, not forecasts or historical crisis replays**. They have
+no probability or time horizon. Bonds and ETFs receive the same decline as stocks. There
+is no sector sensitivity, diversification effect, taxes, fees, currency modeling or trade
+execution. Use **How this is calculated** for the formula and limitations.
+
 ## Sections to be added
 
 As the remaining features ship, this guide will gain:
 
-- **Stress testing** — reading scenario results (US-9).
 - **Asking questions about your holdings** — the grounded, cited Q&A over SEC filings
   (US-11, US-12).
 
@@ -102,3 +127,4 @@ As the remaining features ship, this guide will gain:
 |---|---|
 | 2026-09-02 | Initial user guide created as a living document. |
 | 2026-09-08 | Documented edit/save/cancel and confirmed deletion for US-3; distinguished usage instructions from pending UAT evidence. |
+| 2026-09-18 | Added hypothetical stress-test workflow, pricing completeness rules and limitations for early US-9 implementation. |

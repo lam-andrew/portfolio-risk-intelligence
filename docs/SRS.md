@@ -263,7 +263,7 @@ Every requirement traces to a story, a sprint, and the tests that verify it.
 | FR-8 | US-6 | 2 | Engine unit tests cross-checked against NumPy |
 | FR-9 | US-7 | 2 | Engine unit tests against hand-computed HHI |
 | FR-10 | US-8 | 2 | Engine unit tests over synthetic peak/trough series |
-| FR-11 | US-9 | 3 | Engine unit tests over defined scenarios |
+| FR-11 | US-9 | 3 | [Stress specifications and results](us9-stress-tests.md): engine, authenticated API, UI and controlled browser checks |
 | FR-12 | US-10 | 2 | Frontend component + routing tests |
 | FR-13 | US-11 | 3 | Ingestion/indexing integration tests |
 | FR-14 | US-12 | 3 | Grounding tests: every claim traceable to retrieved text |
