@@ -265,7 +265,7 @@ Every requirement traces to a story, a sprint, and the tests that verify it.
 | FR-10 | US-8 | 2 | Engine unit tests over synthetic peak/trough series |
 | FR-11 | US-9 | 3 | [Stress specifications and results](us9-stress-tests.md): engine, authenticated API, UI and controlled browser checks |
 | FR-12 | US-10 | 2 | Frontend component + routing tests |
-| FR-13 | US-11 | 3 | Ingestion/indexing integration tests |
+| FR-13 | US-11 | 3 | [US-11 procedures](us11-filing-tests.md): bounded ingestion, source search, authorization, recovery and native PostgreSQL indexing; live acceptance pending |
 | FR-14 | US-12 | 3 | Grounding tests: every claim traceable to retrieved text |
 | FR-15 | US-13 | 2 | Auth tests: unauthenticated rejection, session lifecycle, ownership isolation |
 | AR-1 | US-14 | 1 | CI integration job: full stack boots and services communicate |

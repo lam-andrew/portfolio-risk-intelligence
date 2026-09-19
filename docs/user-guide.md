@@ -117,6 +117,37 @@ no probability or time horizon. Bonds and ETFs receive the same decline as stock
 is no sector sensitivity, diversification effect, taxes, fees, currency modeling or trade
 execution. Use **How this is calculated** for the formula and limitations.
 
+## Retrieve and search SEC filings
+
+Open **SEC filings** under Insights, choose a holding, and select **Retrieve filings**.
+The status reports finding the company, finding filings, downloading and indexing. Once
+the catalogue is known, the progress bar counts indexed documents. Work continues if you
+leave the page; returning reads the stored status. A job can remain queued while the worker
+is stopped. A failed status read has a **Refresh status** action.
+
+This release selects the latest 10-K, latest 10-Q and five latest 8-K primary documents in
+SEC's recent submissions list. It does not ingest all history, amendments, exhibits or
+fund-specific forms. A missing corporate ticker match or absent supported forms is
+reported explicitly; an ETF is not mapped to its underlying companies. Missing form types
+and partial failures appear in the status message.
+
+Each indexed source shows its form, filing date, accession and passage count, with a link
+to the original SEC document. **Search filing passages** performs keyword search, returning
+up to 20 matching excerpts with source links. Try specific terms such as “supply chain”.
+No match means this search found no indexed passage, not that the company has no such risk.
+These are original excerpts, not generated answers. Financial tables may lose layout during
+text extraction; consult the source before interpreting their numbers.
+
+Refresh checks for new filings and reuses indexed documents. Completed refreshes are
+limited to once every 15 minutes; partial/failed attempts can retry after one minute.
+Previously indexed filings remain available after failures and accumulate over time. The
+source list shows up to 50 newest filings; search includes all retained filings. Cached
+accessions are not periodically re-downloaded to detect later SEC corrections.
+
+If downloads are unconfigured, the operator must set `APP_SEC_CONTACT_EMAIL` locally and
+recreate backend/worker services. Never enter a personal password or model API key on this
+screen. Source search requires no LLM. Grounded Q&A and semantic search follow in US-12.
+
 ## Sections to be added
 
 As the remaining features ship, this guide will gain:

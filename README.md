@@ -73,6 +73,25 @@ Layered, component-based, fully containerized. Everything inside the deployment 
 - **External services** — free market-data API, SEC EDGAR, hosted LLM API. Reached only through the backend; credentials and rate-limited calls stay server-side.
 - **Docker Compose + GitHub Actions** — Compose orchestrates internal services; Actions builds/tests container images on every push and deploys the same images.
 
+### Filing ingestion deployment (US-11)
+
+The current stack adds a serial **filing-worker** container using the backend image. It
+reads a durable PostgreSQL queue, downloads public SEC documents and stores searchable
+passages. The existing diagram above includes the planned RAG target; current container
+boundaries and planned components are distinguished in [the C4 diagrams](docs/architecture.md).
+
+Set `APP_SEC_CONTACT_EMAIL` in the ignored `.env` to an operator email you monitor, then
+run `docker compose up -d --build`. It is transmitted to SEC as the application contact.
+The app boots without it; downloads remain disabled. No model API key is needed for this
+release. Open **SEC filings**, select a holding, retrieve filings and search keywords.
+Coverage is the latest 10-K, latest 10-Q and five latest 8-K primary documents in SEC's
+recent submissions list, not complete historical coverage. See [the user guide](docs/user-guide.md).
+
+Decisions: [ADR 0019](docs/adr/0019-sec-filing-ingestion.md),
+[ADR 0020](docs/adr/0020-filing-retrieval-staging.md). Embeddings and grounded generation
+remain US-12; this release uses native PostgreSQL full-text search. Implementation began
+September 19, 2026, without changing Sprint 3 or the five-point estimate.
+
 ### Quality attributes the architecture targets
 
 - **Maintainability / Modifiability** — decoupled engines behind an API contract; new engines added without touching the core.
@@ -106,7 +125,7 @@ Guiding principles: provider-agnostic + container-based (no lock-in), open-sourc
 ```
 orbit/
 ├── README.md
-├── docker-compose.yml          # orchestrates backend, frontend, db
+├── docker-compose.yml          # backend, frontend, db, filing worker
 ├── .github/workflows/          # GitHub Actions CI/CD
 ├── backend/
 │   ├── Dockerfile

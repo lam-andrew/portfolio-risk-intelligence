@@ -154,3 +154,18 @@ workflow is a manual-only placeholder until then.
 - **Never commit cached external data** (market data, filings). Local caches live under
   git-ignored paths.
 - All external data is free/public and used for academic purposes only.
+
+## SEC filing development (US-11)
+
+Set `APP_SEC_CONTACT_EMAIL` in local `.env` (never commit it). Compose passes it to the
+backend and dedicated serial worker. Recreate these services after changing environment
+configuration; source edits alone do not reload worker code. Queue jobs survive restart.
+One worker per database obtains an advisory lock; don't launch separate uncoordinated
+SEC clients against a shared outbound IP. Cached corpus data stays in the database.
+
+The backend starts with Alembic migrations; the worker waits for backend health. Migration
+0005 adds three filing tables and a native full-text index without changing existing data.
+Regular pytest is network-free. The integration workflow also runs
+`APP_TEST_POSTGRES=1 pytest tests/test_filings_postgres.py` against its disposable migrated
+PostgreSQL database. Do not point this opt-in test at production. Live SEC UAT is separate
+from synthetic tests; see [US-11 specifications](docs/us11-filing-tests.md).

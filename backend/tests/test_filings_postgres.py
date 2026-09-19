@@ -11,10 +11,11 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.api.filings import search
 from app.core.database import engine
 from app.data.filing_ingestion import ingest
 from app.filing_worker import LOCK_ID
-from app.models import FilingSync
+from app.models import FilingSync, Holding, Portfolio, User
 from tests.test_filings import FakeSec
 
 pytestmark = pytest.mark.skipif(
@@ -55,6 +56,18 @@ def test_native_index_atomic_ingestion_and_stemming() -> None:
             ).all()
             assert rows and all("Supplier concentration" in row.text for row in rows)
             assert all(row.source_url.startswith("https://www.sec.gov/") for row in rows)
+            owner = User(email="native-us11@example.com", password_hash="test-only")
+            session.add(owner)
+            session.flush()
+            portfolio = Portfolio(user_id=owner.id, name="US11 test")
+            session.add(portfolio)
+            session.flush()
+            session.add(Holding(portfolio_id=portfolio.id, ticker="QAUS11", quantity=1))
+            session.flush()
+            hits = search("QAUS11", owner, session, "suppliers manufacturing")
+            assert hits and hits[0].accession.startswith("0000000001-")
+            assert search("QAUS11", owner, session, "zzznomatch'; DROP TABLE filings; --") == []
+
             assert (
                 session.scalar(text("SELECT count(*) FROM filings WHERE cik = '0000000001'")) == 3
             )

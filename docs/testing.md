@@ -67,7 +67,7 @@ automated tests themselves are existing tests, not newly written for the report.
 
 ### Not yet covered
 
-FR-13 (filing ingestion) and FR-14 (grounded Q&A) are Sprint 3 stories whose tests will be
+FR-14 (grounded Q&A) is a Sprint 3 story whose tests will be
 written with those features. Early US-9 / FR-11 stress-test coverage is recorded in
 [the stress-test specifications](us9-stress-tests.md); its Sprint 3 assignment is unchanged.
 FR-14 in particular needs a **grounding test**:
@@ -174,3 +174,11 @@ unchanged 210 backend cases). Lint, formatting, type check and build passed. Con
 browser checks were repeated, including desktop dark and mobile light visual inspection.
 See ST-10 in [the stress specifications](us9-stress-tests.md). No new financial calculation
 or dependency was introduced; the existing SVG-chart decision (ADR 0013) applies.
+
+## US-11 filing ingestion — early implementation September 19, 2026
+
+[US-11 specifications and evidence](us11-filing-tests.md) map FR-13 to parser, API,
+network-boundary, restart, native PostgreSQL and screen tests. The PostgreSQL-specific
+suite runs separately in CI against its disposable Compose database; regular pytest skips
+those two cases. No real SEC downloads occur in automated tests. Live SEC UAT remains
+pending; keyword retrieval is not evidence of grounded generation under FR-14.
