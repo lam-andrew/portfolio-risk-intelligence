@@ -24,7 +24,8 @@ mapping, semantic search, embedding, LLM answer or full-history claim is permitt
   offset/text equality, section label, and no script or hidden text. Thin text is rejected.
 - Postcondition: pure operation, no network or persistence.
 - Automation: `test_extraction_excludes_active_and_hidden_content_and_preserves_offsets`,
-  `test_parser_handles_inline_text_entities_and_hidden_nested_elements`.
+  `test_parser_handles_inline_text_entities_and_hidden_nested_elements`,
+  `test_passages_do_not_mix_item_sections`.
 - Trace: FR-13 → US-11 → FI-01 → local pytest / CI result.
 
 ### FI-02 — Catalogue, downloads and index (system)
@@ -124,7 +125,7 @@ mapping, semantic search, embedding, LLM answer or full-history claim is permitt
 
 ## Evidence log
 
-- September 19: backend Ruff lint/format and strict mypy passed; **228 tests passed**,
+- September 19: backend Ruff lint/format and strict mypy passed; **229 tests passed**,
   two PostgreSQL-only tests skipped in the ordinary suite and passed separately.
 - PostgreSQL 16: clean migrations through 0005, downgrade to 0004 and re-upgrade succeeded
   in a separate disposable local database. Both native database tests passed, including

@@ -3,6 +3,7 @@
 import re
 from dataclasses import dataclass
 from html.parser import HTMLParser
+from itertools import pairwise
 
 PARSER_VERSION = "html-text-v1"
 
@@ -60,21 +61,25 @@ def extract_passages(html: str) -> tuple[str, list[Passage]]:
         raise ValueError("The document has too little readable text to index.")
     headings = list(re.finditer(r"(?im)^item\s+\d+[a-z]?[. :\-][^\n]{0,150}", text))
     passages: list[Passage] = []
-    start = 0
-    while start < len(text):
-        end = min(start + 1800, len(text))
-        if end < len(text):
-            boundary = text.rfind(" ", start + 1200, end)
-            if boundary > start:
-                end = boundary
-        heading = next(
-            (m.group().strip() for m in reversed(headings) if m.start() <= start), "Document"
+    boundaries = sorted({0, len(text), *(heading.start() for heading in headings)})
+    for region_start, region_end in pairwise(boundaries):
+        section = next(
+            (m.group().strip() for m in reversed(headings) if m.start() <= region_start),
+            "Document",
         )
-        passages.append(Passage(len(passages), heading, start, end, text[start:end]))
-        if end == len(text):
-            break
-        start = end - 200
-        boundary = text.find(" ", start, end)
-        if boundary != -1:
-            start = boundary + 1
+        start = region_start
+        while start < region_end:
+            end = min(start + 1800, region_end)
+            if end < region_end:
+                boundary = text.rfind(" ", start + 1200, end)
+                if boundary > start:
+                    end = boundary
+            if text[start:end].strip():
+                passages.append(Passage(len(passages), section, start, end, text[start:end]))
+            if end == region_end:
+                break
+            start = end - 200
+            boundary = text.find(" ", start, end)
+            if boundary != -1:
+                start = boundary + 1
     return text, passages

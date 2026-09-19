@@ -294,3 +294,15 @@ def test_refresh_failure_preserves_existing_sources(client: TestClient, monkeypa
     assert result["sync"]["status"] == "failed"
     assert result["indexed_count"] == 3
     assert client.get("/api/filings/AAPL/search?q=supplier").json()
+
+
+def test_passages_do_not_mix_item_sections() -> None:
+    html = "<h2>Item 1A. Risk Factors</h2><p>" + "Supplier risk. " * 10
+    html += "</p><h2>Item 7. Management Discussion</h2><p>" + "Revenue grew. " * 10 + "</p>"
+    text, passages = extract_passages(html)
+    assert len(passages) == 2
+    assert passages[0].section == "Item 1A. Risk Factors"
+    assert "Revenue grew" not in passages[0].text
+    assert passages[1].section == "Item 7. Management Discussion"
+    assert "Supplier risk" not in passages[1].text
+    assert all(text[p.start : p.end] == p.text for p in passages)
