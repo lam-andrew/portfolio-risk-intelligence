@@ -38,3 +38,4 @@ capture an architecturally significant decision, its context, and its consequenc
 | [0015](0015-landing-page-visual-treatment.md) | Landing page runs its own visual treatment, scoped from the app | Superseded by 0016 |
 | [0016](0016-landing-page-uses-the-application-palette.md) | Landing page uses the application palette; density, not hue, carries the difference | Accepted |
 | [0017](0017-api-namespaced-under-api-prefix.md) | API namespaced under /api so one origin can serve both | Accepted |
+| [0018](0018-hypothetical-portfolio-stress-tests.md) | Hypothetical portfolio stress tests | Accepted |
