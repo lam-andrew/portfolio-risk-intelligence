@@ -14,7 +14,18 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from app import __version__
-from app.api import auth, exposure, filings, holdings, imports, market_data, portfolio, risk, stress
+from app.api import (
+    auth,
+    exposure,
+    filings,
+    holdings,
+    imports,
+    market_data,
+    portfolio,
+    risk,
+    stress,
+    watchlist,
+)
 from app.api.schemas import HealthResponse
 from app.core.config import settings
 from app.core.database import check_database
@@ -29,6 +40,7 @@ api_router.include_router(risk.router)
 api_router.include_router(exposure.router)
 api_router.include_router(stress.router)
 api_router.include_router(filings.router)
+api_router.include_router(watchlist.router)
 
 
 @api_router.get("/health", response_model=HealthResponse, tags=["system"])

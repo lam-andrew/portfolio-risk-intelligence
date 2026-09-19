@@ -6,6 +6,7 @@ from app.models.filings import Filing, FilingPassage, FilingSync
 from app.models.portfolio import Holding, Portfolio
 from app.models.prices import PriceBarRow, PriceCoverageRow
 from app.models.user import User, UserSession
+from app.models.watchlist import WatchlistEntry
 
 __all__ = [
     "Filing",
@@ -17,4 +18,5 @@ __all__ = [
     "PriceCoverageRow",
     "User",
     "UserSession",
+    "WatchlistEntry",
 ]

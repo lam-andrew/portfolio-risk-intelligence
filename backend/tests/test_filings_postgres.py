@@ -85,3 +85,105 @@ def test_only_one_worker_can_hold_deployment_lock() -> None:
             assert not second.scalar(text("SELECT pg_try_advisory_lock(:key)"), {"key": key})
         finally:
             first.execute(text("SELECT pg_advisory_unlock(:key)"), {"key": key})
+
+
+def test_scheduler_preserves_manual_job_queued_after_discovery(monkeypatch) -> None:
+    """A second connection simulates a manual refresh racing the scheduler's upsert."""
+    from datetime import timedelta
+
+    from sqlalchemy import delete
+    from sqlalchemy.dialects.postgresql import Insert
+
+    from app.core.config import settings
+    from app.data.filing_schedule import schedule_due
+    from app.models import WatchlistEntry
+
+    monkeypatch.setattr(settings, "sec_contact_email", "test@example.com")
+    now = datetime(2000, 1, 1, tzinfo=UTC)
+    ticker = "QA21RACE"
+    with Session(engine) as setup:
+        owner = User(email="scheduler-race@example.com", password_hash="test-only")
+        setup.add(owner)
+        setup.flush()
+        owner_id = owner.id
+        setup.add(WatchlistEntry(user_id=owner_id, ticker=ticker))
+        setup.add(FilingSync(ticker=ticker, status="ready", updated_at=now - timedelta(days=2)))
+        setup.commit()
+    try:
+        with Session(engine) as session:
+            execute = session.execute
+            raced = False
+
+            def race(statement, *args, **kwargs):
+                nonlocal raced
+                if (
+                    isinstance(statement, Insert)
+                    and statement.compile().params.get("ticker") == ticker
+                ):
+                    with Session(engine) as manual:
+                        job = manual.get(FilingSync, ticker)
+                        assert job
+                        job.status = "queued"
+                        job.stage = "Queued manually"
+                        job.updated_at = now
+                        manual.commit()
+                    raced = True
+                return execute(statement, *args, **kwargs)
+
+            monkeypatch.setattr(session, "execute", race)
+            schedule_due(session, now=now)
+            job = session.get(FilingSync, ticker)
+            assert raced and job and job.status == "queued" and job.stage == "Queued manually"
+    finally:
+        with Session(engine) as cleanup:
+            cleanup.execute(delete(WatchlistEntry).where(WatchlistEntry.user_id == owner_id))
+            cleanup.execute(delete(User).where(User.id == owner_id))
+            cleanup.execute(delete(FilingSync).where(FilingSync.ticker == ticker))
+            cleanup.commit()
+
+
+def test_concurrent_watch_additions_are_idempotent() -> None:
+    from concurrent.futures import ThreadPoolExecutor
+
+    from sqlalchemy import delete, func, select
+
+    from app.api.schemas import TickerInput
+    from app.api.watchlist import add_watch
+    from app.models import WatchlistEntry
+
+    with Session(engine) as setup:
+        owner = User(email="watch-race@example.com", password_hash="test-only")
+        setup.add(owner)
+        setup.commit()
+        owner_id = owner.id
+
+    def add():
+        with Session(engine) as session:
+            user = session.get(User, owner_id)
+            assert user
+            return add_watch(TickerInput(ticker="AAPL"), session, None, user).ticker
+
+    try:
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            assert list(pool.map(lambda _: add(), range(2))) == ["AAPL", "AAPL"]
+        with Session(engine) as session:
+            assert (
+                session.scalar(
+                    select(func.count())
+                    .select_from(WatchlistEntry)
+                    .where(WatchlistEntry.user_id == owner_id)
+                )
+                == 1
+            )
+    finally:
+        with Session(engine) as cleanup:
+            cleanup.execute(delete(User).where(User.id == owner_id))
+            cleanup.commit()
+            assert (
+                cleanup.scalar(
+                    select(func.count())
+                    .select_from(WatchlistEntry)
+                    .where(WatchlistEntry.user_id == owner_id)
+                )
+                == 0
+            )

@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from app.api.auth import CurrentUser
 from app.core.config import settings
 from app.core.database import get_session
-from app.models import Filing, FilingPassage, FilingSync, Holding, Portfolio
+from app.models import Filing, FilingPassage, FilingSync, Holding, Portfolio, WatchlistEntry
 
 router = APIRouter(prefix="/filings", tags=["filings"])
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -70,9 +70,50 @@ def authorize(session: Session, user_id: int, ticker: str) -> str:
         .join(Portfolio)
         .where(Portfolio.user_id == user_id, Holding.ticker == ticker)
     )
-    if holding is None:
-        raise HTTPException(status_code=404, detail="Holding not found.")
+    if holding is None and session.get(WatchlistEntry, (user_id, ticker)) is None:
+        raise HTTPException(status_code=404, detail="Held or watched company not found.")
     return ticker
+
+
+class TrackedCompany(BaseModel):
+    ticker: str
+    held: bool
+    watched: bool
+    sync: SyncRead
+
+
+class TrackedCompanies(BaseModel):
+    configured: bool
+    companies: list[TrackedCompany]
+
+
+@router.get("", response_model=TrackedCompanies)
+def list_companies(user: CurrentUser, session: SessionDep) -> TrackedCompanies:
+    held = set(
+        session.scalars(select(Holding.ticker).join(Portfolio).where(Portfolio.user_id == user.id))
+    )
+    watched = set(
+        session.scalars(select(WatchlistEntry.ticker).where(WatchlistEntry.user_id == user.id))
+    )
+    tickers = held | watched
+    jobs = {
+        job.ticker: job
+        for job in session.scalars(select(FilingSync).where(FilingSync.ticker.in_(tickers)))
+    }
+    return TrackedCompanies(
+        configured=settings.sec_configured,
+        companies=[
+            TrackedCompany(
+                ticker=ticker,
+                held=ticker in held,
+                watched=ticker in watched,
+                sync=SyncRead.model_validate(jobs[ticker])
+                if ticker in jobs
+                else SyncRead(ticker=ticker),
+            )
+            for ticker in sorted(tickers)
+        ],
+    )
 
 
 @router.get("/{ticker}", response_model=FilingOverview)

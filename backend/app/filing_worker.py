@@ -2,12 +2,13 @@
 
 import time
 
-from sqlalchemy import select, text, update
+from sqlalchemy import text, update
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import SessionLocal, engine
 from app.data.filing_ingestion import ingest
+from app.data.filing_schedule import next_job, schedule_due
 from app.data.sec import SecClient
 from app.models import FilingSync
 
@@ -42,15 +43,14 @@ def main() -> None:
         try:
             with SessionLocal() as session:
                 recover_interrupted(session)
+            next_scan = 0.0
             while True:
                 check_lock()
                 with SessionLocal() as session:
-                    job = session.scalar(
-                        select(FilingSync)
-                        .where(FilingSync.status == "queued")
-                        .order_by(FilingSync.updated_at)
-                        .limit(1)
-                    )
+                    if time.monotonic() >= next_scan:
+                        schedule_due(session)
+                        next_scan = time.monotonic() + 30
+                    job = next_job(session)
                     if job is not None:
                         ingest(session, job, provider)
                 time.sleep(2)
