@@ -188,7 +188,7 @@ function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Pro
             email={email}
             onSignOut={onSignOut}
             title="SEC filings"
-            subtitle="Explore the disclosures behind your holdings"
+            subtitle="Explore disclosures for companies you hold or follow"
           >
             <FilingsPage />
           </AppShell>

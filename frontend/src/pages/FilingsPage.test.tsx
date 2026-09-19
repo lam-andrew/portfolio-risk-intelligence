@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -7,7 +7,9 @@ import { FilingsPage } from "./FilingsPage";
 
 vi.mock("@/api/client", async (original) => ({
   ...(await original<typeof import("@/api/client")>()),
-  getHoldings: vi.fn(),
+  getFilingCompanies: vi.fn(),
+  addWatch: vi.fn(),
+  removeWatch: vi.fn(),
   getFilings: vi.fn(),
   ingestFilings: vi.fn(),
   searchFilings: vi.fn(),
@@ -46,10 +48,13 @@ function show() {
 }
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(api.getHoldings).mockResolvedValue([
-    { id: 1, ticker: "AAPL", quantity: "1" },
-    { id: 2, ticker: "MSFT", quantity: "1" },
-  ]);
+  vi.mocked(api.getFilingCompanies).mockResolvedValue({
+    configured: true,
+    companies: [
+      { ticker: "AAPL", held: true, watched: false, sync: ready.sync },
+      { ticker: "MSFT", held: true, watched: false, sync: { ...ready.sync, ticker: "MSFT" } },
+    ],
+  });
   vi.mocked(api.getFilings).mockResolvedValue(ready);
 });
 
@@ -137,13 +142,13 @@ describe("SEC filings", () => {
     show();
     fireEvent.change(await screen.findByLabelText("Keywords"), { target: { value: "supply" } });
     fireEvent.click(screen.getByRole("button", { name: "Search passages" }));
-    fireEvent.change(screen.getByLabelText("Holding"), { target: { value: "MSFT" } });
+    fireEvent.change(screen.getByLabelText("Company"), { target: { value: "MSFT" } });
     resolve([{ ...source, passage_id: 1, section: "Old holding", text: "Stale answer" }]);
     await waitFor(() => expect(api.getFilings).toHaveBeenCalledWith("MSFT"));
     expect(screen.queryByText("Stale answer")).not.toBeInTheDocument();
   });
   it("offers holdings entry for an empty portfolio", async () => {
-    vi.mocked(api.getHoldings).mockResolvedValue([]);
+    vi.mocked(api.getFilingCompanies).mockResolvedValue({ configured: true, companies: [] });
     show();
     expect(await screen.findByRole("link", { name: "Open Holdings" })).toHaveAttribute(
       "href",
@@ -158,5 +163,134 @@ describe("SEC filings", () => {
     show();
     fireEvent.click(await screen.findByRole("button", { name: "Refresh status" }));
     expect(await screen.findByRole("link", { name: /10-K.*View SEC source/ })).toBeInTheDocument();
+  });
+});
+
+describe("automatic filing following", () => {
+  it("adds a watch with no holdings and selects its automatically scheduled filings", async () => {
+    const empty = { configured: true, companies: [] };
+    vi.mocked(api.getFilingCompanies).mockResolvedValue(empty);
+    vi.mocked(api.addWatch).mockImplementation(async () => {
+      vi.mocked(api.getFilingCompanies).mockResolvedValue({
+        configured: true,
+        companies: [
+          {
+            ticker: "MSFT",
+            held: false,
+            watched: true,
+            sync: { ...ready.sync, ticker: "MSFT", status: "queued" },
+          },
+        ],
+      });
+    });
+    show();
+    fireEvent.change(await screen.findByLabelText("Company ticker"), {
+      target: { value: " msft " },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
+    expect(await screen.findByText("MSFT added to your watchlist.")).toBeInTheDocument();
+    expect(api.addWatch).toHaveBeenCalledWith("MSFT");
+    await waitFor(() => expect(api.getFilings).toHaveBeenCalledWith("MSFT"));
+    expect(api.ingestFilings).not.toHaveBeenCalled();
+    expect(screen.getByText(/Watches do not affect risk/)).toBeInTheDocument();
+  });
+  it("keeps input and displays errors when adding fails", async () => {
+    vi.mocked(api.addWatch).mockRejectedValue(new Error("Failed"));
+    show();
+    fireEvent.change(await screen.findByLabelText("Company ticker"), { target: { value: "bad" } });
+    fireEvent.click(screen.getByRole("button", { name: "Add to watchlist" }));
+    expect(await screen.findByRole("alert")).toBeInTheDocument();
+    expect(screen.getByLabelText("Company ticker")).toHaveValue("bad");
+    expect(screen.queryByText(/added to your watchlist/)).not.toBeInTheDocument();
+  });
+  it("removes selected watch-only sources immediately and ignores an older list response", async () => {
+    const watched = {
+      configured: true,
+      companies: [{ ticker: "AAPL", held: false, watched: true, sync: ready.sync }],
+    };
+    vi.mocked(api.getFilingCompanies).mockResolvedValueOnce(watched);
+    let resolveOld!: (value: api.TrackedCompanies) => void;
+    vi.mocked(api.getFilingCompanies).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveOld = resolve;
+        }),
+    );
+    vi.useFakeTimers();
+    try {
+      await act(async () => {
+        show();
+      });
+      expect(screen.getByLabelText("Keywords")).toBeInTheDocument();
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(10000);
+      });
+      vi.mocked(api.getFilingCompanies).mockResolvedValue({ configured: true, companies: [] });
+      await act(async () => {
+        fireEvent.click(screen.getByRole("button", { name: "Remove AAPL from watchlist" }));
+      });
+      await act(async () => {
+        resolveOld(watched);
+      });
+      expect(screen.queryByLabelText("Keywords")).not.toBeInTheDocument();
+      expect(screen.queryByLabelText("Company")).not.toBeInTheDocument();
+      expect(api.removeWatch).toHaveBeenCalledWith("AAPL");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it("keeps a held company available when removing its watch", async () => {
+    vi.mocked(api.getFilingCompanies).mockResolvedValue({
+      configured: true,
+      companies: [{ ticker: "AAPL", held: true, watched: true, sync: ready.sync }],
+    });
+    vi.mocked(api.removeWatch).mockImplementation(async () => {
+      vi.mocked(api.getFilingCompanies).mockResolvedValue({
+        configured: true,
+        companies: [{ ticker: "AAPL", held: true, watched: false, sync: ready.sync }],
+      });
+    });
+    show();
+    fireEvent.click(await screen.findByRole("button", { name: "Remove AAPL from watchlist" }));
+    expect(await screen.findByText("AAPL removed from your watchlist.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Company")).toHaveValue("AAPL");
+    expect(await screen.findByLabelText("Keywords")).toBeInTheDocument();
+  });
+  it("keeps membership and reports a failed removal", async () => {
+    vi.mocked(api.getFilingCompanies).mockResolvedValue({
+      configured: true,
+      companies: [{ ticker: "AAPL", held: false, watched: true, sync: ready.sync }],
+    });
+    vi.mocked(api.removeWatch).mockRejectedValue(new Error("Failed"));
+    show();
+    fireEvent.click(await screen.findByRole("button", { name: "Remove AAPL from watchlist" }));
+    expect(await screen.findByRole("alert")).toBeInTheDocument();
+    expect(screen.getByLabelText("Company")).toHaveValue("AAPL");
+  });
+  it("polls idle companies until the worker discovers them without a manual click", async () => {
+    vi.mocked(api.getFilings)
+      .mockResolvedValueOnce({
+        ...ready,
+        indexed_count: 0,
+        filings: [],
+        sync: { ...ready.sync, status: "idle", stage: "Not started" },
+      })
+      .mockResolvedValue(ready);
+    vi.useFakeTimers();
+    try {
+      await act(async () => {
+        show();
+      });
+      expect(
+        screen.getByText(/Waiting for automatic retrieval. You can also start/),
+      ).toBeInTheDocument();
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(2000);
+      });
+      expect(screen.getByRole("link", { name: /10-K.*View SEC source/ })).toBeInTheDocument();
+      expect(api.ingestFilings).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

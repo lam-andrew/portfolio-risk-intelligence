@@ -331,7 +331,7 @@ export async function getPortfolioStress(scenario: string): Promise<PortfolioStr
   return data;
 }
 
-/** Public filing corpus scoped through the current user's holdings (US-11). */
+/** Public filing corpus scoped through the current user's holdings or watchlist. */
 export interface FilingSync {
   ticker: string;
   cik: string | null;
@@ -380,4 +380,25 @@ export async function searchFilings(ticker: string, q: string): Promise<FilingHi
     params: { q },
   });
   return data;
+}
+
+export interface TrackedCompany {
+  ticker: string;
+  held: boolean;
+  watched: boolean;
+  sync: FilingSync;
+}
+export interface TrackedCompanies {
+  configured: boolean;
+  companies: TrackedCompany[];
+}
+export async function getFilingCompanies(): Promise<TrackedCompanies> {
+  const { data } = await api.get<TrackedCompanies>("/filings");
+  return data;
+}
+export async function addWatch(ticker: string): Promise<void> {
+  await api.post("/watchlist", { ticker });
+}
+export async function removeWatch(ticker: string): Promise<void> {
+  await api.delete(`/watchlist/${encodeURIComponent(ticker)}`);
 }
