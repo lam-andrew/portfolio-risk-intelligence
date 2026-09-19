@@ -17,6 +17,7 @@ import { DashboardPage } from "@/pages/DashboardPage";
 import { DrawdownPage } from "@/pages/DrawdownPage";
 import { MethodologyPage } from "@/pages/MethodologyPage";
 import { HoldingsPage } from "@/pages/HoldingsPage";
+import { StressTestPage } from "@/pages/StressTestPage";
 import { LandingPage } from "@/pages/LandingPage";
 
 function Loading() {
@@ -156,6 +157,26 @@ function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Pro
             subtitle="The portfolio's worst historical declines"
           >
             <Loaded state={state}>{(data) => <DrawdownPage data={data} />}</Loaded>
+          </AppShell>
+        }
+      />
+      <Route
+        path="/stress"
+        element={
+          <AppShell
+            email={email}
+            onSignOut={onSignOut}
+            title="Stress test"
+            subtitle="Explore the impact of an assumed decline"
+          >
+            <Loaded state={state}>
+              {(data) => (
+                <StressTestPage
+                  key={JSON.stringify(data.summary.positions)}
+                  hasHoldings={data.summary.positions.length > 0}
+                />
+              )}
+            </Loaded>
           </AppShell>
         }
       />

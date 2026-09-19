@@ -67,8 +67,10 @@ automated tests themselves are existing tests, not newly written for the report.
 
 ### Not yet covered
 
-FR-11 (stress testing), FR-13 (filing ingestion), and FR-14 (grounded Q&A) are Sprint 3 stories.
-Their tests will be written with the features. FR-14 in particular needs a **grounding test**:
+FR-13 (filing ingestion) and FR-14 (grounded Q&A) are Sprint 3 stories whose tests will be
+written with those features. Early US-9 / FR-11 stress-test coverage is recorded in
+[the stress-test specifications](us9-stress-tests.md); its Sprint 3 assignment is unchanged.
+FR-14 in particular needs a **grounding test**:
 every claim in an answer must be traceable to retrieved source text, which is a correctness
 property, not a style preference.
 
@@ -148,3 +150,27 @@ stories and seven requirement IDs. Twenty-five specifications are supported by
 this local run; one uses prior passing CI evidence and four remain unexecuted.
 The original six Week 3 acceptance procedures remain pending. No story was
 reassigned or newly accepted by creating these documents.
+
+## US-9 early implementation — September 18, 2026
+
+The stress-test change adds 27 backend cases and 9 frontend cases (8 screen cases plus
+application navigation), bringing the local suites to **210 backend + 62 frontend = 272**.
+Backend Ruff lint/format and strict mypy passed; frontend lint, formatting, type checks,
+Vitest and production build passed. Existing warnings: Starlette/httpx deprecation and
+one non-blocking Fast Refresh warning in button.tsx. The stress tests emit no new warnings.
+
+Local environment: Python 3.13 with SQLite/FakeProvider; Node 24.19.0. CI independently
+checks the configured Python 3.12 and Node 20 containers. Traceability, expected results,
+controlled browser evidence and remaining acceptance procedures are in
+[US-9 test specifications](us9-stress-tests.md). No live-provider or instructor acceptance,
+production deployment, coverage percentage or Sprint 1 throughput is claimed.
+
+
+### Stress-test visualization follow-up
+
+Initial user feedback added a waterfall value comparison and up to five ranked loss bars.
+Five new chart tests bring the frontend suite to **67 passing** (277 combined with the
+unchanged 210 backend cases). Lint, formatting, type check and build passed. Controlled
+browser checks were repeated, including desktop dark and mobile light visual inspection.
+See ST-10 in [the stress specifications](us9-stress-tests.md). No new financial calculation
+or dependency was introduced; the existing SVG-chart decision (ADR 0013) applies.

@@ -293,3 +293,40 @@ export async function login(email: string, password: string): Promise<User> {
 export async function logout(): Promise<void> {
   await api.post("/auth/logout");
 }
+
+/** Server-owned hypothetical scenarios (US-9). Decimal amounts serialize as strings. */
+export interface StressScenario {
+  id: string;
+  name: string;
+  shock_pct: string;
+}
+
+export interface StressPosition {
+  ticker: string;
+  baseline_value: string;
+  loss: string;
+  stressed_value: string;
+}
+
+export interface PortfolioStress {
+  scenario: StressScenario;
+  status: "ready" | "empty" | "unavailable";
+  as_of: string | null;
+  baseline_value: string | null;
+  loss: string | null;
+  loss_pct: string | null;
+  stressed_value: string | null;
+  positions: StressPosition[];
+  missing_tickers: string[];
+  message: string | null;
+}
+
+export async function getStressScenarios(): Promise<StressScenario[]> {
+  const { data } = await api.get<StressScenario[]>("/portfolio/stress-scenarios");
+  return data;
+}
+
+export async function getPortfolioStress(scenario: string): Promise<PortfolioStress> {
+  const { data } = await api.get<PortfolioStress>("/portfolio/stress", { params: { scenario } });
+  return data;
+}

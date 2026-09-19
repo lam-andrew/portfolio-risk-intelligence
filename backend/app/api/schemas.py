@@ -18,6 +18,32 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_serializer, f
 _TICKER_RE = re.compile(r"^[A-Z]{1,6}(\.[A-Z]{1,2})?$")
 
 
+class StressScenarioRead(BaseModel):
+    id: str
+    name: str
+    shock_pct: Decimal
+
+
+class StressPositionRead(BaseModel):
+    ticker: str
+    baseline_value: Decimal
+    loss: Decimal
+    stressed_value: Decimal
+
+
+class PortfolioStressRead(BaseModel):
+    scenario: StressScenarioRead
+    status: Literal["ready", "empty", "unavailable"]
+    as_of: dt.date | None = None
+    baseline_value: Decimal | None = None
+    loss: Decimal | None = None
+    stressed_value: Decimal | None = None
+    loss_pct: Decimal | None = None
+    positions: list[StressPositionRead] = Field(default_factory=list)
+    missing_tickers: list[str] = Field(default_factory=list)
+    message: str | None = None
+
+
 class HealthResponse(BaseModel):
     """Liveness/readiness payload returned by ``GET /health``."""
 

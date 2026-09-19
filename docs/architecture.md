@@ -255,6 +255,26 @@ cannot disagree.
 
 ---
 
+### Stress-test path (US-9)
+
+[ADR 0018](adr/0018-hypothetical-portfolio-stress-tests.md) adds two authenticated,
+read-only endpoints: `/api/portfolio/stress-scenarios` and `/api/portfolio/stress`.
+The API loads the current user's holdings and cached daily bars, requires a usable shared
+pricing date across all holdings, and passes Decimal position values to the pure stress
+calculation. This path does not fit historical returns or modify existing risk functions.
+The frontend requests a selected scenario and displays the returned totals and contributions.
+No new persistence, provider or container is introduced.
+
+```mermaid
+flowchart LR
+    Screen[Stress-test screen] -->|scenario ID| API[Authenticated stress API]
+    API --> Holdings[Current user's holdings]
+    API --> Cache[Existing market-data service and cache]
+    API -->|complete same-date position values and shock| Math[Pure Decimal stress calculation]
+    Math -->|losses and post-shock values| API
+    API -->|dated result or unavailable state| Screen
+```
+
 ## 5. Component responsibilities
 
 | Component | Responsibility | Explicitly not responsible for |
@@ -467,3 +487,5 @@ the consequences accepted. The full index is in [`adr/README.md`](adr/README.md)
   and sections on version control, application organization, data storage and access,
   authentication, deployment, user interaction, external service integration, quality
   attributes, and the design-decision index.
+
+- **2026-09-18** — Added US-9 stress-test API/data flow and ADR 0018; existing container and engine boundaries are unchanged.

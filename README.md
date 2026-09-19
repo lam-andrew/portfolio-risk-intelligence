@@ -193,6 +193,10 @@ Full user stories with Given-When-Then acceptance criteria live in the GitHub Is
 Saved design reference: [Orbi mascot prototype and integration handoff](docs/design/orbi/README.md)
 (design only; not yet integrated into the application).
 
+US-9 stress testing adds hypothetical equal price shocks through the authenticated API;
+see [the stress-test methodology](docs/adr/0018-hypothetical-portfolio-stress-tests.md).
+Early implementation on September 18 does not change its Sprint 3 assignment.
+
 Current academic sprint evidence: [Sprint 1 backlog and Definition of Done](docs/sprint1-plan.md)
 (working artifact for Weeks 3-5; it does not replace the submitted Week 2 report).
 

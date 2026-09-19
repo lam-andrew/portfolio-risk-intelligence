@@ -134,6 +134,9 @@ function mockAll(overrides: { positions?: typeof positions } = {}) {
   vi.spyOn(client, "getPortfolioHistory").mockResolvedValue(history);
   vi.spyOn(client, "getPortfolioConcentration").mockResolvedValue(concentration);
   vi.spyOn(client, "getPortfolioDrawdown").mockResolvedValue(drawdown);
+  vi.spyOn(client, "getStressScenarios").mockResolvedValue([
+    { id: "decline-10", name: "Broad decline · 10%", shock_pct: "-10" },
+  ]);
 }
 
 function renderAt(path: string) {
@@ -145,6 +148,12 @@ function renderAt(path: string) {
 }
 
 describe("Dashboard (US-10)", () => {
+  it("opens the stress screen through portfolio navigation", async () => {
+    renderAt("/");
+    fireEvent.click(await screen.findByRole("link", { name: "Stress test" }));
+    expect(await screen.findByLabelText("Scenario")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Run stress test" })).toBeInTheDocument();
+  });
   beforeEach(() => {
     vi.restoreAllMocks();
     mockAll();
@@ -273,6 +282,9 @@ describe("Load states", () => {
     vi.spyOn(client, "getPortfolioHistory").mockResolvedValue(history);
     vi.spyOn(client, "getPortfolioConcentration").mockResolvedValue(concentration);
     vi.spyOn(client, "getPortfolioDrawdown").mockResolvedValue(drawdown);
+    vi.spyOn(client, "getStressScenarios").mockResolvedValue([
+      { id: "decline-10", name: "Broad decline · 10%", shock_pct: "-10" },
+    ]);
 
     renderAt("/");
     expect(await screen.findByText(/could not load your portfolio/i)).toBeInTheDocument();
@@ -340,6 +352,9 @@ describe("Authentication gate (US-13)", () => {
     vi.spyOn(client, "getPortfolioHistory").mockResolvedValue(history);
     vi.spyOn(client, "getPortfolioConcentration").mockResolvedValue(concentration);
     vi.spyOn(client, "getPortfolioDrawdown").mockResolvedValue(drawdown);
+    vi.spyOn(client, "getStressScenarios").mockResolvedValue([
+      { id: "decline-10", name: "Broad decline · 10%", shock_pct: "-10" },
+    ]);
 
     renderAt("/signin");
     await screen.findByRole("heading", { name: /sign in/i });
