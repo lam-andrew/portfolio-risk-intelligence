@@ -40,6 +40,7 @@ const GROUPS: { title: string; items: NavItem[] }[] = [
     items: [
       { label: "Correlation", to: "/correlation", icon: icon("M3 3v18h18M3 15h18M9 3v18M15 3v18") },
       { label: "Concentration", to: "/concentration", icon: icon("M12 3a9 9 0 1 0 9 9h-9V3Z") },
+      { label: "Stress test", to: "/stress", icon: icon("M3 5l6 6 4-3 8 11M15 19h6v-6") },
       { label: "Drawdown", to: "/drawdown", icon: icon("M3 7l5 6 4-3 4 5 5-9") },
     ],
   },

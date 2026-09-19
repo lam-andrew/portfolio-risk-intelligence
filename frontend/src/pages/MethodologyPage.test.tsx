@@ -85,6 +85,7 @@ describe("MethodologyPage (US-19)", () => {
       /correlation between holdings/i,
       /concentration and overlap/i,
       /^drawdown$/i,
+      /hypothetical stress tests/i,
       /what to scrutinize/i,
     ]) {
       expect(screen.getByRole("heading", { level: 2, name: heading })).toBeInTheDocument();
@@ -94,6 +95,7 @@ describe("MethodologyPage (US-19)", () => {
     expect(screen.getByText(/σₚ = √\( wᵀ Σ w \) × √252/)).toBeInTheDocument();
     expect(screen.getByText(/ρ\(i,j\) = Cov\(i,j\) \/ \( σᵢ × σⱼ \)/)).toBeInTheDocument();
     expect(screen.getByText(/HHI = Σ wᵢ²/)).toBeInTheDocument();
+    expect(screen.getByText(/loss\(i\) = baseline\(i\) × decline fraction/)).toBeInTheDocument();
     expect(
       screen.getByText(/drawdown\(t\) = value\(t\) \/ running_peak\(t\) − 1/),
     ).toBeInTheDocument();

@@ -26,6 +26,7 @@ const CONTENTS = [
   ["correlation", "Correlation between holdings"],
   ["concentration", "Concentration and overlap"],
   ["drawdown", "Drawdown"],
+  ["stress", "Hypothetical stress tests"],
   ["limitations", "What to scrutinize"],
 ] as const;
 
@@ -415,7 +416,46 @@ export function MethodologyPage({ data }: { data: PortfolioData }) {
         </Caveat>
       </Section>
 
-      <Section id="limitations" index="08" title="What to scrutinize">
+      <Section id="stress" index="08" title="Hypothetical stress tests">
+        <Prose>
+          <p>
+            Choose an assumed 10%, 20% or 35% decline applied equally to every holding. We hold your
+            share quantities fixed and use adjusted closes from the latest date shared by all
+            holdings within the last 30 days. The result is a conditional dollar impact, with no
+            assigned probability or time horizon.
+          </p>
+        </Prose>
+        <Formula
+          lines={[
+            "baseline(i) = shares(i) × adjusted close(i)",
+            "loss(i) = baseline(i) × decline fraction",
+            "after(i) = baseline(i) − loss(i)",
+          ]}
+          where={
+            <>
+              Portfolio totals sum the holding rows. A hypothetical $1,000 position under a 20%
+              decline loses $200 and becomes $800.
+            </>
+          }
+        />
+        <Prose>
+          <p>
+            Baseline and loss round half-up to cents per holding before totals are summed. The
+            displayed loss percentage uses those rounded totals. One usable price per holding is
+            enough: no volatility estimate is fitted, so the 20-return statistical minimum does not
+            apply. Missing prices or no common date means no estimate, never a partial total.
+          </p>
+        </Prose>
+        <Caveat>
+          These are equal price shocks, not historical crisis replays or forecasts. Bonds and ETFs
+          receive the same shock as stocks; diversification, sector sensitivity, fees, taxes and
+          currency changes are not modeled. Adjusted closes are an analytical baseline, not live
+          quotes, and cached prices may be stale. The overview may use newer individual dates; the
+          stress screen shows its common pricing date.
+        </Caveat>
+      </Section>
+
+      <Section id="limitations" index="09" title="What to scrutinize">
         <Prose>
           <p>
             Each metric is implemented correctly against its own definition. Whether those
@@ -473,7 +513,7 @@ export function MethodologyPage({ data }: { data: PortfolioData }) {
           <div className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold">Not implemented</h3>
             <ul className="flex list-disc flex-col gap-1.5 pl-5 text-[14px] leading-relaxed text-muted-foreground">
-              <li>Stress testing under defined adverse scenarios.</li>
+              <li>Historical stress testing and differentiated sector or factor shocks.</li>
               <li>Risk-adjusted return — no Sharpe or Sortino ratio.</li>
               <li>Value at Risk or expected shortfall.</li>
               <li>Factor, sector or benchmark-relative decomposition.</li>
@@ -482,9 +522,10 @@ export function MethodologyPage({ data }: { data: PortfolioData }) {
         </div>
 
         <Caveat>
-          <strong className="text-foreground">The standing constraint.</strong> Every figure
-          describes the past. Orbit measures, contextualizes and explains risk — it does not predict
-          prices, and nothing it reports is investment advice.
+          <strong className="text-foreground">The standing constraint.</strong> Historical metrics
+          describe the past; stress tests apply explicit hypothetical assumptions. Orbit measures,
+          contextualizes and explains risk — it does not predict prices, and nothing it reports is
+          investment advice.
         </Caveat>
       </Section>
     </div>
