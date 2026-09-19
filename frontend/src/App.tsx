@@ -17,6 +17,7 @@ import { DashboardPage } from "@/pages/DashboardPage";
 import { DrawdownPage } from "@/pages/DrawdownPage";
 import { MethodologyPage } from "@/pages/MethodologyPage";
 import { HoldingsPage } from "@/pages/HoldingsPage";
+import { FilingsPage } from "@/pages/FilingsPage";
 import { StressTestPage } from "@/pages/StressTestPage";
 import { LandingPage } from "@/pages/LandingPage";
 
@@ -177,6 +178,19 @@ function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Pro
                 />
               )}
             </Loaded>
+          </AppShell>
+        }
+      />
+      <Route
+        path="/filings"
+        element={
+          <AppShell
+            email={email}
+            onSignOut={onSignOut}
+            title="SEC filings"
+            subtitle="Explore the disclosures behind your holdings"
+          >
+            <FilingsPage />
           </AppShell>
         }
       />
