@@ -109,7 +109,7 @@ mapping, semantic search, embedding, LLM answer or full-history claim is permitt
 - Automation: `frontend/src/pages/FilingsPage.test.tsx` (nine cases).
 - Trace: FR-13 → US-11 → FI-07 → Vitest and browser evidence.
 
-### FI-08 — Live-provider UAT (pending)
+### FI-08 — Live-provider integration and user acceptance
 
 - Preconditions: completed project inbox; `APP_SEC_CONTACT_EMAIL` configured locally;
   normal PostgreSQL/Compose worker; signed-in test account owns supported corporate ticker.
@@ -120,7 +120,17 @@ mapping, semantic search, embedding, LLM answer or full-history claim is permitt
 - Expected: real traceable documents, accurate bounded coverage, matching source text,
   duplicates avoided, partial/unavailable states truthful, restart resumes.
 - Postconditions: retain public cached corpus; record acceptance date and any limitations.
-- Result: **Pending.** Synthetic tests and CI do not establish live SEC access or user acceptance.
+- Result: **Live integration passed September 19; user acceptance remains pending.**
+  A separate migrated PostgreSQL database, actual worker process and authenticated API
+  test client queued AAPL. Real SEC responses resolved Apple Inc. / CIK 0000320193;
+  progress advanced 0/7 → 4/7 → ready 7/7. One 10-K, one 10-Q and five 8-Ks were
+  indexed, totaling 255 passages. Native API search for `risk` returned 20 excerpts;
+  each matched its stored filing text at the recorded offsets and linked to that
+  issuer's SEC archive. No test replaced the live SEC provider or worker.
+  The test account and holdings existed only in the disposable database. Operator contact
+  was configured outside Git. No raw filings or email credentials entered the repository.
+  Live mid-download process interruption, manual comparison against the rendered SEC
+  source and user acceptance are still pending; automated recovery was tested under FI-03.
 - Trace: FR-13 → US-11 → FI-08 → reviewer/UAT result required before story Done.
 
 ## Evidence log
@@ -139,6 +149,7 @@ mapping, semantic search, embedding, LLM answer or full-history claim is permitt
   width. This fixture check uses an injected test identity; authentication isolation is
   covered by API tests, not claimed from this browser run. No live holdings were modified.
 - Existing Starlette/httpx deprecation warnings remain. Synthetic fixtures make no SEC calls.
-- Live SEC UAT remains pending project-contact configuration and external-provider access.
+- Live SEC integration passed as recorded in FI-08. Project-contact configuration is complete;
+  remaining manual acceptance steps are explicitly pending.
 - Project-board access remains unavailable with the current token (`read:project` missing).
   Issue #11 remains open; no sprint, point estimate or board status was changed.

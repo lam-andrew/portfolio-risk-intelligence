@@ -180,5 +180,6 @@ or dependency was introduced; the existing SVG-chart decision (ADR 0013) applies
 [US-11 specifications and evidence](us11-filing-tests.md) map FR-13 to parser, API,
 network-boundary, restart, native PostgreSQL and screen tests. The PostgreSQL-specific
 suite runs separately in CI against its disposable Compose database; regular pytest skips
-those two cases. No real SEC downloads occur in automated tests. Live SEC UAT remains
-pending; keyword retrieval is not evidence of grounded generation under FR-14.
+those two cases. No real SEC downloads occur in automated tests. Live SEC integration passed against a separate PostgreSQL database and the actual worker;
+manual acceptance steps remain in FI-08. Keyword retrieval is not evidence of grounded
+generation under FR-14.
