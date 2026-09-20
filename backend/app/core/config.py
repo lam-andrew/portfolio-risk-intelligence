@@ -47,6 +47,15 @@ class Settings(BaseSettings):
     # How long cached daily prices stay fresh before we re-fetch (FR-6).
     market_data_cache_ttl_hours: int = 24
 
+    # SEC identifies the application operator, not the signed-in user.
+    sec_contact_email: str = ""
+
+    @property
+    def sec_configured(self) -> bool:
+        import re
+
+        return re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", self.sec_contact_email) is not None
+
     @property
     def market_data_configured(self) -> bool:
         """Whether a market-data API key is present. Lets the app boot (and /health report)

@@ -5,11 +5,9 @@
 **Status:** Living document. Created Week 2; updated whenever the architecture changes.
 
 This document describes Orbit's architecture using the [C4 model](https://c4model.com/).
-Diagrams are kept as **plain-text ASCII** in Markdown so they render identically
-everywhere — GitHub, a terminal, an exported PDF — with no renderer or toolchain in the
-way, and so they diff and review like source. Keep these diagrams consistent with `README.md` §2 and with the
-Architecture Decision Records in [`docs/adr/`](adr/). A stale diagram is worse than none —
-update it whenever the architecture changes.
+Current System Context and Container diagrams use Mermaid, as required by the repository
+standards. The older Risk engine component illustration remains a text diagram. Keep the
+diagrams consistent with `README.md` and the [ADRs](adr/).
 
 Maintained levels:
 
@@ -30,7 +28,7 @@ Orbit is **layered and component-based, fully containerized**.
   A layer never reaches around the one beneath it: the frontend holds no business logic
   and never touches the database, and the engines never talk to the frontend.
 - **Component-based** — within the domain layer, each analytical capability is an
-  independent component with a narrow numeric interface. Components are composed by the
+  independent component with a narrow input/output interface. Components are composed by the
   API layer, not by each other.
 - **Containerized** — every runnable piece is a Docker service, orchestrated by Compose.
 
@@ -46,40 +44,17 @@ destabilizing the core.
 Who and what Orbit interacts with. Orbit measures, contextualizes, and explains portfolio
 risk; it does **not** predict prices, execute trades, or give investment advice.
 
-```
-                      ┌──────────────────────────────┐
-                      │     Individual Investor      │
-                      │          [Person]            │
-                      │                              │
-                      │   Self-directed investor     │
-                      │   holding stocks and ETFs    │
-                      └───────────────┬──────────────┘
-                                      │
-                    Enters portfolio, views dashboard,
-                          asks questions   [HTTPS]
-                                      ▼
-    ┌───────────────────────────────────────────────────────────────┐
-    │                            ORBIT                              │
-    │                      [Software System]                        │
-    │                                                               │
-    │   Portfolio risk intelligence. Computes risk and exposure     │
-    │   metrics and explains them with citations grounded in        │
-    │   SEC filings.                                                │
-    │                                                               │
-    │   Does NOT predict prices, execute trades, or give advice.    │
-    └──────┬──────────────────────┬─────────────────────┬───────────┘
-           │                      │                     │
-   Retrieves prices        Retrieves filings     Requests embeddings
-   [HTTPS, cached]              [HTTPS]          and answers [HTTPS]
-           ▼                      ▼                     ▼
- ┌──────────────────┐  ┌───────────────────┐  ┌──────────────────────┐
- │ Market-Data API  │  │     SEC EDGAR     │  │    Hosted LLM API    │
- │ [External System]│  │ [External System] │  │  [External System]   │
- │                  │  │                   │  │                      │
- │ Historical daily │  │ Public filings:   │  │ Embeddings and       │
- │ prices, cached   │  │ 10-K, 10-Q, 8-K   │  │ grounded generation  │
- │ locally (FR-6)   │  │                   │  │                      │
- └──────────────────┘  └───────────────────┘  └──────────────────────┘
+```mermaid
+C4Context
+    Person(investor, "Individual investor", "Manages holdings and explores risk and disclosures")
+    System(orbit, "Orbit", "Portfolio risk intelligence and indexed SEC filings")
+    System_Ext(market, "Market-data API", "Historical adjusted prices")
+    System_Ext(sec, "SEC EDGAR", "Public corporate filings")
+    System_Ext(llm, "Hosted model provider — planned US-12", "Embeddings and grounded generation")
+    Rel(investor, orbit, "Uses authenticated application", "HTTPS")
+    Rel(orbit, market, "Retrieves prices", "HTTPS")
+    Rel(orbit, sec, "Retrieves bounded filing selection", "HTTPS")
+    Rel(orbit, llm, "Planned: selected passages and question", "HTTPS")
 ```
 
 **Notes**
@@ -98,63 +73,25 @@ external systems and CI/CD sit outside it. The analytical engines are decoupled 
 contract (see [ADR 0004](adr/0004-decoupled-engines-api-contract.md)): the frontend and each
 engine reach another engine **only** through the backend's API routes.
 
-```
-                      ┌──────────────────────────────┐
-                      │     Individual Investor      │
-                      │          [Person]            │
-                      └───────────────┬──────────────┘
-                                      │ Uses [HTTPS]
- ┌════════════════════════════════════╪════════════════════════════════┐
- ‖  ORBIT — Docker Compose deployment boundary                         ‖
- ‖                                    ▼                                ‖
- ‖  ┌───────────────────────────────────────────────────────────────┐  ‖
- ‖  │ Frontend                    [Container: React + TypeScript]   │  ‖
- ‖  │ Presentation only: portfolio entry, risk dashboard,           │  ‖
- ‖  │ visualizations, Q&A.  No business logic.                      │  ‖
- ‖  └──────────────────────────────┬────────────────────────────────┘  ‖
- ‖                                 │ REST / JSON [HTTPS]               ‖
- ‖                                 ▼                                   ‖
- ‖  ┌───────────────────────────────────────────────────────────────┐  ‖
- ‖  │ Backend / API layer         [Container: Python 3.12 + FastAPI]│  ‖
- ‖  │ Single entry point and orchestrator: authentication, routing, │  ‖
- ‖  │ input validation, engine invocation.                          │  ‖
- ‖  │ Performs ALL external I/O.  THE API CONTRACT.                 │  ‖
- ‖  └───┬──────────────────┬────────────────────────┬───────────────┘  ‖
- ‖      │ invokes behind   │ invokes behind         │ reads / writes   ‖
- ‖      │ the API contract │ the API contract       │ [SQL]            ‖
- ‖      ▼                  ▼                        │                  ‖
- ‖  ┌─────────────────┐  ┌──────────────────────┐   │                  ‖
- ‖  │ Risk & Exposure │  │ RAG engine           │   │                  ‖
- ‖  │ engine   [CORE] │  │ [SECONDARY]          │   │                  ‖
- ‖  │                 │  │                      │   │                  ‖
- ‖  │ Volatility,     │  │ Retrieves, embeds    │   │                  ‖
- ‖  │ correlation,    │  │ and indexes SEC      │   │                  ‖
- ‖  │ concentration,  │  │ filings. Produces    │   │                  ‖
- ‖  │ drawdown,       │  │ grounded, cited      │   │                  ‖
- ‖  │ stress testing. │  │ explanations.        │   │                  ‖
- ‖  │                 │  │                      │   │                  ‖
- ‖  │ PURE — no I/O   │  └──────────┬───────────┘   │                  ‖
- ‖  └─────────────────┘             │ embeddings    │                  ‖
- ‖                                  │ [SQL/pgvector]│                  ‖
- ‖                                  ▼               ▼                  ‖
- ‖          ┌───────────────────────────────────────────────┐          ‖
- ‖          │ PostgreSQL 16 + pgvector      [Container]     │          ‖
- ‖          │ Users, portfolios, holdings, cached price     │          ‖
- ‖          │ bars, coverage windows, filing embeddings     │          ‖
- ‖          └───────────────────────────────────────────────┘          ‖
- └══════════════════════════════════════════════════════════════════════┘
-        │                        │                        │
-  Backend fetches          RAG fetches              RAG requests
-  prices, then caches      filings                  embeddings/answers
-  [HTTPS]                  [HTTPS]                  [HTTPS]
-        ▼                        ▼                        ▼
- ┌─────────────────┐  ┌────────────────────┐  ┌─────────────────────┐
- │ Market-Data API │  │     SEC EDGAR      │  │   Hosted LLM API    │
- │   [External]    │  │     [External]     │  │     [External]      │
- └─────────────────┘  └────────────────────┘  └─────────────────────┘
-
- CI/CD sits outside the boundary: GitHub Actions builds and tests these
- same container images on every push.
+```mermaid
+C4Container
+    Person(investor, "Individual investor")
+    System_Ext(market, "Market-data API")
+    System_Ext(sec, "SEC EDGAR")
+    System_Ext(llm, "Hosted model provider — planned US-12")
+    System_Boundary(orbit, "Orbit / Docker Compose") {
+        Container(web, "Frontend", "React / TypeScript", "Risk screens, filing progress and source search")
+        Container(api, "Backend", "FastAPI", "Auth, ownership, risk orchestration, filing queue and retrieval API")
+        Container(worker, "Filing worker", "Python / same backend image", "Serial durable ingestion, pure text extraction and indexing")
+        ContainerDb(db, "Database", "PostgreSQL 16 / pgvector", "Holdings, private watchlists, price cache, public filings, passages, queue; vectors planned")
+    }
+    Rel(investor, web, "Uses", "HTTPS")
+    Rel(web, api, "Requests / polls", "REST / JSON")
+    Rel(api, db, "Persists queue; authorizes and searches", "SQL")
+    Rel(api, market, "Loads cached market prices", "HTTPS")
+    Rel(worker, db, "Claims serial queue; stores documents and passages", "SQL / advisory lock")
+    Rel(worker, sec, "Downloads with declared contact and rate limit", "HTTPS")
+    Rel(api, llm, "Planned US-12 provider adapter", "HTTPS")
 ```
 
 **Notes**
@@ -282,7 +219,8 @@ flowchart LR
 | **Frontend** (React + TypeScript) | Presentation: portfolio entry, dashboard, visualizations, Q&A. | Business logic; risk math; direct database or external-API access. |
 | **Backend / API layer** (FastAPI) | Single entry point: authentication, routing, input validation, orchestration, all I/O. | Implementing risk math itself. |
 | **Risk & Exposure engine** (core) | The significant algorithmic component: volatility, correlation, concentration, drawdown, stress testing. | Knowing about HTTP, the database, the frontend, or the RAG engine. |
-| **RAG engine** (secondary) | Filing retrieval, embedding, indexing, grounded and cited answers. | Touching the risk engine's internals. |
+| **RAG processing** (secondary) | Pure text extraction/chunking now; retrieval policies and grounded-answer processing planned for US-12. | HTTP, SQL or risk-engine internals; adapters/orchestrators own I/O. |
+| **Filing worker** | Durable serial queue, SEC downloads, atomic corpus persistence and progress. | Generating answers or modifying portfolio holdings. |
 | **Data layer** (PostgreSQL + pgvector) | Durable relational data and vector embeddings in one service. | Business rules. |
 | **External services** | Market data, EDGAR filings, LLM inference. | Being reached from the browser; all calls are server-side. |
 
@@ -297,7 +235,8 @@ flowchart LR
 | Backend | Engines | In-process function calls behind the API contract | Callers never import engine internals ([ADR 0004](adr/0004-decoupled-engines-api-contract.md)). |
 | Backend | Database | SQL via SQLAlchemy | Schema evolves through Alembic migrations ([ADR 0010](adr/0010-alembic-migrations.md)). |
 | Backend | Market-data API | HTTPS, cached | Behind a provider interface ([ADR 0011](adr/0011-market-data-provider.md)). |
-| RAG engine | EDGAR / LLM API | HTTPS | Server-side only; LLM abstracted behind an interface. |
+| Filing worker / data adapter | EDGAR | HTTPS | Fixed hosts, contact header, serial rate limit; ADR 0019. |
+| API / future model adapter | Hosted LLM API | HTTPS | Planned US-12; not implemented or configured. |
 
 ---
 
@@ -338,8 +277,8 @@ backend/app/
 
 Two rules keep the layering honest, and both are mechanically checkable:
 
-1. Nothing under `engines/` imports from `api/`, `data/`, or `models/`. The engines receive
-   numbers and return numbers.
+1. Nothing under `engines/` imports from `api/`, `data/`, or `models/`. Risk engines receive numbers; RAG text processing receives text and returns passages.
+   All provider and persistence I/O stays in data/orchestration modules.
 2. The frontend imports nothing from the backend except the shape of the JSON contract.
 
 ---
@@ -388,7 +327,7 @@ Recorded in [ADR 0014](adr/0014-authentication.md).
 
 - **Unit of deployment:** Docker images, orchestrated locally and in CI by Docker Compose
   ([ADR 0003](adr/0003-docker-compose-provider-agnostic.md)). Services: frontend, backend,
-  database.
+  database, and filing worker.
 - **Provider-agnostic by construction.** Nothing depends on a managed cloud service. The
   same Compose stack runs on a laptop, a VM, or any container host, which keeps both the
   hosting decision and the grader's reproduction path open.
@@ -489,3 +428,60 @@ the consequences accepted. The full index is in [`adr/README.md`](adr/README.md)
   attributes, and the design-decision index.
 
 - **2026-09-18** — Added US-9 stress-test API/data flow and ADR 0018; existing container and engine boundaries are unchanged.
+
+## 17. Filing ingestion and retrieval (US-11, September 19 early implementation)
+
+[ADR 0019](adr/0019-sec-filing-ingestion.md) records durable ingestion and bounded coverage;
+[ADR 0020](adr/0020-filing-retrieval-staging.md) stages keyword retrieval before embeddings.
+[ADR 0021](adr/0021-automatic-filing-following.md) extends scheduling and authorization to
+existing/new holdings and private ticker watchlists (US-21 / FR-16).
+
+```mermaid
+flowchart LR
+    Screen[Authenticated Filings screen] --> API[Held-or-watched authorization]
+    API --> Membership[(Holdings and private watchlists)]
+    Membership --> Scheduler[Worker: discover due tracked tickers]
+    Scheduler --> Queue[(Ticker sync queue)]
+    API -->|Manual refresh| Queue
+    Queue --> Worker[Single worker / advisory lock]
+    Worker --> SEC[SEC adapter: exact issuer and recent catalogue]
+    SEC --> Parser[Pure HTML-to-text and passage extractor]
+    Parser --> Corpus[(Public filing text, hashes and passage offsets)]
+    API --> Search[PostgreSQL full-text query]
+    Corpus --> Search
+    Search --> Screen
+```
+
+API routes: GET `/api/filings` lists the caller's held/watched companies and statuses;
+GET/POST `/api/watchlist` and DELETE `/api/watchlist/{ticker}` manage private preferences.
+GET `/api/filings/{ticker}`, POST `/api/filings/{ticker}/ingest`, and GET
+`/api/filings/{ticker}/search?q=...` check that the caller still holds or watches the ticker.
+Public documents are shared by CIK/accession, while a job reveals
+no requesting user. No holdings, quantities or credentials are sent to SEC. The configured
+application operator contact is sent in the User-Agent; it is not returned by the API.
+
+Ingestion commits one filing and its passages atomically. Completed documents survive
+worker restart and are reused by accession/parser version. Interrupted jobs requeue only
+after a worker acquires the deployment lock. Database errors terminate the worker;
+Compose restarts it. Multiple independent deployments sharing an IP are outside this
+rate-limit coordination boundary. Without contact configuration the worker idles.
+
+The corpus retains previous indexed filings, including after a failed refresh. The list
+shows the newest 50; keyword retrieval searches all retained passages and returns at most
+20. Initial coverage excludes older submissions archives, amendments, exhibits and fund
+forms. Cached accession content is not periodically re-downloaded for SEC corrections;
+source dates and this limitation must remain visible in documentation. Text extraction
+preserves offsets into normalized text, not DOM coordinates or original table layout.
+
+The RAG engine does not perform HTTP or SQL operations. Adapters and the worker own I/O;
+this clarifies the earlier planned-component shorthand in this document. Hosted model
+calls and embeddings remain unimplemented US-12 work. No risk-engine code changed.
+
+The advisory-lock owner scans committed holdings/watchlists at startup and every 30 seconds
+between jobs, in batches of at most 100 due tickers. Ready jobs become due after 24 hours,
+failed/partial after one hour, unsupported after seven days. Conditional PostgreSQL upserts
+preserve jobs queued concurrently by manual requests. Queue selection skips globally
+untracked tickers, retaining their cached public corpus. New watchlists use migration 0006,
+with a composite user/ticker key, account deletion cascade and a per-account 100-entry cap.
+Per-account row locks serialize additions. Portfolio-write routes and risk engines have no
+SEC dependency; the database-backed scan supplies reconciliation without an event broker.

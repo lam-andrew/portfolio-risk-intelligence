@@ -73,6 +73,28 @@ Layered, component-based, fully containerized. Everything inside the deployment 
 - **External services** — free market-data API, SEC EDGAR, hosted LLM API. Reached only through the backend; credentials and rate-limited calls stay server-side.
 - **Docker Compose + GitHub Actions** — Compose orchestrates internal services; Actions builds/tests container images on every push and deploys the same images.
 
+### Filing ingestion deployment (US-11)
+
+The current stack adds a serial **filing-worker** container using the backend image. It
+reads a durable PostgreSQL queue, downloads public SEC documents and stores searchable
+passages. The existing diagram above includes the planned RAG target; current container
+boundaries and planned components are distinguished in [the C4 diagrams](docs/architecture.md).
+
+Set `APP_SEC_CONTACT_EMAIL` in the ignored `.env` to an operator email you monitor, then
+run `docker compose up -d --build`. It is transmitted to SEC as the application contact.
+The app boots without it; downloads remain disabled. No model API key is needed for this
+release. The worker automatically discovers existing/new holdings and private watchlist
+companies, then checks for new filings daily. Open **SEC filings** to add watched tickers,
+see retrieval status and search keywords. Watchlists do not affect portfolio risk.
+Coverage is the latest 10-K, latest 10-Q and five latest 8-K primary documents in SEC's
+recent submissions list, not complete historical coverage. See [the user guide](docs/user-guide.md).
+
+Decisions: [ADR 0019](docs/adr/0019-sec-filing-ingestion.md),
+[ADR 0020](docs/adr/0020-filing-retrieval-staging.md),
+[ADR 0021](docs/adr/0021-automatic-filing-following.md). Embeddings and grounded generation
+remain US-12; this release uses native PostgreSQL full-text search. Implementation began
+September 19, 2026, without changing Sprint 3 or the five-point estimate.
+
 ### Quality attributes the architecture targets
 
 - **Maintainability / Modifiability** — decoupled engines behind an API contract; new engines added without touching the core.
@@ -106,7 +128,7 @@ Guiding principles: provider-agnostic + container-based (no lock-in), open-sourc
 ```
 orbit/
 ├── README.md
-├── docker-compose.yml          # orchestrates backend, frontend, db
+├── docker-compose.yml          # backend, frontend, db, filing worker
 ├── .github/workflows/          # GitHub Actions CI/CD
 ├── backend/
 │   ├── Dockerfile
@@ -183,6 +205,7 @@ Goal: a running, deployable app that ingests a portfolio and shows a real risk m
 | FR-13 | The system shall ingest SEC filings (10-K, 10-Q, 8-K) for a user's holdings and index them for retrieval. |
 | FR-14 | The system shall answer a user's natural-language question about a holding with an explanation grounded in and citing the retrieved filing text. |
 | FR-15 | The system shall allow a user to authenticate before accessing their portfolio. |
+| FR-16 | The system shall automatically follow filings for held and privately watched companies, with recurring refresh and no effect on risk calculations (US-21, user-requested September 19). |
 
 Full user stories with Given-When-Then acceptance criteria live in the GitHub Issues / Project board (US-1 … US-15).
 

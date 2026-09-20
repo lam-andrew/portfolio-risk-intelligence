@@ -57,11 +57,10 @@ class HealthResponse(BaseModel):
     market_data: Literal["configured", "unconfigured"]
 
 
-class HoldingCreate(BaseModel):
-    """Request body for adding a holding (US-1): a ticker and a share quantity."""
+class TickerInput(BaseModel):
+    """Normalized ticker shared by holdings and watchlist input."""
 
     ticker: str = Field(min_length=1, max_length=12, examples=["AAPL"])
-    quantity: Decimal = Field(gt=0, examples=["10"])
 
     @field_validator("ticker")
     @classmethod
@@ -70,6 +69,12 @@ class HoldingCreate(BaseModel):
         if not _TICKER_RE.match(normalized):
             raise ValueError("Ticker must be 1-6 letters, optionally like 'BRK.B'.")
         return normalized
+
+
+class HoldingCreate(TickerInput):
+    """Request body for adding a holding (US-1)."""
+
+    quantity: Decimal = Field(gt=0, examples=["10"])
 
 
 #: Prices serialize at a fixed scale so a response looks identical whether it came straight

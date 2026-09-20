@@ -39,6 +39,7 @@ services:
       APP_ENVIRONMENT: ${APP_ENVIRONMENT:-development}
       APP_DATABASE_URL: ${APP_DATABASE_URL:-postgresql+psycopg://orbit:orbit@db:5432/orbit}
       # Market data (US-4). Supplied from .env; empty until a key is configured.
+      APP_SEC_CONTACT_EMAIL: ${APP_SEC_CONTACT_EMAIL:-}
       APP_MARKET_DATA_PROVIDER: ${APP_MARKET_DATA_PROVIDER:-tiingo}
       APP_MARKET_DATA_API_KEY: ${APP_MARKET_DATA_API_KEY:-}
       APP_MARKET_DATA_CACHE_TTL_HOURS: ${APP_MARKET_DATA_CACHE_TTL_HOURS:-24}
@@ -49,6 +50,22 @@ services:
       - ./backend:/app
     # Apply DB migrations before serving (Alembic; see ADR 0010).
     command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
+
+  filing-worker:
+    build: ./backend
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      APP_DATABASE_URL: ${APP_DATABASE_URL:-postgresql+psycopg://orbit:orbit@db:5432/orbit}
+      APP_SEC_CONTACT_EMAIL: ${APP_SEC_CONTACT_EMAIL:-}
+    volumes:
+      - ./backend:/app
+    command: ["python", "-m", "app.filing_worker"]
+    restart: on-failure
+    # Worker has no HTTP listener; API healthcheck from the shared image does not apply.
+    healthcheck:
+      disable: true
 
   frontend:
     build: ./frontend

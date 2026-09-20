@@ -330,3 +330,75 @@ export async function getPortfolioStress(scenario: string): Promise<PortfolioStr
   const { data } = await api.get<PortfolioStress>("/portfolio/stress", { params: { scenario } });
   return data;
 }
+
+/** Public filing corpus scoped through the current user's holdings or watchlist. */
+export interface FilingSync {
+  ticker: string;
+  cik: string | null;
+  company: string | null;
+  status: "idle" | "queued" | "running" | "ready" | "partial" | "failed" | "unsupported";
+  stage: string;
+  completed: number;
+  total: number;
+  message: string | null;
+  updated_at: string | null;
+}
+export interface FilingSource {
+  accession: string;
+  form: string;
+  filed_on: string;
+  source_url: string;
+  passage_count: number;
+  indexed_at: string;
+}
+export interface FilingOverview {
+  configured: boolean;
+  coverage: string;
+  sync: FilingSync;
+  filings: FilingSource[];
+  indexed_count: number;
+}
+export interface FilingHit {
+  passage_id: number;
+  accession: string;
+  form: string;
+  filed_on: string;
+  section: string;
+  text: string;
+  source_url: string;
+}
+export async function getFilings(ticker: string): Promise<FilingOverview> {
+  const { data } = await api.get<FilingOverview>(`/filings/${encodeURIComponent(ticker)}`);
+  return data;
+}
+export async function ingestFilings(ticker: string): Promise<FilingSync> {
+  const { data } = await api.post<FilingSync>(`/filings/${encodeURIComponent(ticker)}/ingest`);
+  return data;
+}
+export async function searchFilings(ticker: string, q: string): Promise<FilingHit[]> {
+  const { data } = await api.get<FilingHit[]>(`/filings/${encodeURIComponent(ticker)}/search`, {
+    params: { q },
+  });
+  return data;
+}
+
+export interface TrackedCompany {
+  ticker: string;
+  held: boolean;
+  watched: boolean;
+  sync: FilingSync;
+}
+export interface TrackedCompanies {
+  configured: boolean;
+  companies: TrackedCompany[];
+}
+export async function getFilingCompanies(): Promise<TrackedCompanies> {
+  const { data } = await api.get<TrackedCompanies>("/filings");
+  return data;
+}
+export async function addWatch(ticker: string): Promise<void> {
+  await api.post("/watchlist", { ticker });
+}
+export async function removeWatch(ticker: string): Promise<void> {
+  await api.delete(`/watchlist/${encodeURIComponent(ticker)}`);
+}
