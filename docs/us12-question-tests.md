@@ -133,3 +133,45 @@ in this follow-up; the earlier frontend/native results remain applicable.
 Live setup and operational limits: [API-key guide](qa-setup.md). The
 [20-case runbook](us12-live-evaluation.md) defines label preparation, mixed case classes,
 quota-aware execution and metric denominators. It remains **not executed**.
+
+## First live activation and REST adapter correction — September 26, 2026
+
+Andrew confirmed that the locally saved key belongs to a Free-tier project with billing
+not set up. Enabled the ignored local configuration and recreated backend/embedding-worker.
+Google billing state is user-confirmed, not independently inspectable by Orbit.
+
+The first live generation response exposed a contract error: `output_text` is an SDK
+convenience property, while REST returns `steps[].content[]` in a `model_output` step.
+Both initial diagnostic attempts were rejected with a sanitized service error; neither
+was accepted as an answer. Corrected in `7cdc4aa`. The parser now requires completed status,
+one final text output and the existing strict answer/verdict schemas. Thought steps are
+ignored; tool steps, multiple outputs and malformed content fail closed. Synthetic adapter
+fixtures now match the documented REST envelope instead of inventing an SDK response.
+Source: [Interactions REST response](https://ai.google.dev/api/interactions-api).
+
+Container checks after correction: Ruff lint/format and strict mypy pass;
+**316 backend tests pass**, seven PostgreSQL-only cases skipped in this ordinary run.
+The 15 additional cases cover valid split text, thought exclusion and malformed/unexpected
+response structures. Native database and frontend behavior were not changed by this fix;
+CI checks those separately. Existing Starlette/httpx warning remains.
+
+Two bounded **provider-adapter smoke checks** then passed using one already cached public
+AMD 10-Q passage (accession `0000002488-26-000123`, filed August 5, 2026). The factual case
+identified TSMC's role for microprocessor/GPU wafers at 7 nm or smaller nodes, returned an
+exact source quotation and passed the separate support check. Manual comparison confirmed
+the claim matches the supplied excerpt. The future stock-price request returned
+`insufficient_evidence` with no claims. Five generation calls in total were reserved in
+the normal persistent daily budget, including the two failed diagnostics. No automatic
+retry, paid fallback, quota reset or private account/portfolio payload was used.
+
+Preparation persisted **112 of 6,522 passages** before a real provider quota response paused
+embedding work. The worker's existing ten-minute backoff is active; it will try again
+without resetting budgets. This proves initial embedding success and the pause path, not
+quota recovery or full corpus readiness. Browser checks show the provider is enabled and
+company preparation counters are present. An enabled provider does not bypass preparation.
+
+These smoke checks supply known evidence directly to the adapter: they do **not** exercise
+authenticated question routing, semantic retrieval, complete-company readiness or source-link
+navigation. They are not counted toward the 20-case evaluation. Full evaluation and user
+acceptance remain pending. Raw local evidence stays under ignored `data/cache/us12-evaluation/`;
+no cached filing text, credentials, thought signatures or private questions are committed.

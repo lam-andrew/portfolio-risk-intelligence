@@ -115,3 +115,12 @@ budgets, report actual failures and fix them before seeking final acceptance.
 
 US-12 stays In Progress and PR #92 stays draft until live grounding, citation, abstention,
 quota behavior and user acceptance are verified. Andrew reviews the experience before merge.
+
+## Local activation record — September 26, 2026
+
+Andrew completed the assisted handoff and confirmed Free tier with no billing setup.
+The key was detected without displaying it; Q&A was enabled locally. Initial embeddings
+and corrected answer-generation/support-check smoke tests succeeded. A provider quota
+response paused preparation after 112 passages; the existing worker backoff and daily
+budgets remain in force. The full corpus and 20-case evaluation are still incomplete.
+See [live activation evidence](us12-question-tests.md#first-live-activation-and-rest-adapter-correction--september-26-2026).
