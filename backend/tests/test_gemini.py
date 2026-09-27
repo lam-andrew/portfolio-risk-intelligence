@@ -11,6 +11,13 @@ from app.data.question_provider import ModelError
 from app.engines.rag.grounding import Evidence
 
 
+def interaction(text, *, status="completed"):
+    return {
+        "status": status,
+        "steps": [{"type": "model_output", "content": [{"type": "text", "text": text}]}],
+    }
+
+
 def provider(handler):
     return GeminiProvider("test-secret", transport=httpx.MockTransport(handler))
 
@@ -60,7 +67,7 @@ def test_generation_is_stateless_tool_free_and_schema_validated():
             if len(requests) == 1
             else {"answers_question": False, "claims": []}
         )
-        return httpx.Response(200, json={"status": "completed", "output_text": json.dumps(output)})
+        return httpx.Response(200, json=interaction(json.dumps(output)))
 
     client = provider(handle)
     draft = client.answer("Question?", [Evidence(1, "Untrusted evidence")])
@@ -98,10 +105,26 @@ def test_provider_failures_are_sanitized_without_retry_or_redirect(status):
 @pytest.mark.parametrize(
     "response",
     [
-        {"status": "in_progress", "output_text": "{}"},
-        {"status": "completed", "output_text": "not json"},
-        {"status": "completed", "output_text": '{"status":"answered","claims":[]}'},
+        interaction("{}", status="in_progress"),
+        interaction("not json"),
+        interaction('{"status":"answered","claims":[]}'),
         {"status": "completed"},
+        {"status": "completed", "output_text": '{"status":"insufficient_evidence","claims":[]}'},
+        {"status": "completed", "steps": None},
+        {"status": "completed", "steps": []},
+        {"status": "completed", "steps": [None]},
+        {"status": "completed", "steps": [{"type": "thought", "text": "{}"}]},
+        {"status": "completed", "steps": [{"type": "function_call"}]},
+        {"status": "completed", "steps": [{"type": "model_output"}]},
+        {"status": "completed", "steps": [{"type": "model_output", "content": {}}]},
+        {"status": "completed", "steps": [{"type": "model_output", "content": []}]},
+        {"status": "completed", "steps": [{"type": "model_output", "content": [None]}]},
+        {
+            "status": "completed",
+            "steps": [{"type": "model_output", "content": [{"type": "image"}]}],
+        },
+        interaction(None),
+        interaction(12),
     ],
 )
 def test_partial_invalid_and_missing_generation_never_accepted(response):
@@ -121,3 +144,35 @@ def test_timeout_and_oversized_response_are_bounded():
             client.embed(["text"])
         assert "secret" not in str(exc.value)
         client.close()
+
+
+def test_rest_model_text_parts_ignore_thought_content():
+    text = '{"status":"insufficient_evidence","claims":[]}'
+    response = interaction(text)
+    response["steps"].insert(
+        0, {"type": "thought", "text": "not final output", "signature": "ignored"}
+    )
+    response["steps"][1]["content"] = [
+        {"type": "text", "text": text[:20]},
+        {"type": "text", "text": text[20:]},
+    ]
+    client = provider(lambda _: httpx.Response(200, json=response))
+    try:
+        assert client.answer("Question?", []).status == "insufficient_evidence"
+    finally:
+        client.close()
+
+
+def test_multiple_final_outputs_and_unexpected_steps_are_rejected():
+    for extra in [
+        {"type": "model_output", "content": [{"type": "text", "text": "{}"}]},
+        {"type": "function_call", "name": "unexpected"},
+    ]:
+        response = interaction('{"status":"insufficient_evidence","claims":[]}')
+        response["steps"].append(extra)
+        client = provider(lambda _, body=response: httpx.Response(200, json=body))
+        try:
+            with pytest.raises(ModelError):
+                client.answer("Question?", [])
+        finally:
+            client.close()
