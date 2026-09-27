@@ -50,6 +50,17 @@ class Settings(BaseSettings):
     # SEC identifies the application operator, not the signed-in user.
     sec_contact_email: str = ""
 
+    # Enable only with a Google AI Studio project whose billing is disabled (ADR 0022).
+    qa_enabled: bool = False
+    qa_provider: str = "gemini"
+    gemini_api_key: str = Field(default="", repr=False)
+
+    @property
+    def qa_configured(self) -> bool:
+        return (
+            self.qa_enabled and self.qa_provider == "gemini" and bool(self.gemini_api_key.strip())
+        )
+
     @property
     def sec_configured(self) -> bool:
         import re
