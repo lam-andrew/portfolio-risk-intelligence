@@ -402,3 +402,43 @@ export async function addWatch(ticker: string): Promise<void> {
 export async function removeWatch(ticker: string): Promise<void> {
   await api.delete(`/watchlist/${encodeURIComponent(ticker)}`);
 }
+
+export interface QuestionStatus {
+  configured: boolean;
+  total_passages: number;
+  ready_passages: number;
+  ready: boolean;
+}
+
+export interface FilingAnswer {
+  status: "answered" | "insufficient_evidence";
+  question: string;
+  message: string;
+  coverage: string;
+  limitation: string;
+  claims: {
+    text: string;
+    citations: {
+      passage_id: number;
+      accession: string;
+      form: string;
+      filed_on: string;
+      section: string;
+      quote: string;
+      source_url: string;
+      start_offset: number;
+      end_offset: number;
+    }[];
+  }[];
+}
+
+export async function getQuestionStatus(ticker: string): Promise<QuestionStatus> {
+  return (await api.get<QuestionStatus>(`/filings/${encodeURIComponent(ticker)}/questions/status`))
+    .data;
+}
+
+export async function askFilingQuestion(ticker: string, question: string): Promise<FilingAnswer> {
+  return (
+    await api.post<FilingAnswer>(`/filings/${encodeURIComponent(ticker)}/questions`, { question })
+  ).data;
+}

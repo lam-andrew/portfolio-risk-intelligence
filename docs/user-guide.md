@@ -163,14 +163,29 @@ accessions are not periodically re-downloaded to detect later SEC corrections.
 
 If downloads are unconfigured, the operator must set `APP_SEC_CONTACT_EMAIL` locally and
 recreate backend/worker services. Never enter a personal password or model API key on this
-screen. Source search requires no LLM. Grounded Q&A and semantic search follow in US-12.
+screen. Source search requires no LLM. Optional grounded questions are described below.
 
-## Sections to be added
+## Asking questions about a company
 
-As the remaining features ship, this guide will gain:
+Select a held or watched company under **SEC filings**. The **Ask about [ticker]** card
+shows how many filing passages are ready. Preparation runs in the background when the
+operator enables the model service; free-tier limits can pause it. Source search remains
+available even when questions are disabled.
 
-- **Asking questions about your holdings** — the grounded, cited Q&A over SEC filings
-  (US-11, US-12).
+When ready, enter a question such as “What supply chain risks does the company disclose?”
+and select **Ask question**. The answer shows individual claims alongside exact supporting
+quotations, the filing date, section and a link to the original SEC filing. Check those
+sources and dates. Choosing a different company clears the previous question and answer.
+
+If support cannot be established, Orbit says it could not find enough evidence. That is
+not proof that the company has no such risk. A quota/service error is shown separately and
+can be retried later. Answers reflect the bounded cached corpus and may miss disclosures;
+they do not provide forecasts, trade recommendations or personalized advice.
+
+The model service receives your question and public filing excerpts. Google may use
+free-tier submissions for product improvement, so keep personal or confidential information
+out of questions. Orbit does not attach your portfolio quantities or account details and
+stores no question history. Live model quality and user acceptance are still being evaluated.
 
 ---
 

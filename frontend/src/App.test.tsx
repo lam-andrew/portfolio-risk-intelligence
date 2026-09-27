@@ -253,8 +253,9 @@ describe("Navigation (US-10)", () => {
       "/concentration",
     );
     expect(screen.getByRole("link", { name: /drawdown/i })).toHaveAttribute("href", "/drawdown");
-    // Still-unbuilt sections keep their SOON marker.
-    expect(screen.getAllByText("SOON").length).toBeGreaterThan(0);
+    // Filing questions now live within SEC filings, without a duplicate inactive entry.
+    expect(screen.queryByText("Filings Q&A")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "SEC filings" })).toHaveAttribute("href", "/filings");
   });
 
   it("routes to concentration and drawdown", async () => {

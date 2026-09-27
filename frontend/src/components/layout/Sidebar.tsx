@@ -48,7 +48,6 @@ const GROUPS: { title: string; items: NavItem[] }[] = [
     title: "Insights",
     items: [
       { label: "SEC filings", to: "/filings", icon: icon("M4 4h11l5 5v11H4V4Zm4 8h8M8 16h5") },
-      { label: "Filings Q&A", soon: true, icon: icon("M4 4h16v13H8l-4 4V4Z") },
     ],
   },
   {

@@ -50,11 +50,11 @@ C4Context
     System(orbit, "Orbit", "Portfolio risk intelligence and indexed SEC filings")
     System_Ext(market, "Market-data API", "Historical adjusted prices")
     System_Ext(sec, "SEC EDGAR", "Public corporate filings")
-    System_Ext(llm, "Hosted model provider — planned US-12", "Embeddings and grounded generation")
+    System_Ext(llm, "Hosted model provider / replaceable Gemini adapter", "Embeddings and grounded generation")
     Rel(investor, orbit, "Uses authenticated application", "HTTPS")
     Rel(orbit, market, "Retrieves prices", "HTTPS")
     Rel(orbit, sec, "Retrieves bounded filing selection", "HTTPS")
-    Rel(orbit, llm, "Planned: selected passages and question", "HTTPS")
+    Rel(orbit, llm, "Selected public passages and explicit question", "HTTPS")
 ```
 
 **Notes**
@@ -78,12 +78,13 @@ C4Container
     Person(investor, "Individual investor")
     System_Ext(market, "Market-data API")
     System_Ext(sec, "SEC EDGAR")
-    System_Ext(llm, "Hosted model provider — planned US-12")
+    System_Ext(llm, "Hosted model provider / replaceable Gemini adapter")
     System_Boundary(orbit, "Orbit / Docker Compose") {
         Container(web, "Frontend", "React / TypeScript", "Risk screens, filing progress and source search")
         Container(api, "Backend", "FastAPI", "Auth, ownership, risk orchestration, filing queue and retrieval API")
         Container(worker, "Filing worker", "Python / same backend image", "Serial durable ingestion, pure text extraction and indexing")
-        ContainerDb(db, "Database", "PostgreSQL 16 / pgvector", "Holdings, private watchlists, price cache, public filings, passages, queue; vectors planned")
+        Container(embeddings, "Embedding worker", "Python / same backend image", "Resumable preparation for held/watched issuers")
+        ContainerDb(db, "Database", "PostgreSQL 16 / pgvector", "Holdings, private watchlists, price cache, public filings, passages, vectors and request budgets")
     }
     Rel(investor, web, "Uses", "HTTPS")
     Rel(web, api, "Requests / polls", "REST / JSON")
@@ -91,7 +92,9 @@ C4Container
     Rel(api, market, "Loads cached market prices", "HTTPS")
     Rel(worker, db, "Claims serial queue; stores documents and passages", "SQL / advisory lock")
     Rel(worker, sec, "Downloads with declared contact and rate limit", "HTTPS")
-    Rel(api, llm, "Planned US-12 provider adapter", "HTTPS")
+    Rel(api, llm, "Question embedding, answer and support check", "HTTPS")
+    Rel(embeddings, db, "Discovers missing vectors; stores versioned batches", "SQL / advisory lock")
+    Rel(embeddings, llm, "Public text embeddings through adapter", "HTTPS")
 ```
 
 **Notes**
@@ -219,7 +222,7 @@ flowchart LR
 | **Frontend** (React + TypeScript) | Presentation: portfolio entry, dashboard, visualizations, Q&A. | Business logic; risk math; direct database or external-API access. |
 | **Backend / API layer** (FastAPI) | Single entry point: authentication, routing, input validation, orchestration, all I/O. | Implementing risk math itself. |
 | **Risk & Exposure engine** (core) | The significant algorithmic component: volatility, correlation, concentration, drawdown, stress testing. | Knowing about HTTP, the database, the frontend, or the RAG engine. |
-| **RAG processing** (secondary) | Pure text extraction/chunking now; retrieval policies and grounded-answer processing planned for US-12. | HTTP, SQL or risk-engine internals; adapters/orchestrators own I/O. |
+| **RAG processing** (secondary) | Pure extraction/chunking and fail-closed citation/support validation. | HTTP, SQL or risk-engine internals; adapters/orchestrators own I/O. |
 | **Filing worker** | Durable serial queue, SEC downloads, atomic corpus persistence and progress. | Generating answers or modifying portfolio holdings. |
 | **Data layer** (PostgreSQL + pgvector) | Durable relational data and vector embeddings in one service. | Business rules. |
 | **External services** | Market data, EDGAR filings, LLM inference. | Being reached from the browser; all calls are server-side. |
@@ -236,7 +239,7 @@ flowchart LR
 | Backend | Database | SQL via SQLAlchemy | Schema evolves through Alembic migrations ([ADR 0010](adr/0010-alembic-migrations.md)). |
 | Backend | Market-data API | HTTPS, cached | Behind a provider interface ([ADR 0011](adr/0011-market-data-provider.md)). |
 | Filing worker / data adapter | EDGAR | HTTPS | Fixed hosts, contact header, serial rate limit; ADR 0019. |
-| API / future model adapter | Hosted LLM API | HTTPS | Planned US-12; not implemented or configured. |
+| API / embedding worker through model adapter | Hosted LLM API | HTTPS | Optional US-12; stateless questions and public text embeddings. |
 
 ---
 
@@ -286,7 +289,7 @@ Two rules keep the layering honest, and both are mechanically checkable:
 ## 9. Data storage and access
 
 - **One database service.** PostgreSQL 16 with the pgvector extension holds both relational
-  data and, later, filing embeddings. Combining them was a deliberate choice to reduce
+  data and versioned filing embeddings. Combining them was a deliberate choice to reduce
   moving parts for a solo project ([ADR 0002](adr/0002-postgres-pgvector.md)); a separate
   vector store would have added a service, a backup story, and a consistency problem.
 - **Access path.** Application code reaches the database only through SQLAlchemy models and
@@ -327,7 +330,7 @@ Recorded in [ADR 0014](adr/0014-authentication.md).
 
 - **Unit of deployment:** Docker images, orchestrated locally and in CI by Docker Compose
   ([ADR 0003](adr/0003-docker-compose-provider-agnostic.md)). Services: frontend, backend,
-  database, and filing worker.
+  database, filing worker, and embedding worker.
 - **Provider-agnostic by construction.** Nothing depends on a managed cloud service. The
   same Compose stack runs on a laptop, a VM, or any container host, which keeps both the
   hosting decision and the grader's reproduction path open.
@@ -474,8 +477,8 @@ source dates and this limitation must remain visible in documentation. Text extr
 preserves offsets into normalized text, not DOM coordinates or original table layout.
 
 The RAG engine does not perform HTTP or SQL operations. Adapters and the worker own I/O;
-this clarifies the earlier planned-component shorthand in this document. Hosted model
-calls and embeddings remain unimplemented US-12 work. No risk-engine code changed.
+this clarifies the earlier planned-component shorthand in this document. US-12 adds model calls and embeddings through a replaceable data-layer adapter (below).
+No risk-engine code changed.
 
 The advisory-lock owner scans committed holdings/watchlists at startup and every 30 seconds
 between jobs, in batches of at most 100 due tickers. Ready jobs become due after 24 hours,
@@ -485,3 +488,41 @@ untracked tickers, retaining their cached public corpus. New watchlists use migr
 with a composite user/ticker key, account deletion cascade and a per-account 100-entry cap.
 Per-account row locks serialize additions. Portfolio-write routes and risk engines have no
 SEC dependency; the database-backed scan supplies reconciliation without an event broker.
+
+
+## 18. Grounded questions (US-12, September 26 early implementation)
+
+[ADR 0022](adr/0022-grounded-filing-questions.md) records the candidate model, free-only
+configuration, versioned 768-dimensional vectors, data handling and evaluation gates.
+All internal services run in Compose. The provider is an external HTTPS dependency,
+explicitly permitted by ADR 0003, with no provider-hosted corpus, vector DB or identity.
+Changing a provider requires an adapter and re-embedding, not a change to the risk engine.
+
+```mermaid
+flowchart LR
+    UI[Filings question form] --> Auth[Session and held-or-watched authorization]
+    Auth --> Status[Corpus preparation completeness]
+    Status --> Budget[Atomic PostgreSQL request budgets]
+    Budget --> Retrieval[Issuer and version filtered pgvector cosine ranking]
+    Retrieval --> Adapter[Replaceable question provider]
+    Adapter --> Model[Hosted model: candidate Gemini]
+    Model --> Draft[Structured claims and passage IDs]
+    Draft --> Validation[Pure exact-quote validation and complete support verdict]
+    Validation --> Response[Server-resolved SEC citations or insufficient evidence]
+    Response --> UI
+    Worker[Embedding worker / backend Docker image] --> DB[(PostgreSQL public corpus and vectors)]
+    Worker --> Adapter
+    DB --> Retrieval
+```
+
+New authenticated routes: GET `/api/filings/{ticker}/questions/status` and POST
+`/api/filings/{ticker}/questions`. The request contains only a bounded question. Source
+metadata comes from the selected issuer's cached passages. Recheck membership after remote
+I/O. No question or answer history is persisted. Errors and quotas produce service errors,
+not claims that evidence does not exist. Preparation requires a matching embedding for all
+currently indexed issuer passages; it never claims complete SEC history.
+
+A separate serial embedding process prevents model throttling from delaying SEC downloads.
+Its missing-row queue and shared budgets survive restarts. Migration 0007 owns the schema.
+The keyless stack starts with Q&A disabled, while cached source search and risk still work.
+Offline tests exercise contracts and safeguards; they do not establish live model quality.

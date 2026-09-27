@@ -13,6 +13,7 @@ vi.mock("@/api/client", async (original) => ({
   getFilings: vi.fn(),
   ingestFilings: vi.fn(),
   searchFilings: vi.fn(),
+  getQuestionStatus: vi.fn(),
 }));
 const source = {
   accession: "0000000001-26-000001",
@@ -48,6 +49,12 @@ function show() {
 }
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.mocked(api.getQuestionStatus).mockResolvedValue({
+    configured: false,
+    total_passages: 0,
+    ready_passages: 0,
+    ready: false,
+  });
   vi.mocked(api.getFilingCompanies).mockResolvedValue({
     configured: true,
     companies: [
