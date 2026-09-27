@@ -11,18 +11,12 @@ import { ExplainLink } from "@/features/methodology/ExplainLink";
  *  because 0 is a meaningful midpoint, not merely the low end — a sequential ramp would hide
  *  the difference between "unrelated" and "hedged". Colour is always paired with the printed
  *  number, so the value is never conveyed by hue alone. */
-function cellStyle(value: number, dark: boolean): { background: string; color: string } {
+function cellStyle(value: number): { background: string; color: string } {
   const magnitude = Math.min(Math.abs(value), 1);
-  const neutral = dark ? [43, 52, 66] : [237, 239, 242];
-  const pole =
-    value >= 0 ? (dark ? [230, 103, 103] : [227, 73, 72]) : dark ? [57, 135, 229] : [42, 120, 214];
-
-  const mix = neutral.map((c, i) => Math.round(c + (pole[i] - c) * magnitude));
-  const luminance = (0.299 * mix[0] + 0.587 * mix[1] + 0.114 * mix[2]) / 255;
-
+  const pole = value >= 0 ? "var(--down)" : "var(--accent)";
   return {
-    background: `rgb(${mix[0]},${mix[1]},${mix[2]})`,
-    color: luminance > 0.6 ? "#101620" : "#ffffff",
+    background: `color-mix(in srgb, ${pole} ${magnitude * 35}%, var(--surface-2))`,
+    color: "var(--foreground)",
   };
 }
 
@@ -45,8 +39,6 @@ interface CorrelationCardProps {
 /** Correlation among holdings (US-6): a heatmap plus the pairs that matter. */
 export function CorrelationCard({ correlation, compact = false }: CorrelationCardProps) {
   const { tickers, matrix } = correlation;
-  const dark =
-    typeof document !== "undefined" && document.documentElement.classList.contains("dark");
 
   if (tickers.length < 2) {
     return (
@@ -71,12 +63,12 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
   // Shrink cells as the matrix grows so it fits the page rather than overflowing it.
   const count = tickers.length;
   const cell = count > 20 ? 34 : count > 14 ? 42 : count > 9 ? 48 : 52;
-  const fontSize = count > 14 ? 9.5 : count > 9 ? 10.5 : 11;
+  const fontSize = 11;
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-baseline justify-between gap-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
           <CardTitle>Correlation</CardTitle>
           <span className="flex items-baseline gap-3">
             {!compact && (
@@ -136,12 +128,12 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
                           const style =
                             value === null
                               ? { background: "var(--surface-2)", color: "var(--faint)" }
-                              : cellStyle(value, dark);
+                              : cellStyle(value);
                           return (
                             <td
                               key={colTicker}
                               title={`${rowTicker} / ${colTicker}: ${fmt(raw)}`}
-                              className="rounded-md text-center font-mono tabular-nums"
+                              className="rounded-xl text-center font-mono tabular-nums"
                               style={{
                                 ...style,
                                 width: cell,
@@ -164,7 +156,7 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
                 <span
                   className="h-2 max-w-[200px] flex-1 rounded-full"
                   style={{
-                    background: `linear-gradient(90deg, ${cellStyle(-1, dark).background}, ${cellStyle(0, dark).background}, ${cellStyle(1, dark).background})`,
+                    background: `linear-gradient(90deg, ${cellStyle(-1).background}, ${cellStyle(0).background}, ${cellStyle(1).background})`,
                   }}
                 />
                 <span>+1.0</span>

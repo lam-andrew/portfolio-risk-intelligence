@@ -100,7 +100,7 @@ export function StressTestPage({ hasHoldings }: { hasHoldings: boolean }) {
                 <select
                   id="stress-scenario"
                   value={selected}
-                  className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="rounded-full border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onChange={(e) => {
                     request.current += 1;
                     setSelected(e.target.value);

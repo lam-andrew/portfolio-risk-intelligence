@@ -56,9 +56,9 @@
    moves the landing page with it and the two cannot drift apart.
    --------------------------------------------------------------------------- */
 .landing {
-  --lp-card: rgba(255, 255, 255, 0.026);
-  --lp-line: rgba(255, 255, 255, 0.075);
-  --lp-glow: rgba(74, 147, 240, 0.5);
+  --lp-card: var(--surface);
+  --lp-line: var(--border);
+  --lp-glow: color-mix(in srgb, var(--accent) 35%, transparent);
 
   background: var(--background);
   color: var(--foreground);
@@ -74,7 +74,7 @@
 .lp-card {
   background: var(--lp-card);
   border: 1px solid var(--lp-line);
-  border-radius: 18px;
+  border-radius: 24px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
@@ -164,5 +164,177 @@
   .lp-body,
   .lp-pulse {
     animation: none;
+  }
+}
+
+/* Shared product treatment: one palette across every route and financial chart. */
+.orbit-shell {
+  margin: 16px;
+  min-height: calc(100vh - 32px);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  background:
+    radial-gradient(
+      ellipse 440px 220px at 0 0,
+      color-mix(in srgb, var(--accent) 9%, transparent),
+      transparent
+    ),
+    var(--background);
+}
+.orbit-panel {
+  border-radius: 24px;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 3%, transparent);
+}
+.orbit-stat {
+  min-height: 152px;
+  justify-content: center;
+}
+.orbit-stat-featured {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  border-color: transparent;
+}
+.orbit-stat-featured .text-muted-foreground,
+.orbit-stat-featured .text-up,
+.orbit-stat-featured .text-down {
+  color: var(--accent-foreground);
+}
+.orbit-nav-symbol {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--surface-2);
+}
+.orbit-nav-active .orbit-nav-symbol {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+.orbit-auth {
+  background: radial-gradient(
+    ellipse 450px 350px at 20% 10%,
+    color-mix(in srgb, var(--accent) 10%, transparent),
+    transparent
+  );
+}
+.chart-axis {
+  fill: var(--muted-foreground);
+  font:
+    11px "IBM Plex Mono",
+    monospace;
+}
+.chart-bar {
+  transition:
+    height 250ms ease,
+    y 250ms ease;
+}
+.chart-choice {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.chart-choice[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--accent-foreground);
+}
+.allocation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+.allocation-key {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  text-align: left;
+}
+.allocation-key[aria-pressed="true"] {
+  background: var(--surface-2);
+  color: var(--foreground);
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.orbit-shell table tbody tr {
+  transition: background-color 120ms;
+}
+.orbit-shell table tbody tr:hover {
+  background-color: var(--surface-2);
+}
+.orbit-shell progress {
+  accent-color: var(--accent);
+}
+@media (min-width: 640px) {
+  .allocation-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(140px, 0.8fr);
+  }
+}
+@media (min-width: 1024px) {
+  .orbit-desktop-nav .orbit-sidebar {
+    padding: 22px 10px;
+    gap: 28px;
+  }
+  .orbit-desktop-nav .orbit-brand {
+    flex-direction: column;
+    padding: 0;
+  }
+  .orbit-desktop-nav .orbit-brand-caption,
+  .orbit-desktop-nav .orbit-nav-group,
+  .orbit-desktop-nav .orbit-account-email {
+    display: none;
+  }
+  .orbit-desktop-nav nav {
+    gap: 16px;
+  }
+  .orbit-desktop-nav .orbit-nav-link {
+    flex-direction: column;
+    gap: 5px;
+    padding: 7px 1px;
+    font-size: 11px;
+    line-height: 1.4;
+    text-align: center;
+    border-radius: 16px;
+  }
+  .orbit-desktop-nav .orbit-nav-symbol {
+    width: 38px;
+    height: 38px;
+  }
+  .orbit-desktop-nav .orbit-sidebar > div:last-child > div {
+    justify-content: center;
+  }
+}
+@media (max-width: 639px) {
+  .orbit-shell {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+  .orbit-panel {
+    border-radius: 20px;
+  }
+  .orbit-stat {
+    min-height: 136px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chart-bar,
+  .orbit-shell * {
+    transition: none !important;
+    scroll-behavior: auto !important;
   }
 }

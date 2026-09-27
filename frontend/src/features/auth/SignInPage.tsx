@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 
 import { login, register, toErrorMessage, type User } from "@/api/client";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -42,12 +43,15 @@ export function SignInPage({ onSignedIn }: { onSignedIn: (user: User) => void })
   const canSubmit = email.trim() !== "" && password !== "" && !tooShort && !busy;
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-5 py-12">
+    <div className="orbit-auth flex min-h-screen items-center justify-center px-5 py-12">
       <div className="flex w-full max-w-sm flex-col gap-6">
+        <div className="self-end">
+          <ThemeToggle />
+        </div>
         <div className="flex flex-col items-center gap-2 text-center">
           <span
             className="grid h-11 w-11 place-items-center rounded-xl text-white"
-            style={{ background: "linear-gradient(150deg, var(--accent), #1f5fb0)" }}
+            style={{ background: "var(--accent)", color: "var(--accent-foreground)" }}
             aria-hidden="true"
           >
             <svg

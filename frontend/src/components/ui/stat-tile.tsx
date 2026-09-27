@@ -12,17 +12,30 @@ interface StatTileProps {
   badge?: ReactNode;
   chart?: ReactNode;
   className?: string;
+  featured?: boolean;
 }
 
 /** Summary-before-detail tile for the dashboard's top row. */
-export function StatTile({ label, value, detail, badge, chart, className }: StatTileProps) {
+export function StatTile({
+  label,
+  value,
+  detail,
+  badge,
+  chart,
+  className,
+  featured = false,
+}: StatTileProps) {
   return (
-    <Card className={cn("flex flex-col gap-2 p-5", className)}>
-      <span className="font-mono text-[10.5px] font-medium uppercase tracking-[0.13em] text-faint">
-        {label}
-      </span>
+    <Card
+      className={cn(
+        "orbit-stat flex min-w-0 flex-col gap-3 p-5 sm:p-6",
+        featured && "orbit-stat-featured",
+        className,
+      )}
+    >
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
       <div className="flex items-end justify-between gap-3">
-        <span className="font-mono text-[26px] font-medium leading-none tracking-tight tabular-nums">
+        <span className="font-mono text-[clamp(22px,1.7vw,30px)] font-medium leading-tight tracking-tight break-words tabular-nums">
           {value}
         </span>
         {badge}
