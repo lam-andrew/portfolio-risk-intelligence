@@ -165,6 +165,26 @@ describe("Dashboard (US-10)", () => {
     expect(screen.getAllByText(APP_NAME).length).toBeGreaterThan(0);
   });
 
+  it("keeps mobile navigation keyboard focus inside and restores it on Escape", async () => {
+    renderAt("/");
+    const open = await screen.findByRole("button", { name: "Open navigation" });
+    open.focus();
+    fireEvent.click(open);
+    const drawer = screen.getByRole("dialog", { name: "Navigation" });
+    expect(within(drawer).getByRole("link", { name: "Overview" })).toHaveFocus();
+    const close = within(drawer).getByRole("button", { name: "Close navigation" });
+    const signOut = within(drawer).getByRole("button", { name: "Sign out" });
+    signOut.focus();
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(close).toHaveFocus();
+    fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+    expect(signOut).toHaveFocus();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(open).toHaveFocus();
+    expect(document.body.style.overflow).not.toBe("hidden");
+  });
+
   it("presents summary tiles before the detail", async () => {
     renderAt("/");
 
@@ -178,14 +198,14 @@ describe("Dashboard (US-10)", () => {
     expect(screen.getByText("Moderate")).toBeInTheDocument();
 
     expect(screen.getByText("Average correlation")).toBeInTheDocument();
-    expect(screen.getByText("Effective holdings")).toBeInTheDocument();
-    // 2.88 effective appears in the tile and in the concentration card below.
+    expect(screen.getByText(/effective holdings, from/i)).toBeInTheDocument();
+    // Effective holdings remains available in the concentration detail.
     expect(screen.getAllByText("2.9").length).toBeGreaterThan(0);
     // "Worst decline" labels both the tile and the drawdown card.
     expect(screen.getAllByText("Worst decline").length).toBeGreaterThan(0);
   });
 
-  it("renders a value sparkline as a labelled image", async () => {
+  it("renders value history as a labelled image", async () => {
     renderAt("/");
     expect(
       await screen.findByRole("img", { name: /portfolio value over time/i }),

@@ -1,3 +1,4 @@
+import { useId } from "react";
 /** A compact trend line for a stat tile.
  *
  *  Hand-drawn SVG rather than a charting library: at this size there are no axes, ticks or
@@ -12,6 +13,7 @@ interface SparklineProps {
 }
 
 export function Sparkline({ values, color = "var(--accent)", className, label }: SparklineProps) {
+  const gradientId = useId();
   if (values.length < 2) return null;
 
   const width = 240;
@@ -28,7 +30,6 @@ export function Sparkline({ values, color = "var(--accent)", className, label }:
     .map((v, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`)
     .join(" ");
   const area = `${line} L${x(values.length - 1).toFixed(1)} ${height - pad} L${x(0).toFixed(1)} ${height - pad} Z`;
-  const gradientId = `spark-${label?.replace(/\W/g, "") ?? "x"}-${values.length}`;
 
   return (
     <svg
@@ -54,6 +55,15 @@ export function Sparkline({ values, color = "var(--accent)", className, label }:
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+      {values.map(
+        (v, i) =>
+          i % Math.max(1, Math.ceil(values.length / 10)) === 0 && (
+            <g key={i}>
+              <circle cx={x(i)} cy={y(v)} r="3.5" fill={color} opacity=".15" />
+              <circle cx={x(i)} cy={y(v)} r="1.5" fill={color} />
+            </g>
+          ),
+      )}
       <circle cx={x(values.length - 1)} cy={y(values[values.length - 1])} r="2.4" fill={color} />
     </svg>
   );

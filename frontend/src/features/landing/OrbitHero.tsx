@@ -116,9 +116,9 @@ export function OrbitHero({ className }: { className?: string }) {
       <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="absolute inset-0 h-full w-full">
         <defs>
           <radialGradient id="lp-core" cx="38%" cy="34%">
-            <stop offset="0%" stopColor="#dcebff" />
+            <stop offset="0%" stopColor="var(--foreground)" />
             <stop offset="45%" stopColor="var(--accent)" />
-            <stop offset="100%" stopColor="#12395f" />
+            <stop offset="100%" stopColor="var(--surface-2)" />
           </radialGradient>
           <linearGradient id="lp-ring" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.55" />

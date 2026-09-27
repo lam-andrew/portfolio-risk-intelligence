@@ -1,3 +1,5 @@
+import { AllocationChart } from "@/components/charts/AllocationChart";
+import type { Position } from "@/api/client";
 import type { PortfolioConcentration } from "@/api/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExplainLink } from "@/features/methodology/ExplainLink";
@@ -13,7 +15,13 @@ function pct(value: string | null): string {
  *  Leads with effective holdings rather than raw weights: "11 positions behaving like 2.9"
  *  states the problem in one line, where a column of percentages leaves the reader to infer
  *  it. Overlap groups follow, because that is the concentration a holdings table hides. */
-export function ConcentrationCard({ data }: { data: PortfolioConcentration }) {
+export function ConcentrationCard({
+  data,
+  positions,
+}: {
+  data: PortfolioConcentration;
+  positions?: Position[];
+}) {
   if (data.effective_holdings === null || data.holdings_count === 0) {
     return (
       <Card>
@@ -33,7 +41,7 @@ export function ConcentrationCard({ data }: { data: PortfolioConcentration }) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-baseline justify-between gap-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
           <CardTitle>Concentration</CardTitle>
           <ExplainLink anchor="concentration" />
           <span className="font-mono text-xs text-faint">HHI {data.hhi}</span>
@@ -42,6 +50,7 @@ export function ConcentrationCard({ data }: { data: PortfolioConcentration }) {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-5">
+          {positions && <AllocationChart positions={positions} />}
           <div>
             <div className="flex items-end gap-2.5">
               <span className="font-mono text-4xl font-medium leading-none tabular-nums tracking-tight">
@@ -116,7 +125,7 @@ export function ConcentrationCard({ data }: { data: PortfolioConcentration }) {
               <ul className="flex flex-col gap-2">
                 {data.overlaps.map((group) => (
                   <li key={group.tickers.join("-")} className="flex flex-col gap-0.5">
-                    <div className="flex items-baseline justify-between gap-3 text-sm">
+                    <div className="flex flex-wrap items-baseline justify-between gap-3 text-sm">
                       <span className="font-mono font-medium">{group.tickers.join(" + ")}</span>
                       <span className="font-mono tabular-nums">
                         {pct(group.combined_weight_pct)}

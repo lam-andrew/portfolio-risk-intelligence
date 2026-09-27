@@ -192,3 +192,11 @@ frontend tests**, plus **four native PostgreSQL tests** run separately. Ruff, my
 Prettier, TypeScript and production build pass; existing warnings are unchanged. Desktop
 and 390px mobile controlled browser checks passed with synthetic data. User acceptance
 remains pending; the story has no new sprint assignment or estimate.
+
+## UI/chart refresh — September 26, 2026
+
+The user-approved application sweep is tracked in [#93](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/93).
+See [UI refresh verification](ui-refresh-tests.md) for route coverage, new chart and theme
+cases, mobile keyboard behavior, 99 passing frontend tests, production build/audit results
+and the existing development-tool audit limitations. This does not complete US-12 live
+acceptance or change any sprint assignment.

@@ -1,3 +1,5 @@
+import { AllocationChart } from "@/components/charts/AllocationChart";
+import { LineChart } from "@/components/charts/LineChart";
 import { Link } from "react-router-dom";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,14 +52,11 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
   const changePct = first !== undefined && first !== 0 ? ((last - first) / first) * 100 : null;
   const rising = changePct !== null && changePct >= 0;
 
-  const topWeight = [...summary.positions].sort(
-    (a, b) => Number(b.weight_pct ?? 0) - Number(a.weight_pct ?? 0),
-  )[0];
-
   return (
     <div className="flex flex-col gap-4">
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatTile
+          featured
           label="Portfolio value"
           value={formatCurrency(summary.total_value)}
           detail={
@@ -72,11 +71,7 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
           }
           chart={
             values.length > 1 ? (
-              <Sparkline
-                values={values}
-                color={rising ? "var(--up)" : "var(--down)"}
-                label="Portfolio value over time"
-              />
+              <Sparkline values={values} color="currentColor" label="Portfolio value over time" />
             ) : undefined
           }
         />
@@ -103,21 +98,6 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
         />
 
         <StatTile
-          label="Effective holdings"
-          value={
-            concentration?.effective_holdings !== null &&
-            concentration?.effective_holdings !== undefined
-              ? Number(concentration.effective_holdings).toFixed(1)
-              : "—"
-          }
-          detail={
-            concentration !== null
-              ? `from ${concentration.holdings_count} positions${topWeight !== undefined ? ` · ${topWeight.ticker} is ${pct(topWeight.weight_pct)}` : ""}`
-              : "Concentration"
-          }
-        />
-
-        <StatTile
           label="Worst decline"
           value={pct(drawdown?.max_drawdown_pct)}
           detail={
@@ -128,10 +108,46 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
         />
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
+      {history && history.points.length > 0 && (
         <Card>
           <CardHeader>
-            <div className="flex items-baseline justify-between gap-3">
+            <CardTitle>Portfolio value over time</CardTitle>
+            <CardDescription>
+              Current share quantities replayed at historical prices. This is not your actual
+              investment return.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <LineChart
+              points={history.points.map((p) => ({ date: p.date, value: Number(p.value) }))}
+              label="Portfolio value"
+              unit="Value · USD"
+              formatValue={(v) => formatCurrency(String(v))}
+            />
+            <p className="mt-3 text-xs text-muted-foreground">
+              Source: cached market prices · {history.start} to {history.end}
+            </p>
+          </CardContent>
+        </Card>
+      )}
+      <section className="grid gap-4 xl:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Where your exposure sits</CardTitle>
+            <CardDescription>
+              Portfolio weight by holding. Select a holding to inspect its share.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AllocationChart positions={summary.positions} />
+          </CardContent>
+        </Card>
+        {correlation !== null && <CorrelationCard correlation={correlation} compact />}
+      </section>
+      <section className="grid gap-4">
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-baseline justify-between gap-3">
               <CardTitle>Holdings</CardTitle>
               <Link
                 to="/holdings"
@@ -151,19 +167,6 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
             />
           </CardContent>
         </Card>
-
-        {correlation !== null && summary.positions.length > 1 ? (
-          <CorrelationCard correlation={correlation} compact />
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>Correlation</CardTitle>
-              <CardDescription>
-                Add a second holding to see how your positions move together.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        )}
       </section>
 
       <section className="grid gap-4 xl:grid-cols-2">

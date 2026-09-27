@@ -21,7 +21,13 @@ export function VolatilitySpark() {
         </linearGradient>
       </defs>
       <path d={`M ${d} L 200,76 L 0,76 Z`} fill="url(#mv-vol)" />
-      <path d={`M ${d}`} fill="none" stroke={ACCENT} strokeWidth="2" strokeLinejoin="round" />
+      <path d={`M ${d}`} fill="none" stroke={ACCENT} strokeWidth="1.4" strokeLinejoin="round" />
+      {pts.map((v, i) => (
+        <g key={i}>
+          <circle cx={(i / (pts.length - 1)) * 200} cy={70 - v} r="5" fill={ACCENT} opacity=".15" />
+          <circle cx={(i / (pts.length - 1)) * 200} cy={70 - v} r="2.5" fill={ACCENT} />
+        </g>
+      ))}
     </svg>
   );
 }
@@ -85,13 +91,36 @@ export function DrawdownCurve() {
     <svg viewBox="0 0 200 76" className="h-full w-full" aria-hidden="true">
       <defs>
         <linearGradient id="mv-dd" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#f0655f" stopOpacity="0.40" />
-          <stop offset="100%" stopColor="#f0655f" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--down)" stopOpacity="0.40" />
+          <stop offset="100%" stopColor="var(--down)" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <line x1="0" y1="4" x2="200" y2="4" stroke="rgba(255,255,255,0.22)" strokeWidth="1" />
+      <line
+        x1="0"
+        y1="4"
+        x2="200"
+        y2="4"
+        stroke="var(--muted-foreground)"
+        strokeDasharray="2 5"
+        strokeWidth="1"
+      />
       <path d={`M ${d} L 200,0 L 0,0 Z`} fill="url(#mv-dd)" />
-      <path d={`M ${d}`} fill="none" stroke="#f0655f" strokeWidth="2" strokeLinejoin="round" />
+      <path
+        d={`M ${d}`}
+        fill="none"
+        stroke="var(--down)"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      {pts.map((v, i) => (
+        <circle
+          key={i}
+          cx={(i / (pts.length - 1)) * 200}
+          cy={4 + Math.abs(v) * 2.2}
+          r="2.5"
+          fill="var(--down)"
+        />
+      ))}
     </svg>
   );
 }

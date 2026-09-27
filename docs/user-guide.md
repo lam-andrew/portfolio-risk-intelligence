@@ -196,3 +196,21 @@ stores no question history. Live model quality and user acceptance are still bei
 | 2026-09-02 | Initial user guide created as a living document. |
 | 2026-09-08 | Documented edit/save/cancel and confirmed deletion for US-3; distinguished usage instructions from pending UAT evidence. |
 | 2026-09-18 | Added hypothetical stress-test workflow, pricing completeness rules and limitations for early US-9 implementation. |
+
+## Chart controls and appearance
+
+Use **Light mode / Dark mode** in the header to change the appearance; Orbit remembers
+that choice in this browser. On smaller screens, open navigation with the menu button.
+Escape closes the menu and returns keyboard focus to that button.
+
+The overview now includes a full history chart and portfolio allocation chart. Move
+across the history line, or use **Inspect date** with touch or keyboard arrows, to read
+an exact observation. History replays today's share quantities at past prices; it is
+not a record of your actual investment returns. Drawdown uses the same date control,
+with declines below a dotted zero baseline.
+
+Select a holding beside the allocation chart to highlight its weight. For more than
+six holdings, the largest five are shown individually and the rest are grouped as
+**Other holdings**. Missing prices are not assigned invented weights. Stress-test bars
+show the five largest dollar losses on a common scale starting at zero; select a ticker
+below the bars for its exact value. The full holdings table remains available below.

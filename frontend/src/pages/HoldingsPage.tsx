@@ -18,7 +18,7 @@ export function HoldingsPage({ data, onChanged }: HoldingsPageProps) {
     <div className="flex flex-col gap-4">
       <Card>
         <CardHeader>
-          <div className="flex items-baseline justify-between gap-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
             <CardTitle>Holdings</CardTitle>
             <span className="font-mono text-xs text-faint">
               {summary.positions.length} {summary.positions.length === 1 ? "position" : "positions"}
