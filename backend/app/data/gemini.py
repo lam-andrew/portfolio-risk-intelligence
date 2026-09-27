@@ -119,7 +119,35 @@ class GeminiProvider:
         try:
             if result.get("status") != "completed":
                 raise ValueError("Incomplete model response")
-            return schema.model_validate_json(result["output_text"])
+            # output_text is an SDK convenience, absent from the REST response.
+            # Only final model output is evidence; never parse thoughts/tool steps.
+            steps = result["steps"]
+            if not isinstance(steps, list):
+                raise ValueError("Invalid interaction steps")
+            outputs = []
+            for step in steps:
+                if not isinstance(step, dict):
+                    raise ValueError("Invalid interaction step")
+                if step.get("type") == "thought":
+                    continue
+                if step.get("type") != "model_output":
+                    raise ValueError("Unexpected interaction step")
+                outputs.append(step)
+            if len(outputs) != 1:
+                raise ValueError("Expected one final model output")
+            content = outputs[0].get("content")
+            if not isinstance(content, list) or not content:
+                raise ValueError("Missing model content")
+            texts = []
+            for part in content:
+                if (
+                    not isinstance(part, dict)
+                    or part.get("type") != "text"
+                    or not isinstance(part.get("text"), str)
+                ):
+                    raise ValueError("Expected text content")
+                texts.append(part["text"])
+            return schema.model_validate_json("".join(texts))
         except (KeyError, TypeError, ValueError, ValidationError) as exc:
             raise ModelError("The question service returned an invalid answer.") from exc
 
