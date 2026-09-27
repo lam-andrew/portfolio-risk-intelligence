@@ -1,6 +1,9 @@
 # US-12 live evaluation runbook
 
-Status: **prepared, not executed**. Depends on the [free-tier setup](qa-setup.md).
+Status: **20-case evaluation prepared, not executed**. Free-tier activation and two
+provider-adapter smoke checks completed September 26; corpus preparation is incomplete
+and encountered a provider quota pause. See [activation evidence](us12-question-tests.md#first-live-activation-and-rest-adapter-correction--september-26-2026).
+The smoke checks are not scored evaluation cases. Setup: [free-tier guide](qa-setup.md).
 All cases trace to FR-14 / US-12; supported cases exercise AC1 and unsupported cases AC2.
 [Offline results](us12-question-tests.md) are separate evidence.
 
