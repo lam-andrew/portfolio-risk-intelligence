@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { FilingQuestions } from "../components/FilingQuestions";
 
 import {
   getFilings,
@@ -443,6 +444,7 @@ function HoldingFilings({ ticker }: { ticker: string }) {
               </p>
             </CardContent>
           </Card>
+          <FilingQuestions key={ticker} ticker={ticker} />
           {overview.filings.length > 0 && (
             <>
               <section aria-label="Indexed sources" className="flex flex-col gap-3">

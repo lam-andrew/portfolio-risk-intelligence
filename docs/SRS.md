@@ -267,7 +267,7 @@ Every requirement traces to a story, a sprint, and the tests that verify it.
 | FR-11 | US-9 | 3 | [Stress specifications and results](us9-stress-tests.md): engine, authenticated API, UI and controlled browser checks |
 | FR-12 | US-10 | 2 | Frontend component + routing tests |
 | FR-13 | US-11 | 3 | [US-11 procedures](us11-filing-tests.md): bounded ingestion, source search, authorization, recovery and native PostgreSQL indexing; live acceptance pending |
-| FR-14 | US-12 | 3 | Grounding tests: every claim traceable to retrieved text |
+| FR-14 | US-12 | 3 | [US-12 procedures](us12-question-tests.md): provenance, support validation, retrieval and UI; live quality / UAT pending |
 | FR-15 | US-13 | 2 | Auth tests: unauthenticated rejection, session lifecycle, ownership isolation |
 | AR-1 | US-14 | 1 | CI integration job: full stack boots and services communicate |
 | AR-2 | US-15 | 1 | Engine modules import no I/O; enforced by review and static analysis |
@@ -294,4 +294,4 @@ notifications or real-time filing alerts are included.
 Traceability: **FR-16 → US-21 / issue #90 → AF-01–AF-06** in
 [automatic-following test specifications](us21-following-tests.md), including results and
 remaining user acceptance. FR-13 / US-11 continues to cover bounded filing extraction and
-retrieval. FR-14 / US-12 grounded Q&A remains separate and unimplemented.
+retrieval. FR-14 / US-12 grounded Q&A is implemented early on September 26; live evaluation and user acceptance remain pending. Sprint 3 and the eight-point estimate are unchanged. See ADR 0022 and the US-12 test specifications.

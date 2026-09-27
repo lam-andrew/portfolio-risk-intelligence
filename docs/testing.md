@@ -67,8 +67,7 @@ automated tests themselves are existing tests, not newly written for the report.
 
 ### Not yet covered
 
-FR-14 (grounded Q&A) is a Sprint 3 story whose tests will be
-written with those features. Early US-9 / FR-11 stress-test coverage is recorded in
+FR-14 (grounded Q&A) now has [US-12 offline and native test specifications](us12-question-tests.md); live model evaluation and UAT are pending. It remains a Sprint 3 story. Early US-9 / FR-11 stress-test coverage is recorded in
 [the stress-test specifications](us9-stress-tests.md); its Sprint 3 assignment is unchanged.
 FR-14 in particular needs a **grounding test**:
 every claim in an answer must be traceable to retrieved source text, which is a correctness

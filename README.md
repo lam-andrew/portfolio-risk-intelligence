@@ -82,8 +82,7 @@ boundaries and planned components are distinguished in [the C4 diagrams](docs/ar
 
 Set `APP_SEC_CONTACT_EMAIL` in the ignored `.env` to an operator email you monitor, then
 run `docker compose up -d --build`. It is transmitted to SEC as the application contact.
-The app boots without it; downloads remain disabled. No model API key is needed for this
-release. The worker automatically discovers existing/new holdings and private watchlist
+The app boots without it; downloads remain disabled. No model API key is needed for ingestion or keyword search. The worker automatically discovers existing/new holdings and private watchlist
 companies, then checks for new filings daily. Open **SEC filings** to add watched tickers,
 see retrieval status and search keywords. Watchlists do not affect portfolio risk.
 Coverage is the latest 10-K, latest 10-Q and five latest 8-K primary documents in SEC's
@@ -91,9 +90,32 @@ recent submissions list, not complete historical coverage. See [the user guide](
 
 Decisions: [ADR 0019](docs/adr/0019-sec-filing-ingestion.md),
 [ADR 0020](docs/adr/0020-filing-retrieval-staging.md),
-[ADR 0021](docs/adr/0021-automatic-filing-following.md). Embeddings and grounded generation
-remain US-12; this release uses native PostgreSQL full-text search. Implementation began
+[ADR 0021](docs/adr/0021-automatic-filing-following.md). Keyword search uses native PostgreSQL full-text search. US-11 implementation began
 September 19, 2026, without changing Sprint 3 or the five-point estimate.
+
+### Grounded filing questions (US-12, early implementation September 26)
+
+The filings screen now includes a question form, preparation progress, cited claims and an
+explicit insufficient-evidence response. A separate **embedding-worker** container uses the
+backend image to prepare tracked issuers. All vectors stay in PostgreSQL/pgvector; model I/O
+uses a replaceable backend adapter. See [ADR 0022](docs/adr/0022-grounded-filing-questions.md)
+and [verification / pending live acceptance](docs/us12-question-tests.md).
+
+Initial candidates are Gemini 3.8 Flash and Gemini Embedding 2. Before enabling them:
+
+1. Create an API key in [Google AI Studio](https://aistudio.google.com/api-keys) using a
+   **Free-tier project with billing disabled**. Orbit cannot verify billing from the key.
+2. Set `APP_GEMINI_API_KEY` in the ignored `.env`, then `APP_QA_ENABLED=true` and
+   `APP_QA_PROVIDER=gemini`. Enabling starts preparation of public filing passages.
+3. Recreate services: `docker compose up -d --build backend embedding-worker`.
+4. Open **SEC filings** and wait for preparation counts to finish, then ask a question.
+
+Leave Q&A disabled for a keyless setup. Other features and source search continue to work.
+No paid fallback is configured. Questions and excerpts go to Google, whose free-tier terms
+allow product-improvement use; keep questions free of confidential information. Orbit saves
+no conversation history. Free quotas can pause preparation or answers. Local request budgets,
+model versions, container boundaries and migration rules are recorded in ADR 0022.
+Live quality evaluation and user acceptance are **pending**; US-12 remains Sprint 3 / 8 points.
 
 ### Quality attributes the architecture targets
 
