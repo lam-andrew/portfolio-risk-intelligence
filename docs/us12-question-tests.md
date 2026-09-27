@@ -119,3 +119,17 @@ run before acceptance. A passing small evaluation does not guarantee universal c
 Browser UAT remains pending for live answers, quota recovery and visual confirmation of
 real citation passages. Until then the branch/PR is a reviewable implementation, not an
 accepted release.
+
+## Additional handoff verification — September 26
+
+The API test suite also checks invalid/non-SEC source URLs, a verifier outage or quota
+failure after generation (no unverified draft escapes), source replacement during an
+embedding call (no stale vector is saved), and a durable ten-minute provider pause followed
+by recovery. These eight cases extend QA-01/04/05/06. The containerized backend regression now
+passes **301 tests**, with seven native tests skipped in the ordinary suite. Ruff lint,
+format checks and strict mypy also pass. No application behavior or dependencies changed
+in this follow-up; the earlier frontend/native results remain applicable.
+
+Live setup and operational limits: [API-key guide](qa-setup.md). The
+[20-case runbook](us12-live-evaluation.md) defines label preparation, mixed case classes,
+quota-aware execution and metric denominators. It remains **not executed**.

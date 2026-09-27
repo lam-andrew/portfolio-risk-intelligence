@@ -11,7 +11,7 @@ from app.core.config import settings
 from app.core.database import get_session
 from app.data.filing_embeddings import coverage, prepare_batch, retrieve
 from app.data.gemini import EMBEDDING_VERSION
-from app.data.model_budget import ModelLimitError, reserve
+from app.data.model_budget import ModelLimitError, pause, reserve
 from app.data.question_provider import ModelError
 from app.engines.rag.grounding import AnswerDraft, GroundingVerdict
 from app.main import app
@@ -292,3 +292,75 @@ def test_budget_survives_new_sessions_and_resets_next_day(client):
         with pytest.raises(ModelLimitError):
             reserve(session, "test", daily=2, seconds=30, now=now + timedelta(minutes=2))
         reserve(session, "test", daily=2, seconds=30, now=now + timedelta(days=1))
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://www.sec.gov/Archives/edgar/data/1/a.htm",
+        "https://www.sec.gov.evil.example/Archives/edgar/data/1/a.htm",
+        "https://evil.example/Archives/edgar/data/1/a.htm",
+        "https://www.sec.gov/unrelated/a.htm",
+    ],
+)
+def test_untrusted_source_url_never_reaches_answer(client, questions, url):
+    with db() as session:
+        filing = session.get(Filing, "0000000001-26-000001")
+        filing.source_url = url
+        session.commit()
+    response = ask(client)
+    assert response.status_code == 503
+    assert "claims" not in response.json()
+    assert url not in response.text
+
+
+@pytest.mark.parametrize(
+    "error,code",
+    [(ModelError("Verifier unavailable"), 503), (ModelLimitError("Verifier quota"), 429)],
+)
+def test_verifier_failure_never_releases_unverified_draft(client, questions, error, code):
+    def fail(*args):
+        raise error
+
+    questions.verify = fail
+    response = ask(client)
+    assert response.status_code == code
+    assert "claims" not in response.json()
+    assert "single supplier" not in response.text
+    if code == 429:
+        with db() as session, pytest.raises(ModelLimitError):
+            reserve(session, "generation", daily=40, seconds=0)
+
+
+def test_worker_discards_embedding_if_source_changes_during_remote_call(client, questions):
+    def replace_source(texts, *, query=False):
+        with db() as other:
+            passage = other.scalar(
+                select(FilingPassage).where(FilingPassage.accession == "0000000001-26-000001")
+            )
+            passage.text = "A replacement passage that needs its own embedding."
+            other.commit()
+        return [VECTOR for _ in texts]
+
+    questions.embed = replace_source
+    with db() as session:
+        session.execute(delete(PassageEmbedding))
+        session.commit()
+        prepare_batch(session, questions)
+        assert coverage(session, "0000000001", EMBEDDING_VERSION) == (1, 0)
+
+
+def test_provider_pause_survives_sessions_then_allows_retry(client):
+    with db() as session:
+        reserve(session, "generation", daily=40, seconds=0)
+        pause(session, "generation")
+    with db() as session:
+        with pytest.raises(ModelLimitError):
+            reserve(session, "generation", daily=40, seconds=0)
+        reserve(
+            session,
+            "generation",
+            daily=40,
+            seconds=0,
+            now=datetime.now(UTC) + timedelta(minutes=11),
+        )

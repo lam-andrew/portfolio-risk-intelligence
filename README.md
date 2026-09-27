@@ -101,7 +101,9 @@ backend image to prepare tracked issuers. All vectors stay in PostgreSQL/pgvecto
 uses a replaceable backend adapter. See [ADR 0022](docs/adr/0022-grounded-filing-questions.md)
 and [verification / pending live acceptance](docs/us12-question-tests.md).
 
-Initial candidates are Gemini 3.8 Flash and Gemini Embedding 2. Before enabling them:
+Initial candidates are Gemini 3.8 Flash and Gemini Embedding 2. The detailed
+[API-key handoff and troubleshooting guide](docs/qa-setup.md) covers free-tier setup,
+preparation time and the live evaluation. Before enabling them:
 
 1. Create an API key in [Google AI Studio](https://aistudio.google.com/api-keys) using a
    **Free-tier project with billing disabled**. Orbit cannot verify billing from the key.
