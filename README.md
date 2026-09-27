@@ -264,3 +264,14 @@ The estimated Sprint 1-3 baseline totals 62 points, excluding unestimated additi
 ## 8. Academic context
 
 Penn State World Campus — Master of Software Engineering — **SWENG 894 Capstone Experience**. Solo project (Group 5). Instructor: Dr. Raghu Sangwan. The build follows an agile-like process (SCRUM/Kanban/DevOps adapted for an academic setting) with weekly reports, two product demos (end of Sprint 2 and Sprint 4), and a final documentation suite (SRS, architecture & design, testing report, end-user manual).
+
+### Application visual direction — September 26 refresh
+
+The approved UI refresh uses Orbit's existing palette with shared rounded panels,
+responsive labeled navigation, theme controls, marked history/drawdown lines, proportional
+allocation segments and zero-based stress bars. All application charts use existing API
+results and hand-authored SVG. See [ADR 0023](docs/adr/0023-unified-dashboard-chart-design.md),
+[chart controls](docs/user-guide.md#chart-controls-and-appearance) and
+[verification notes](docs/ui-refresh-tests.md). Review is tracked in
+[UI issue #93](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/93), separately
+from US-12 provider activation.
