@@ -102,7 +102,9 @@ document routine coding choices — that creates noise, not signal.
 
 ## Current status
 
-Sprint 1 (Weeks 3–5). Goal: a running, deployable app that ingests a portfolio and shows a
-real risk metric (volatility) on live market data — a thin end-to-end slice. Sprint 1
-stories: US-14, US-15 (architectural, do first), then US-1, US-3, US-4, US-5. Full stories
-with acceptance criteria are in GitHub Issues and the project board.
+Sprint 2 (Weeks 6–8), planning baseline September 28, 2026. Seven selected stories:
+US-13, US-2, US-6, US-7, US-8, US-10 and US-19, totaling 23 points. Original six
+estimates remain unchanged; Andrew approved US-19 at 2 points. Existing core
+implementations predate the sprint; do not count them as new Week 6 delivery.
+Five Sprint 1 acceptance procedures remain to be verified. See
+`docs/sprint2-plan.md` and `docs/sprint2-tests.md`; require evidence before Done.
