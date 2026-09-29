@@ -96,3 +96,13 @@ September 28: approved scope 23; accepted 0; remaining 23. Five carryover verifi
 - [Authentication](adr/0014-authentication.md)
 
 No new architecture decision is introduced by this planning update.
+
+## Integration blocker observed September 28
+
+The documentation PR #95 triggered fresh CI on the main-based planning branch.
+Backend type-checking fails in `app/data/filing_schedule.py` (lines 21 and 45):
+SQLAlchemy `CompoundSelect` return typing and a missing inferred list annotation.
+The compatibility fix already exists in unmerged commit `5de4b25` on PR #92.
+This is an existing code/dependency compatibility problem, not a documentation
+change. Keep #95 unmerged until the fix is integrated and required checks pass.
+[Failure evidence](https://github.com/lam-andrew/portfolio-risk-intelligence/actions/runs/36521193675).
