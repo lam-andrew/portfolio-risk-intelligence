@@ -241,6 +241,7 @@ the authoritative form. Sprint 1's six stories are reproduced in full in
 | US-8 | See historical drawdown | Core | 2 | 2 |
 | US-6 | See correlation among holdings | Core | 2 | 5 |
 | US-10 | Risk dashboard | Core | 2 | 5 |
+| US-19 | Risk methodology and explanations (FR-12 support) | Core | 2 | 2 |
 | US-9 | Run a stress test | Core | 3 | 8 |
 | US-11 | Ingest filings for a holding | Secondary | 3 | 5 |
 | US-12 | Ask a grounded question | Secondary | 3 | 8 |
@@ -249,6 +250,11 @@ the authoritative form. Sprint 1's six stories are reproduced in full in
 | US-18 | Automated brokerage connection | Stretch | — | — |
 
 ---
+
+Sprint 2 now totals **23 points**. US-19 received a 2-point estimate approved by
+Andrew on September 28, 2026; the six original estimates remain unchanged.
+See [the Sprint 2 plan](sprint2-plan.md) and [test specifications](sprint2-tests.md)
+for current acceptance criteria, DoD and requirement-to-test mapping.
 
 ## 6. Traceability matrix
 
