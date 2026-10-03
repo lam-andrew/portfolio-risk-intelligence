@@ -99,10 +99,31 @@ docker compose -f experiments/local_embeddings/compose.yaml down
 
 ## Measurements
 
-The local corpus benchmark uses 470 cached AMD passages. Measured results are added after
-completion. Local timing is from Apple Silicon Docker with a one-CPU limit, not the target
-Intel host. Target-host throughput, peak memory under concurrent application use and the
-20-case retrieval/grounding evaluation remain pending.
+Completed on October 2 on Apple Silicon Docker (`linux/arm64`), one ONNX thread and a
+one-CPU / 1-GiB container limit. This is **not** an OptiPlex benchmark.
+
+- Input: 470 cached AMD passages, expanded into 500 windows; 30 passages required splitting.
+- Model load, including artifact verification: 0.785 seconds (already downloaded files).
+- Initial corpus encoding: 790.793 seconds (13 minutes 11 seconds), 0.632 windows/second.
+- Fifteen sequential question-embedding + in-memory search samples: median 0.101 seconds;
+  95th percentile 0.103 seconds. Three questions repeated five times; not a concurrency SLO.
+- Peak benchmark-process RSS: 453.14 MiB. A sampled cgroup peak counter reached 513.73 MiB
+  while running; that sample is not a final full-container peak. No OOM or swap allowance.
+- Separate internal HTTP smoke measurement: ten repeated query-embedding requests,
+  median 0.103 seconds and maximum 0.166 seconds. No database or generation latency included.
+- GitHub linux/amd64 prototype, backend, frontend, integration and security checks passed
+  for implementation commit `27e2749`; the real model remains locally tested on arm64 only.
+
+Interpretation: interactive embedding looks promising, but single-CPU FP32 backfill is slow.
+Preserve completed work, schedule bounded incremental preparation and evaluate quantization
+before committing to full-corpus rebuild expectations. The target i5 may perform differently.
+The full 20-case retrieval/grounding evaluation and target-host load test remain pending.
+
+Manual inspection of three diagnostic rankings found supply-chain and export-control text
+in the top results. The manufacturing query ranked a mixed third-party-IP/platform-components
+passage first, so these results do not establish optimal ordering or accepted retrieval quality.
+No model-generated answers, citation verification or abstention cases ran in this benchmark.
+The raw output and source export remain in ignored local cache, not in the repository.
 
 ## Gates before switching the app
 
