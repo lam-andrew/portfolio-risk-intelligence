@@ -1,0 +1,34 @@
+# Separate project: no connection to Orbit's live database or provider keys.
+name: orbit-embedding-spike
+services:
+  provision:
+    build:
+      context: .
+      target: runtime
+    command: ["python", "download_model.py"]
+    profiles: ["setup"]
+    volumes: ["models:/models"]
+    healthcheck:
+      disable: true
+  encoder:
+    build:
+      context: .
+      target: runtime
+    environment:
+      EMBEDDING_THREADS: "1"
+    volumes: ["models:/models:ro"]
+    networks: [inference]
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpus: 1.0
+    pids_limit: 64
+    read_only: true
+    tmpfs: ["/tmp:size=16m"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+networks:
+  inference:
+    internal: true
+volumes:
+  models:
