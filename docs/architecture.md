@@ -526,3 +526,32 @@ A separate serial embedding process prevents model throttling from delaying SEC 
 Its missing-row queue and shared budgets survive restarts. Migration 0007 owns the schema.
 The keyless stack starts with Q&A disabled, while cached source search and risk still work.
 Offline tests exercise contracts and safeguards; they do not establish live model quality.
+
+
+## Proposed local embedding boundary — October 2 experiment
+
+The diagram below is a proposed integration, not the current application deployment.
+The isolated prototype implements only the internal embedding service and benchmark.
+See [ADR 0024](adr/0024-local-embedding-homelab-prototype.md) and
+[experiment evidence](local-embedding-spike.md).
+
+```mermaid
+C4Container
+    System_Boundary(host, "Proposed Orbit homelab VM / Docker Compose") {
+        Container(api, "API", "FastAPI", "Authenticated questions and retrieval orchestration")
+        Container(worker, "Preparation worker", "Python", "Resumable, bounded filing backfill")
+        Container(embed, "Shared embedding service", "ONNX Runtime / CPU", "One loaded BGE model; private endpoint")
+        ContainerDb(db, "Corpus and vector index", "PostgreSQL 16 / pgvector", "Public filings, source offsets and versioned vectors")
+    }
+    System_Ext(gemini, "Gemini", "Answer generation and support verification")
+    Rel(api, embed, "Encode question", "Internal HTTP")
+    Rel(worker, embed, "Encode filing windows", "Internal HTTP")
+    Rel(worker, db, "Read passages and persist vectors", "SQL")
+    Rel(api, db, "Retrieve issuer-specific evidence", "SQL")
+    Rel(api, gemini, "Question and selected public evidence", "HTTPS")
+```
+
+Resource estimates from the user-supplied read-only homelab inspection: 2 vCPUs, 6 GiB RAM
+and 48 GiB disk in a separate guest on the 16 GB OptiPlex. No guest has been provisioned
+for Orbit. Existing applications remain separate. Model and database services would not
+be exposed through host ports; private frontend ingress and backup setup remain deployment work.

@@ -43,3 +43,4 @@ capture an architecturally significant decision, its context, and its consequenc
 | [0020](0020-filing-retrieval-staging.md) | Full-text retrieval before hosted embeddings and generation | Accepted |
 | [0021](0021-automatic-filing-following.md) | Automatically follow filings for holdings and private watchlists | Accepted |
 | [0022](0022-grounded-filing-questions.md) | Portable grounded questions with a free-tier model adapter | Proposed; live evaluation pending |
+| [0024](0024-local-embedding-homelab-prototype.md) | CPU-only local embedding homelab prototype | Proposed; target-host and quality evaluation pending |

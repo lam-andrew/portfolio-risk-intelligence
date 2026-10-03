@@ -119,6 +119,13 @@ no conversation history. Free quotas can pause preparation or answers. Local req
 model versions, container boundaries and migration rules are recorded in ADR 0022.
 Live quality evaluation and user acceptance are **pending**; US-12 remains Sprint 3 / 8 points.
 
+### Local embedding experiment — October 2
+
+An isolated CPU-only BGE/ONNX prototype evaluates removal of the shared Gemini embedding
+quota for the planned OptiPlex homelab. It does not change the running application, database
+schema or hosting configuration. See [the experiment and results](docs/local-embedding-spike.md)
+and [proposed ADR 0024](docs/adr/0024-local-embedding-homelab-prototype.md).
+
 ### Quality attributes the architecture targets
 
 - **Maintainability / Modifiability** — decoupled engines behind an API contract; new engines added without touching the core.
