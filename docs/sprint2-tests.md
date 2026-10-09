@@ -73,7 +73,7 @@ test_auth.py: hashing, verification, expired/revoked sessions and case-normalize
 **Method:** Automated API/component regression plus specified browser integration verification  
 **Status:** Planned regression group; not newly executed for this specification.
 
-test_auth.py and test_api.py plus App.test.tsx: login cookie, authenticated requests, unauthorized access, logout and user isolation. Execute across a disposable PostgreSQL-backed stack as well as deterministic fixtures.
+test_auth.py plus App.test.tsx: login cookie, authenticated requests, unauthorized access, logout and user isolation. Execute across a disposable PostgreSQL-backed stack as well as deterministic fixtures.
 
 ## US-2 CSV portfolio import
 
@@ -178,7 +178,7 @@ test_correlation.py: independently calculated Pearson results, perfect positive/
 **Method:** Automated API/component regression plus specified browser integration verification  
 **Status:** Planned regression group; not newly executed for this specification.
 
-test_api.py and App.test.tsx: analysis response through the correlation view, correct holding labels and insufficient-data state. Use a deterministic market provider with aligned dates.
+test_risk.py and App.test.tsx: analysis response through the correlation view, correct holding labels and insufficient-data state. Use a deterministic market provider with aligned dates.
 
 ## US-7 Concentration and overlapping exposure
 
@@ -230,7 +230,7 @@ test_concentration.py: normalized HHI, effective holdings, top-N weights, 2/n ov
 **Method:** Automated API/component regression plus specified browser integration verification  
 **Status:** Planned regression group; not newly executed for this specification.
 
-test_api.py and App.test.tsx: exposure payloads render matching weights, flags and groups. Exercise a known analysis-response fixture and then compare a real stack response with the displayed result.
+test_exposure.py and App.test.tsx: exposure payloads render matching weights, flags and groups. Exercise a known analysis-response fixture and then compare a real stack response with the displayed result.
 
 ## US-8 Historical drawdown
 
@@ -282,7 +282,7 @@ test_drawdown.py: running rather than future peak, maximum/current decline, reco
 **Method:** Automated API/component regression plus specified browser integration verification  
 **Status:** Planned regression group; not newly executed for this specification.
 
-test_api.py and App.test.tsx: portfolio history becomes drawdown metrics and correctly labeled episodes. Compare an independent value-series calculation with the displayed chart and API.
+test_exposure.py and App.test.tsx: portfolio history becomes drawdown metrics and correctly labeled episodes. Compare an independent value-series calculation with the displayed chart and API.
 
 ## US-10 Risk dashboard
 
@@ -392,3 +392,7 @@ App.test.tsx plus browser navigation from dashboard metric links to the methodol
 ## Result record template
 
 For each procedure record: test ID; requirement/AC; date; commit; environment/fixture; expected result; actual result; Passed/Failed/Blocked/Not executed; evidence URL; defect and corrective action. Use the original Sprint 1 procedures for carryover rather than inventing replacement results.
+
+## October 9 refinement
+
+The 14 UAT records above remain Not executed. The dated September 28 group status is historical; see [35 detailed cases and current regression outcomes](sprint2-unit-system-tests.md) for the Week 7 expansion. Stale `test_api.py` references were corrected to the existing route test modules; acceptance criteria and UAT procedure IDs did not change.

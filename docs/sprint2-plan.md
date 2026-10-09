@@ -106,3 +106,11 @@ The compatibility fix already exists in unmerged commit `5de4b25` on PR #92.
 This is an existing code/dependency compatibility problem, not a documentation
 change. Keep #95 unmerged until the fix is integrated and required checks pass.
 [Failure evidence](https://github.com/lam-andrew/portfolio-risk-intelligence/actions/runs/36521193675).
+
+## Week 7 checkpoint October 9
+
+The public board still contains the same seven Sprint 2 stories and 23 points. US-2 is In Progress; US-6, US-7, US-8, US-10, US-13 and US-19 have status Sprint 2. All remain open; accepted scope is 0 and remaining scope is 23. No scope, estimate, priority or sprint-assignment change. The five carryover procedures remain Not executed; the Week 6 intention to finish them first has not yet produced completion evidence.
+
+[Detailed unit/system specifications and current results](sprint2-unit-system-tests.md) expand the seven Week 6 groups into 35 cases, of which 34 match passing October 9 regressions and one full-system procedure remains unexecuted. All 14 UAT procedures remain unexecuted. [Wireframes](design/sprint2-wireframes.md) cover all seven selected requirements. No new architecture decision or product functionality is introduced by this documentation update.
+
+Current preview cac2730 passed 316 backend and 99 frontend regressions, with 7 native-PostgreSQL skips. This is not a new main-branch or deployed-release result. PR #95 remains subject to the existing backend typing gate; keep review and required CI/security checks before merge.
