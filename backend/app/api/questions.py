@@ -107,9 +107,8 @@ def ask_question(
             status_code=409, detail="Filings are still being prepared for questions."
         )
     try:
-        reserve(session, f"questions:user:{user.id}", daily=10, seconds=30)
-        reserve(session, "questions", daily=20, seconds=15)
-        reserve(session, "embeddings", daily=200, seconds=0)
+        if not provider.local_embeddings:
+            reserve(session, "embeddings", daily=200, seconds=0)
         try:
             vector = provider.embed([body.question], query=True)[0]
         except ModelLimitError:
@@ -117,6 +116,9 @@ def ask_question(
             raise
         passages = retrieve(session, job.cik, provider.embedding_version, vector)
         evidence = [p.evidence(ticker) for p in passages]
+        # Preparation/search failures must not consume a user's question allowance.
+        reserve(session, f"questions:user:{user.id}", daily=10, seconds=30)
+        reserve(session, "questions", daily=20, seconds=15)
         result = QuestionAnswer(
             status="insufficient_evidence", question=body.question, message=ABSTENTION
         )
