@@ -157,15 +157,14 @@ export function AppShell({ title, subtitle, actions, children, email, onSignOut 
           aria-label="Navigation"
           className="fixed inset-0 z-40 lg:hidden"
         >
-          <button
-            className="absolute inset-0 bg-black/50"
-            aria-label="Close navigation"
-            onClick={() => setNavOpen(false)}
-          />
           <div className="absolute inset-0 overflow-y-auto bg-background p-5">
             <div className="flex justify-between">
               <ThemeToggle />
-              <Button variant="outline" onClick={() => setNavOpen(false)}>
+              <Button
+                variant="outline"
+                aria-label="Close navigation"
+                onClick={() => setNavOpen(false)}
+              >
                 Close menu
               </Button>
             </div>

@@ -173,11 +173,11 @@ describe("Dashboard (US-10)", () => {
     fireEvent.click(open);
     const drawer = screen.getByRole("dialog", { name: "Navigation" });
     expect(within(drawer).getByRole("link", { name: "Overview" })).toHaveFocus();
-    const close = within(drawer).getByRole("button", { name: "Close navigation" });
+    const first = within(drawer).getByRole("button", { name: /Switch to .* mode/ });
     const signOut = within(drawer).getByRole("button", { name: "Sign out" });
     signOut.focus();
     fireEvent.keyDown(document, { key: "Tab" });
-    expect(close).toHaveFocus();
+    expect(first).toHaveFocus();
     fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
     expect(signOut).toHaveFocus();
     fireEvent.keyDown(document, { key: "Escape" });
@@ -307,7 +307,11 @@ describe("Navigation (US-10)", () => {
 });
 
 describe("Load states", () => {
-  beforeEach(() => vi.restoreAllMocks());
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(client, "getStressScenarios").mockResolvedValue([]);
+    vi.spyOn(client, "getPortfolioStress").mockRejectedValue(new Error("Preview unavailable"));
+  });
 
   it("surfaces an error when the portfolio cannot be loaded", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue({ id: 1, email: "owner@example.com" });
@@ -362,7 +366,11 @@ describe("Load states", () => {
 });
 
 describe("Authentication gate (US-13)", () => {
-  beforeEach(() => vi.restoreAllMocks());
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(client, "getStressScenarios").mockResolvedValue([]);
+    vi.spyOn(client, "getPortfolioStress").mockRejectedValue(new Error("Preview unavailable"));
+  });
 
   it("shows the sign-in screen when there is no session", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
@@ -458,7 +466,11 @@ describe("Authentication gate (US-13)", () => {
 });
 
 describe("Public landing page", () => {
-  beforeEach(() => vi.restoreAllMocks());
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(client, "getStressScenarios").mockResolvedValue([]);
+    vi.spyOn(client, "getPortfolioStress").mockRejectedValue(new Error("Preview unavailable"));
+  });
 
   it("greets a signed-out visitor at the root instead of a bare sign-in form", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);

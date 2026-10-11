@@ -71,7 +71,13 @@ export function HoldingRow({ position, risk, onChanged }: HoldingRowProps) {
     <>
       <tr className="border-b border-border/60 last:border-0">
         <td data-label="Ticker" className="px-2 py-3 font-medium text-foreground">
-          {position.ticker}
+          <a
+            className="underline decoration-border underline-offset-4"
+            href={`/filings?ticker=${encodeURIComponent(position.ticker)}`}
+            aria-label={`Research ${position.ticker} filings`}
+          >
+            {position.ticker}
+          </a>
         </td>
 
         <td data-label="Shares" className="px-2 py-3 text-right">

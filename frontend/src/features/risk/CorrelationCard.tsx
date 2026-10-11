@@ -66,7 +66,7 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
   // Shrink cells as the matrix grows so it fits the page rather than overflowing it.
   const count = tickers.length;
   const cell = count > 20 ? 34 : count > 14 ? 42 : count > 9 ? 48 : 52;
-  const fontSize = 11;
+  const fontSize = compact || count > 9 ? 11 : 14;
 
   return (
     <Card>
@@ -97,11 +97,11 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col gap-5">
+        <div className={compact ? "flex flex-col gap-5" : "atlas-correlation-detail"}>
           {(!compact || count <= 6) && (
-            <>
+            <div className="min-w-0 space-y-4">
               <div className="overflow-x-auto">
-                <table className="border-separate border-spacing-[3px]">
+                <table className="w-full border-separate border-spacing-[3px]">
                   <thead>
                     <tr>
                       <th />
@@ -173,7 +173,7 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
                 <span>+1.0</span>
                 <span className="ml-1">diversifying → moves together</span>
               </div>
-            </>
+            </div>
           )}
 
           {!compact && (

@@ -17,6 +17,7 @@ import { DashboardPage } from "@/pages/DashboardPage";
 import { DrawdownPage } from "@/pages/DrawdownPage";
 import { MethodologyPage } from "@/pages/MethodologyPage";
 import { HoldingsPage } from "@/pages/HoldingsPage";
+import { FilingReaderPage } from "@/pages/FilingReaderPage";
 import { FilingsPage } from "@/pages/FilingsPage";
 import { StressTestPage } from "@/pages/StressTestPage";
 import { LandingPage } from "@/pages/LandingPage";
@@ -81,7 +82,7 @@ export default function App() {
     );
   }
 
-  return <SignedInApp email={auth.user.email} onSignOut={signOut} />;
+  return <SignedInApp key={auth.user.id} email={auth.user.email} onSignOut={signOut} />;
 }
 
 /** The application proper. Split out so portfolio data is only ever fetched once a session
@@ -199,6 +200,19 @@ function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Pro
         }
       />
       <Route
+        path="/filings/:ticker/:accession"
+        element={
+          <AppShell
+            email={email}
+            onSignOut={onSignOut}
+            title="Filing research"
+            subtitle="Read the disclosure. Inspect the evidence."
+          >
+            <FilingReaderPage />
+          </AppShell>
+        }
+      />
+      <Route
         path="/methodology"
         element={
           <AppShell
@@ -219,7 +233,7 @@ function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Pro
             <Card>
               <CardHeader>
                 <CardTitle>That page doesn&apos;t exist</CardTitle>
-                <CardDescription>Pick a destination from the sidebar.</CardDescription>
+                <CardDescription>Pick a destination from the navigation.</CardDescription>
               </CardHeader>
             </Card>
           </AppShell>
