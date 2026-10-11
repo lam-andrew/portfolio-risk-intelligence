@@ -252,3 +252,23 @@ def test_local_rank_uses_best_window_and_deduplicates_passages(client, questions
         session.commit()
         rows = retrieve(session, "0000000001", LOCAL_VERSION, LOCAL_VECTOR)
         assert len(rows) == 2 and rows[-1].passage.id == second
+
+
+def test_exhausted_daily_allowance_stops_before_encoding_then_resets(client, questions):
+    from datetime import UTC, datetime, timedelta
+
+    now = datetime.now(UTC)
+    with db() as session:
+        session.add(
+            ModelBudget(
+                scope="questions", day=now.date(), calls=20, next_at=now - timedelta(seconds=1)
+            )
+        )
+        session.commit()
+    assert ask(client).status_code == 429
+    assert questions.calls == []
+    with db() as session:
+        budget = session.get(ModelBudget, "questions")
+        budget.day = now.date() - timedelta(days=1)
+        session.commit()
+    assert ask(client).status_code == 200

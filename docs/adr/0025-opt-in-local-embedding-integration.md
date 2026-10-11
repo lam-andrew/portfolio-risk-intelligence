@@ -48,7 +48,8 @@ index. This integrates the ADR 0024 candidate; it does not declare it accepted f
   at most eight distinct original passages. Evidence uses the original passage IDs/text;
   citations retain the original source offsets. Windowing therefore changes retrieval,
   not the public citation contract or the pure grounding validators.
-- Encode and retrieve before reserving a user's question allowance. Preparation/search
+- Reject already-exhausted question budgets/cooldowns with a read-only preflight. Encode
+  and retrieve before atomically reserving a user's question allowance. Preparation/search
   failures therefore consume no question allowance. Hosted embedding calls still have their
   independent budget. Generation attempts retain existing limits and failure accounting.
   Busy/unavailable services return errors rather than an insufficient-evidence answer.

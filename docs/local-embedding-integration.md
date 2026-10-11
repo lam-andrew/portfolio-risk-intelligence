@@ -99,3 +99,8 @@ The real-encoder test is opt-in (`APP_TEST_LOCAL_ENCODER=1` and
 `APP_LOCAL_EMBEDDING_URL` pointing at the private provisioned encoder). Normal CI skips it
 so routine tests do not download models or call external APIs. This adds one explicit skip
 in subsequent default backend suite runs. The draft integration is tracked in [PR #98](https://github.com/lam-andrew/portfolio-risk-intelligence/pull/98), stacked on prototype PR #96.
+
+A final budget preflight rejects known cooldowns/daily exhaustion before query encoding,
+while actual reservations still occur after successful retrieval. This avoids wasting CPU
+or hosted embedding quota on already-limited requests without charging preparation failures.
+The regression includes exhaustion and next-day recovery.

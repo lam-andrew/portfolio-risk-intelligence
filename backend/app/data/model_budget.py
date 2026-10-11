@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import and_, case, or_, update
+from sqlalchemy import and_, case, or_, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from sqlalchemy.orm import Session
@@ -12,6 +12,22 @@ from app.models import ModelBudget
 
 class ModelLimitError(Exception):
     """A local budget or provider quota was exhausted. No paid fallback is allowed."""
+
+
+def check_available(session: Session, scope: str, *, daily: int) -> None:
+    """Cheap preflight; reserve still arbitrates races after successful query encoding."""
+    now = datetime.now(UTC)
+    blocked = session.scalar(
+        select(ModelBudget.scope).where(
+            ModelBudget.scope == scope,
+            or_(
+                ModelBudget.next_at > now,
+                and_(ModelBudget.day >= now.date(), ModelBudget.calls >= daily),
+            ),
+        )
+    )
+    if blocked is not None:
+        raise ModelLimitError("Question service quota reached. Please try again later.")
 
 
 def reserve(
