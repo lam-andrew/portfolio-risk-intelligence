@@ -224,3 +224,11 @@ Setup: signed-in SQLite/FakeProvider fixture; add AAPL 10 and NVDA 5. Action: GE
 Setup: isolated signed-in account with AAPL 10 and NVDA 5, sufficient available price history, same recorded lookback. Actions: open the dashboard and capture the corresponding /api/portfolio/risk response; compare the portfolio tile and each holding's displayed volatility with the matching response values. Expected: every priced holding and the portfolio show a labeled percentage consistent with response rounding; missing history is shown as unavailable, not silently reported as zero. Retain sanitized screenshot/response evidence. Do not assume real NVDA is always more volatile than real AAPL; seeded test ordering is not a live-market assertion.
 
 **Traceability:** implementation and initial math/API tests 1b23564 (PR #56); later dashboard integration 23ca50b (PR #59, Sprint 2 baseline, not Sprint 1 throughput); API paths 24d39ef. [ADR 0012](https://github.com/lam-andrew/portfolio-risk-intelligence/blob/c065aef/docs/adr/0012-risk-methodology.md). Specification IDs created/reviewed September 8.
+
+## Carryover execution update — October 10, 2026
+
+TC-14-01, TC-1-03, TC-3-03, TC-4-03 and TC-5-03 were executed in a separate
+PostgreSQL/Compose browser environment. See [actual results, fixture differences,
+live Tiingo evidence and remaining sign-off boundary](core-acceptance-2026-10-10.md).
+The dated specifications above are retained as historical records. No historical
+Sprint 1 throughput or completion date was changed.

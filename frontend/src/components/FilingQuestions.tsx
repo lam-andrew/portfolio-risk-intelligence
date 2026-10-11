@@ -131,7 +131,7 @@ export function FilingQuestions({ ticker }: { ticker: string }) {
           </label>
           <textarea
             id="filing-question"
-            className="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="min-h-24 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             value={question}
             onChange={(event) => setQuestion(event.target.value)}
             minLength={5}
@@ -180,7 +180,7 @@ export function FilingQuestions({ ticker }: { ticker: string }) {
                 {claim.citations.map((citation, i) => (
                   <details
                     key={`${citation.passage_id}-${i}`}
-                    className="rounded-md border border-border p-3"
+                    className="rounded-xl border border-border p-3"
                     open
                   >
                     <summary className="cursor-pointer text-xs font-medium">

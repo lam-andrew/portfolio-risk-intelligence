@@ -192,3 +192,21 @@ frontend tests**, plus **four native PostgreSQL tests** run separately. Ruff, my
 Prettier, TypeScript and production build pass; existing warnings are unchanged. Desktop
 and 390px mobile controlled browser checks passed with synthetic data. User acceptance
 remains pending; the story has no new sprint assignment or estimate.
+
+## UI/chart refresh — September 26, 2026
+
+The user-approved application sweep is tracked in [#93](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/93).
+See [UI refresh verification](ui-refresh-tests.md) for route coverage, new chart and theme
+cases, mobile keyboard behavior, 99 passing frontend tests, production build/audit results
+and the existing development-tool audit limitations. This does not complete US-12 live
+acceptance or change any sprint assignment.
+
+## Core acceptance closeout — October 10, 2026
+
+[Execution results and reproducible fixture](core-acceptance-2026-10-10.md) record
+14 Sprint 2 browser UAT procedures, five Sprint 1 carryover checks, and W7-19-05.
+Five presentation/navigation defects were fixed with demonstrated failing/passing regressions.
+Final local suites: 316 backend plus seven separate PostgreSQL cases; 101 frontend.
+Required production dependency audits passed; development-tool advisories remain
+explicitly recorded. Board/issue review and integration gates remain open; this is
+agent-executed acceptance, not Andrew's final sign-off or a deployment claim.

@@ -127,3 +127,25 @@ Researched Aug 2026. Used for inspiration only; we build our own on shadcn/ui + 
 Direction accepted; stack recorded in [ADR 0009](../adr/0009-ui-styling-tailwind-shadcn-tremor.md).
 Wired into the frontend when the first UI ships (US-1). This document is updated as the design
 system firms up during the dashboard stories.
+
+## September 26 application and chart refresh
+
+The user approved a rounded dashboard reference and Orbit-palette previews, including the
+chart marks themselves. [ADR 0023](../adr/0023-unified-dashboard-chart-design.md) records the
+implementation boundary. This refines the earlier small-radius/dense layout guidance:
+
+- Rounded 24px panels (20px on narrow screens), compact labeled navigation, pill actions,
+  a blue primary portfolio metric and a subtle token-derived glow around the shell.
+- Dot/halo markers and fine connecting lines; dotted reference baselines; exact date/value
+  inspection with pointer and native keyboard controls. All observations remain on the line.
+- Rounded vertical bars with a soft accent fill on the selected holding and subdued peers.
+  Zero remains the origin. The stress bridge retains its hatched loss step and units.
+- Separated proportional allocation sectors with a selected holding and complete textual
+  legend. At most six segments; smaller holdings are summed into a named Other group.
+- Preserve red loss semantics and the correlation heatmap's signed scale. Color never
+  replaces units, numerical values, limitations or availability messages.
+- Shared light/dark tokens throughout forms, filings/Q&A, methodology and public pages.
+  Theme choice is a local display preference; credentials and API configuration are unrelated.
+
+The production implementation uses React/SVG per ADR 0013. The approved standalone previews
+used illustrative data; those values are not included in authenticated application screens.

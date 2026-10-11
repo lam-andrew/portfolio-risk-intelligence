@@ -65,7 +65,7 @@ export function FaqAccordion() {
               </button>
             </h3>
             {isOpen ? (
-              <p className="px-5 pb-5 text-sm leading-relaxed text-white/85">{item.a}</p>
+              <p className="px-5 pb-5 text-sm leading-relaxed text-foreground">{item.a}</p>
             ) : null}
           </div>
         );

@@ -1,7 +1,8 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { getHealth } from "@/api/client";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Sidebar } from "./Sidebar";
 
 function BackendStatus() {
@@ -41,34 +42,74 @@ interface AppShellProps {
  *  narrow screens, so the dashboard grid never has to compete with it for width. */
 export function AppShell({ title, subtitle, actions, children, email, onSignOut }: AppShellProps) {
   const [navOpen, setNavOpen] = useState(false);
+  const drawer = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!navOpen) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    drawer.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setNavOpen(false);
+      }
+      if (event.key !== "Tab") return;
+      const controls = drawer.current?.querySelectorAll<HTMLElement>("a, button");
+      if (!controls?.length) return;
+      const first = controls[0],
+        last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = overflow;
+      previous?.focus();
+    };
+  }, [navOpen]);
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[236px_1fr]">
-      <aside className="hidden border-r border-border bg-surface lg:sticky lg:top-0 lg:block lg:h-screen">
+    <div className="orbit-shell min-h-screen lg:grid lg:grid-cols-[108px_minmax(0,1fr)]">
+      <aside className="orbit-desktop-nav hidden lg:sticky lg:top-4 lg:block lg:h-[calc(100vh-2rem)] lg:overflow-y-auto">
         <Sidebar email={email} onSignOut={onSignOut} />
       </aside>
 
       {navOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
+        <div
+          ref={drawer}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation"
+          className="fixed inset-0 z-40 lg:hidden"
+        >
           <button
             className="absolute inset-0 bg-black/50"
             aria-label="Close navigation"
             onClick={() => setNavOpen(false)}
           />
-          <div className="absolute left-0 top-0 h-full w-64 border-r border-border bg-surface">
+          <div className="absolute left-0 top-0 h-full w-64 overflow-y-auto border-r border-border bg-surface">
             <Sidebar email={email} onSignOut={onSignOut} onNavigate={() => setNavOpen(false)} />
           </div>
         </div>
       )}
 
-      <main className="min-w-0 px-5 py-6 sm:px-7 lg:px-8">
-        <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
+      <main className="min-w-0 px-4 py-6 sm:px-6 lg:px-7">
+        <header className="mb-7 flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-start gap-3">
             <Button
               variant="outline"
               size="icon"
               className="lg:hidden"
               aria-label="Open navigation"
+              aria-expanded={navOpen}
               onClick={() => setNavOpen(true)}
             >
               <svg
@@ -82,7 +123,7 @@ export function AppShell({ title, subtitle, actions, children, email, onSignOut 
               </svg>
             </Button>
             <div>
-              <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+              <h1 className="text-2xl font-medium tracking-tight">{title}</h1>
               {subtitle !== undefined && (
                 <p className="mt-0.5 text-[13px] text-muted-foreground">{subtitle}</p>
               )}
@@ -90,6 +131,7 @@ export function AppShell({ title, subtitle, actions, children, email, onSignOut 
           </div>
           <div className="flex items-center gap-2">
             {actions}
+            <ThemeToggle />
             <BackendStatus />
           </div>
         </header>

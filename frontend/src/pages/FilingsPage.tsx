@@ -277,7 +277,7 @@ export function FilingsPage() {
                   id="filing-company"
                   value={selected}
                   onChange={(event) => setTicker(event.target.value)}
-                  className="max-w-sm rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  className="max-w-sm rounded-xl border border-input bg-background px-3 py-2 text-sm"
                 >
                   {companies.map((c) => (
                     <option key={c.ticker} value={c.ticker}>

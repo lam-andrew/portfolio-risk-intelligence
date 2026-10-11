@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 /**
  * Public landing page: what the product does, before anyone signs in.
  *
@@ -51,8 +52,8 @@ function Logo() {
   return (
     <span className="flex items-center gap-2.5">
       <span
-        className="grid h-8 w-8 place-items-center rounded-[10px] text-white"
-        style={{ background: "linear-gradient(150deg, var(--accent), #1f5fb0)" }}
+        className="grid h-8 w-8 place-items-center rounded-[10px] text-accent-foreground"
+        style={{ background: "var(--accent)" }}
         aria-hidden="true"
       >
         <svg
@@ -141,29 +142,30 @@ export function LandingPage() {
       <header className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
         <Logo />
         <nav className="hidden items-center gap-7 text-sm text-[color:var(--muted-foreground)] md:flex">
-          <a href="#features" className="transition-colors hover:text-white">
+          <a href="#features" className="transition-colors hover:text-foreground">
             Features
           </a>
-          <a href="#how" className="transition-colors hover:text-white">
+          <a href="#how" className="transition-colors hover:text-foreground">
             How it works
           </a>
-          <a href="#limits" className="transition-colors hover:text-white">
+          <a href="#limits" className="transition-colors hover:text-foreground">
             Limits
           </a>
-          <a href="#faq" className="transition-colors hover:text-white">
+          <a href="#faq" className="transition-colors hover:text-foreground">
             FAQ
           </a>
         </nav>
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center justify-end gap-2.5">
+          <ThemeToggle />
           <Link
             to="/signin"
-            className="lp-pill px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors hover:text-white"
+            className="lp-pill px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors hover:text-foreground"
           >
             Log in
           </Link>
           <Link
             to="/signin"
-            className="lp-cta flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white"
+            className="lp-cta flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider text-accent-foreground"
           >
             Get started <Arrow />
           </Link>
@@ -187,7 +189,7 @@ export function LandingPage() {
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <Link
                 to="/signin"
-                className="lp-cta flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white"
+                className="lp-cta flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-accent-foreground"
               >
                 Analyze my portfolio <Arrow />
               </Link>
@@ -205,7 +207,7 @@ export function LandingPage() {
           aria-hidden="true"
         >
           <div className="lp-horizon absolute inset-x-[-20%] bottom-[-58%] h-[130%] rounded-[100%]" />
-          <div className="absolute inset-x-[-20%] bottom-[-58%] h-[130%] rounded-[100%] border-t border-white/15" />
+          <div className="absolute inset-x-[-20%] bottom-[-58%] h-[130%] rounded-[100%] border-t border-border" />
         </div>
       </section>
 
@@ -214,7 +216,7 @@ export function LandingPage() {
         <p className="text-center text-xs uppercase tracking-[0.16em] text-[color:var(--faint)]">
           Reads the CSV your brokerage already gives you
         </p>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-lg font-semibold text-white/45">
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-lg font-semibold text-muted-foreground">
           <span>Schwab</span>
           <span>Fidelity</span>
           <span>Vanguard</span>
@@ -226,7 +228,7 @@ export function LandingPage() {
               <p
                 className="text-4xl font-semibold"
                 style={{
-                  background: "linear-gradient(180deg,#fff,var(--accent))",
+                  background: "linear-gradient(180deg,var(--foreground),var(--accent))",
                   WebkitBackgroundClip: "text",
                   backgroundClip: "text",
                   color: "transparent",
@@ -257,7 +259,7 @@ export function LandingPage() {
               key={f.title}
               className={`lp-card flex flex-col gap-4 p-6 ${f.wide ? "md:col-span-3" : "md:col-span-2"}`}
             >
-              <div className="h-24 overflow-hidden rounded-xl bg-white/[0.02] p-3">{f.viz}</div>
+              <div className="h-24 overflow-hidden rounded-xl bg-surface-2 p-3">{f.viz}</div>
               <div>
                 <h3 className="text-lg font-semibold">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-[color:var(--muted-foreground)]">
@@ -279,7 +281,7 @@ export function LandingPage() {
           {STEPS.map((step, i) => (
             <li key={step.title} className="lp-card flex flex-col gap-3 p-6">
               <span
-                className="grid h-10 w-10 place-items-center rounded-xl text-sm font-semibold text-white"
+                className="grid h-10 w-10 place-items-center rounded-xl text-sm font-semibold text-accent-foreground"
                 style={{
                   background: "linear-gradient(150deg, rgba(74,147,240,0.9), rgba(18,57,95,0.7))",
                 }}
@@ -309,7 +311,7 @@ export function LandingPage() {
           {BOUNDARIES.map((item) => (
             <div key={item.title} className="lp-card p-6">
               <span
-                className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/[0.03]"
+                className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-surface-2"
                 aria-hidden="true"
               >
                 <svg
@@ -392,7 +394,7 @@ export function LandingPage() {
           <div className="mt-8 flex justify-center">
             <Link
               to="/signin"
-              className="lp-cta flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white"
+              className="lp-cta flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-accent-foreground"
             >
               Get started <Arrow />
             </Link>
@@ -412,16 +414,16 @@ export function LandingPage() {
               </p>
             </div>
             <div className="flex flex-col gap-2 text-sm text-[color:var(--muted-foreground)] sm:items-end">
-              <Link to="/signin" className="transition-colors hover:text-white">
+              <Link to="/signin" className="transition-colors hover:text-foreground">
                 Sign in
               </Link>
-              <a href="#features" className="transition-colors hover:text-white">
+              <a href="#features" className="transition-colors hover:text-foreground">
                 Features
               </a>
-              <a href="#limits" className="transition-colors hover:text-white">
+              <a href="#limits" className="transition-colors hover:text-foreground">
                 Deliberate limits
               </a>
-              <a href="#faq" className="transition-colors hover:text-white">
+              <a href="#faq" className="transition-colors hover:text-foreground">
                 FAQ
               </a>
             </div>

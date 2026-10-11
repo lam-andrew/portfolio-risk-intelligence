@@ -43,3 +43,5 @@ capture an architecturally significant decision, its context, and its consequenc
 | [0020](0020-filing-retrieval-staging.md) | Full-text retrieval before hosted embeddings and generation | Accepted |
 | [0021](0021-automatic-filing-following.md) | Automatically follow filings for holdings and private watchlists | Accepted |
 | [0022](0022-grounded-filing-questions.md) | Portable grounded questions with a free-tier model adapter | Proposed; live evaluation pending |
+
+- [0023 — Unified dashboard and chart design](0023-unified-dashboard-chart-design.md) — Accepted, September 26, 2026.

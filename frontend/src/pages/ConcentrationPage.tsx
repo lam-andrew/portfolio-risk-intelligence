@@ -14,5 +14,5 @@ export function ConcentrationPage({ data }: { data: PortfolioData }) {
       </Card>
     );
   }
-  return <ConcentrationCard data={data.concentration} />;
+  return <ConcentrationCard data={data.concentration} positions={data.summary.positions} />;
 }
