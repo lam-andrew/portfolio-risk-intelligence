@@ -49,7 +49,7 @@ export function AllocationChart({ positions }: { positions: Position[] }) {
           const a = start + gap / 2,
             b = end - gap / 2,
             large = b - a > Math.PI ? 1 : 0;
-          const fill = p.label === active.label ? "var(--accent)" : "var(--surface-2)";
+          const fill = `var(--chart${index === 0 ? "" : `-${Math.min(index + 1, 5)}`})`;
           if (groups.length === 1)
             return (
               <circle
@@ -59,16 +59,16 @@ export function AllocationChart({ positions }: { positions: Position[] }) {
                 r="88"
                 fill="none"
                 stroke={fill}
-                strokeWidth="64"
+                strokeWidth="36"
               />
             );
           return (
             <path
               key={p.label}
-              d={`M${point(120, a)} A120,120 0 ${large} 1 ${point(120, b)} L${point(56, b)} A56,56 0 ${large} 0 ${point(56, a)} Z`}
+              d={`M${point(120, a)} A120,120 0 ${large} 1 ${point(120, b)} L${point(84, b)} A84,84 0 ${large} 0 ${point(84, a)} Z`}
               fill={fill}
               stroke="var(--surface)"
-              strokeWidth="5"
+              strokeWidth="3"
               strokeLinejoin="round"
             >
               <title>
@@ -96,7 +96,7 @@ export function AllocationChart({ positions }: { positions: Position[] }) {
         role="group"
         aria-label="Highlight portfolio allocation"
       >
-        {groups.map((p) => (
+        {groups.map((p, index) => (
           <button
             key={p.label}
             type="button"
@@ -107,7 +107,10 @@ export function AllocationChart({ positions }: { positions: Position[] }) {
             <span className="flex items-center gap-2">
               <span
                 aria-hidden="true"
-                className={`h-2 w-2 rounded-full ${p.label === active.label ? "bg-accent" : "bg-faint"}`}
+                className="h-2 w-5 rounded-sm"
+                style={{
+                  background: `var(--chart${index === 0 ? "" : `-${Math.min(index + 1, 5)}`})`,
+                }}
               />
               {p.label}
             </span>

@@ -35,7 +35,7 @@ export function StatTile({
     >
       <span className="text-xs font-medium text-muted-foreground">{label}</span>
       <div className="flex items-end justify-between gap-3">
-        <span className="font-mono text-[clamp(22px,1.7vw,30px)] font-medium leading-tight tracking-tight break-words tabular-nums">
+        <span className="atlas-value text-[clamp(22px,1.7vw,30px)] font-medium leading-tight tracking-tight break-words tabular-nums">
           {value}
         </span>
         {badge}

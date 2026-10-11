@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import type { PortfolioCorrelation } from "@/api/client";
@@ -39,6 +40,8 @@ interface CorrelationCardProps {
 /** Correlation among holdings (US-6): a heatmap plus the pairs that matter. */
 export function CorrelationCard({ correlation, compact = false }: CorrelationCardProps) {
   const { tickers, matrix } = correlation;
+  const [selection, setPair] = useState<[number, number]>([0, 1]);
+  const pair = selection.every((i) => i < correlation.tickers.length) ? selection : [0, 1];
 
   if (tickers.length < 2) {
     return (
@@ -95,7 +98,7 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-5">
-          {!compact && (
+          {(!compact || count <= 6) && (
             <>
               <div className="overflow-x-auto">
                 <table className="border-separate border-spacing-[3px]">
@@ -141,7 +144,15 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
                                 fontSize,
                               }}
                             >
-                              {fmt(raw)}
+                              <button
+                                type="button"
+                                className="h-full min-h-11 w-full min-w-11 rounded-lg"
+                                aria-label={`Inspect ${rowTicker} / ${colTicker}: ${fmt(raw)}`}
+                                aria-pressed={pair[0] === i && pair[1] === j}
+                                onClick={() => setPair([i, j])}
+                              >
+                                {fmt(raw)}
+                              </button>
                             </td>
                           );
                         })}
@@ -165,6 +176,18 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
             </>
           )}
 
+          {!compact && (
+            <div role="status" className="rounded-xl bg-surface-2 p-5">
+              <p className="font-mono text-xs text-muted-foreground">
+                SELECTED PAIR · {tickers[pair[0]]} / {tickers[pair[1]]}
+              </p>
+              <p className="atlas-value my-3 text-4xl">{fmt(matrix[pair[0]]?.[pair[1]] ?? null)}</p>
+              <p className="text-sm text-muted-foreground">
+                Daily-return co-movement in the observed window. Undefined pairs are shown as a
+                dash, never a measured zero.
+              </p>
+            </div>
+          )}
           <dl className="grid gap-x-6 gap-y-1 border-t border-border pt-4 text-sm sm:grid-cols-2">
             {top !== undefined && (
               <>

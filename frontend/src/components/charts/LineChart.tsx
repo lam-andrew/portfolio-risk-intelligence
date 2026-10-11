@@ -20,7 +20,7 @@ export function LineChart({
   label,
   unit,
   formatValue,
-  color = "var(--accent)",
+  color = "var(--chart)",
   underwater = false,
 }: Props) {
   const { ref, width } = useChartWidth();
@@ -45,7 +45,7 @@ export function LineChart({
   const x = (i: number) => left + (i / Math.max(valid.length - 1, 1)) * (right - left);
   const y = (v: number) => top + ((high - v) / (high - low)) * (bottom - top);
   const line = valid.map((p, i) => `${i ? "L" : "M"}${x(i)},${y(p.value)}`).join(" ");
-  const step = Math.max(1, Math.ceil(valid.length / Math.max(4, Math.floor(width / 35))));
+  const step = Math.max(1, Math.ceil(valid.length / Math.max(4, Math.floor(width / 95))));
   const ticks = [
     ...new Set(
       width < 440
@@ -85,8 +85,8 @@ export function LineChart({
       >
         <defs>
           <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor={color} stopOpacity=".04" />
-            <stop offset="1" stopColor={color} stopOpacity=".16" />
+            <stop offset="0" stopColor={color} stopOpacity=".28" />
+            <stop offset="1" stopColor={color} stopOpacity=".02" />
           </linearGradient>
         </defs>
         {[0, 1, 2, 3].map((i) => {
@@ -112,13 +112,13 @@ export function LineChart({
             </g>
           );
         })}
-        {underwater && (
+        {
           <path
-            d={`${line} L${x(valid.length - 1)},${y(0)} L${x(0)},${y(0)} Z`}
+            d={`${line} L${x(valid.length - 1)},${underwater ? y(0) : bottom} L${x(0)},${underwater ? y(0) : bottom} Z`}
             fill={`url(#${id})`}
           />
-        )}
-        <path d={line} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
+        }
+        <path d={line} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
         {valid.map(
           (p, i) =>
             (i % step === 0 || i === valid.length - 1 || i === trough) && (

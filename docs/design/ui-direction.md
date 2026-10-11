@@ -149,3 +149,12 @@ implementation boundary. This refines the earlier small-radius/dense layout guid
 
 The production implementation uses React/SVG per ADR 0013. The approved standalone previews
 used illustrative data; those values are not included in authenticated application screens.
+
+## Atlas update — October 10, 2026
+
+Atlas replaces the earlier rail and ambient-light treatment with labeled top navigation,
+navy/white analytical panels, cobalt actions and distinct allocation colors. See
+[ADR 0026](../adr/0026-orbit-atlas-interface.md). Every analytic plot still consumes the
+existing API contract; no risk-engine formula changes. Mobile holdings retain controls in
+stacked rows. Correlation supports explicit pair selection without relying on hover.
+The filing reader/chat is a separate contract change, tracked with US-12.

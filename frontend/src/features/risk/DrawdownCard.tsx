@@ -17,7 +17,13 @@ function shortDate(iso: string): string {
 }
 
 /** Historical drawdown (US-8): how far the portfolio fell, and whether it came back. */
-export function DrawdownCard({ data }: { data: PortfolioDrawdown }) {
+export function DrawdownCard({
+  data,
+  compact = false,
+}: {
+  data: PortfolioDrawdown;
+  compact?: boolean;
+}) {
   if (data.series.length === 0 || data.max_drawdown_pct === null) {
     return (
       <Card>
@@ -31,8 +37,8 @@ export function DrawdownCard({ data }: { data: PortfolioDrawdown }) {
     );
   }
 
-  const current = Number(data.current_drawdown_pct ?? 0);
-  const underwater = current < -0.05;
+  const current = data.current_drawdown_pct === null ? null : Number(data.current_drawdown_pct);
+  const underwater = current !== null && current < -0.05;
 
   return (
     <Card>
@@ -64,7 +70,11 @@ export function DrawdownCard({ data }: { data: PortfolioDrawdown }) {
               <span
                 className={`font-mono text-3xl font-medium leading-none tabular-nums ${underwater ? "text-down" : "text-up"}`}
               >
-                {underwater ? pct(data.current_drawdown_pct) : "At peak"}
+                {current === null
+                  ? "Unavailable"
+                  : underwater
+                    ? pct(data.current_drawdown_pct)
+                    : "At peak"}
               </span>
             </div>
           </div>
@@ -78,7 +88,7 @@ export function DrawdownCard({ data }: { data: PortfolioDrawdown }) {
             formatValue={(v) => `${v.toFixed(2)}%`}
           />
 
-          {data.episodes.length > 0 && (
+          {!compact && data.episodes.length > 0 && (
             <div className="flex flex-col gap-2 border-t border-border pt-4">
               <h3 className="text-sm font-medium">Largest declines</h3>
               <div className="overflow-x-auto">
