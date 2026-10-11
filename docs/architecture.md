@@ -526,3 +526,29 @@ A separate serial embedding process prevents model throttling from delaying SEC 
 Its missing-row queue and shared budgets survive restarts. Migration 0007 owns the schema.
 The keyless stack starts with Q&A disabled, while cached source search and risk still work.
 Offline tests exercise contracts and safeguards; they do not establish live model quality.
+
+## 19. Atlas document research (October 10, 2026)
+
+[ADR 0027](adr/0027-filing-scoped-conversation.md) supersedes section 18's single-turn
+UI and its “question only” payload description for the new document routes. The legacy
+issuer routes remain compatible. Atlas uses:
+
+- GET `/api/filings/{ticker}/documents/{accession}`: metadata, revision and up to 40
+  safe-text passages; `offset` pages sequentially and `passage_id` locates a cited page.
+- GET `…/questions/status`: readiness for this document/version only.
+- POST `…/questions`: `{question, revision, history: [{accession, question, answer}]}`.
+  Maximum three exchanges and 6000 history characters, plus a 1000-character current question.
+
+Membership and CIK/accession validation precede retrieval. CIK, accession and embedding
+version filter the candidate set before ranking. Each answer independently retrieves and
+validates sources. Prior answers are untrusted context, not evidence. Recheck the login,
+membership, revision and source passages after model I/O. Invalid context returns 422;
+changed/unprepared documents 409; inaccessible documents 404; model/budget limits 429;
+service failures 503. Abstention remains a successful response with no claims.
+
+The reader is explicitly indexed passages, not a complete reconstruction of SEC HTML.
+The chat is optional, kept only in client memory, and cleared on filing/account changes.
+Generation now receives limited prior exchanges, disclosed in the UI; provider credentials
+remain server-side. No new services, storage tables, dependencies or deployment requirements.
+Open local-embedding PR #98 requires reconciliation with these scoped predicates before
+combined deployment; it is not silently included or marked accepted by this PR.
