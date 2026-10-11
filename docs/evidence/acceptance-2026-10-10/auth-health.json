@@ -1,0 +1,13 @@
+{
+  "unauthenticated_holdings": 401,
+  "revoked_session_holdings": 401,
+  "identical_invalid_login_errors": true,
+  "health": {
+    "status": "ok",
+    "service": "Orbit API",
+    "version": "0.1.0",
+    "environment": "development",
+    "database": "connected",
+    "market_data": "unconfigured"
+  }
+}

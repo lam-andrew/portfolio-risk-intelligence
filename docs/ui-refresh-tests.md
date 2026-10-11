@@ -63,3 +63,11 @@ Private portfolio screenshots were used only for local inspection and are not pu
 as repository fixtures. Automated tests use existing synthetic data. No coverage percentage,
 full screen-reader audit, live Q&A pass or user acceptance is claimed. User review of
 visual density, spacing and chart emphasis remains pending; issue #93 stays open.
+
+## Core acceptance follow-up — October 10, 2026
+
+[The core acceptance sweep](core-acceptance-2026-10-10.md) exercised real browser/API/
+PostgreSQL flows, chart keyboard controls and a narrow dashboard. It found and fixed
+three misleading/error-state presentation behaviors, with red/green regression proof.
+The updated frontend suite passes 101 tests. Screenshots use disposable synthetic
+portfolios; no personal holdings or model credentials are included.

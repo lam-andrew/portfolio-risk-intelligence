@@ -1,0 +1,14 @@
+{
+  "http_status": 200,
+  "price_provider_calls": 0,
+  "ticker": "AAPL",
+  "source": "cache",
+  "count": 250,
+  "start": "2025-10-13",
+  "end": "2026-10-09",
+  "risk_status": 200,
+  "price_provider_calls_after_analysis": 0,
+  "repeat_source": "cache",
+  "final_price_provider_calls": 0
+}
+
