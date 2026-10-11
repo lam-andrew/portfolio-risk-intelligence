@@ -71,3 +71,11 @@ PostgreSQL flows, chart keyboard controls and a narrow dashboard. It found and f
 five presentation/navigation defects, with red/green regression proof.
 The updated frontend suite passes 101 tests. Screenshots use disposable synthetic
 portfolios; no personal holdings or model credentials are included.
+
+## Atlas superseding direction — October 10, 2026
+
+Atlas replaces the earlier rail/ambient treatment (ADR 0026), while preserving chart
+geometry, API values and interaction controls. Full reader/chat behavior is added under
+ADR 0027. See [Atlas verification](atlas-verification-2026-10-10.md) for current automated
+results, route screenshots in both themes and remaining UAT. Historical evidence above
+is retained as a record of the earlier refresh, not a claim of Atlas acceptance.

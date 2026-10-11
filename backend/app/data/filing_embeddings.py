@@ -28,7 +28,9 @@ class SourcePassage:
         )
 
 
-def coverage(session: Session, cik: str, version: str) -> tuple[int, int]:
+def coverage(
+    session: Session, cik: str, version: str, *, accession: str | None = None
+) -> tuple[int, int]:
     total, ready = session.execute(
         select(func.count(FilingPassage.id), func.count(PassageEmbedding.passage_id))
         .join(Filing, Filing.accession == FilingPassage.accession)
@@ -38,7 +40,7 @@ def coverage(session: Session, cik: str, version: str) -> tuple[int, int]:
                 PassageEmbedding.passage_id == FilingPassage.id, PassageEmbedding.version == version
             ),
         )
-        .where(Filing.cik == cik)
+        .where(Filing.cik == cik, *([Filing.accession == accession] if accession else []))
     ).one()
     return total, ready
 
@@ -92,7 +94,12 @@ def prepare_batch(session: Session, provider: QuestionProvider) -> int:
 
 
 def retrieve(
-    session: Session, cik: str, version: str, vector: Sequence[float]
+    session: Session,
+    cik: str,
+    version: str,
+    vector: Sequence[float],
+    *,
+    accession: str | None = None,
 ) -> list[SourcePassage]:
     """Rank only this issuer/version. Exact cosine ranking avoids ANN filtering losses."""
     query = (
@@ -101,6 +108,8 @@ def retrieve(
         .join(PassageEmbedding, PassageEmbedding.passage_id == FilingPassage.id)
         .where(Filing.cik == cik, PassageEmbedding.version == version)
     )
+    if accession is not None:
+        query = query.where(Filing.accession == accession)
     if session.get_bind().dialect.name == "postgresql":
         rows = session.execute(
             query.order_by(

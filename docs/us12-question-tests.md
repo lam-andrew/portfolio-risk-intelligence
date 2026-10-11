@@ -175,3 +175,37 @@ authenticated question routing, semantic retrieval, complete-company readiness o
 navigation. They are not counted toward the 20-case evaluation. Full evaluation and user
 acceptance remain pending. Raw local evidence stays under ignored `data/cache/us12-evaluation/`;
 no cached filing text, credentials, thought signatures or private questions are committed.
+
+## Atlas document conversation additions — October 10, 2026
+
+FR-13/FR-14, US-11/US-12; ADR 0027. These are controlled-provider contracts, not live-model
+acceptance. Existing issuer endpoint regression cases remain in place.
+
+- **AT-F01 — document access:** signed-in user holds/watches AAPL; request its selected
+  accession, another issuer's accession, untracked ticker and foreign passage ID.
+  Expect safe-text metadata/40-passage pagination only for the authorized document; all
+  mismatches 404. Source text is rendered as React text, never injected HTML.
+- **AT-F02 — document readiness/scope:** prepare one AAPL filing and leave another
+  unprepared. Selected readiness succeeds independently. Ask about suppliers; every
+  retrieved passage and citation belongs to that accession. Native pgvector verifies
+  accession, CIK and version predicates before rank/limit.
+- **AT-F03 — context bounds:** submit a follow-up with one prior exchange, then wrong
+  accession, extra role field, four exchanges, 1501-character answer and >6000 total
+  history characters. Valid context is labeled untrusted for generation/verification;
+  invalid cases return 422 before model calls. Embedding context remains ≤2200 chars.
+- **AT-F04 — revocation/drift:** remove membership, revoke the login, replace passage
+  text or change the document revision during provider I/O. No answer/citations may
+  escape; expect 404/401/409 respectively. Stale revision before a request spends no calls.
+- **AT-F05 — support/failures:** invalid IDs, unsupported claims and abstention produce
+  insufficient evidence without fabricated citations; quota is a distinct 429.
+- **AT-F06 — client lifecycle:** chat starts closed; suggestion fills without submitting;
+  send explicitly invokes the scoped endpoint with revision. Next question includes prior
+  context. Duplicate sends are guarded. Close/reopen preserves draft/history. Filing or
+  account unmount aborts/discards late requests. Service errors preserve draft for retry.
+- **AT-F07 — source navigation/mobile:** citation fetches its page if needed, highlights
+  the exact offset/quote and focuses the passage. Mobile dialog returns to reader on
+  citation/Back/Escape; composer stays within the visible viewport.
+
+Implementation: `backend/tests/test_filing_chat.py`, `test_questions_postgres.py`,
+`frontend/src/pages/FilingReaderPage.test.tsx`. Results, screenshots and remaining live
+checks: [Atlas verification](atlas-verification-2026-10-10.md).

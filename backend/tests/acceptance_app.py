@@ -83,3 +83,44 @@ def acceptance_service(session: SessionDep, request: Request) -> MarketDataServi
 
 app.dependency_overrides[get_symbol_provider] = lambda: provider
 app.dependency_overrides[get_market_data_service] = acceptance_service
+
+# Explicitly opt-in, disposable-only provider for Atlas browser interaction checks.
+# This does not evaluate a live LLM and cannot be enabled by the production entry point.
+if os.environ.get("ORBIT_ACCEPTANCE_CHAT") == "1":
+    from app.api.questions import get_question_provider
+    from app.engines.rag.grounding import AnswerDraft
+    from tests.test_questions import QUOTE, FakeQuestions
+
+    class AcceptanceQuestions(FakeQuestions):
+        def answer(self, question, passages):
+            current = json.loads(question)["current_question"]
+            if "predict" in current.lower():
+                return AnswerDraft(status="insufficient_evidence", claims=[])
+            source = next((p for p in passages if QUOTE in p.text), None)
+            if source is None:
+                return AnswerDraft(status="insufficient_evidence", claims=[])
+            followup = "name" in current.lower()
+            return AnswerDraft.model_validate(
+                {
+                    "status": "answered",
+                    "claims": [
+                        {
+                            "text": "The fixture does not name the supplier in this disclosure."
+                            if followup
+                            else "The company depends on a single supplier for certain components.",
+                            "evidence": [
+                                {
+                                    "passage_id": source.passage_id,
+                                    "quote": "The supplier is not named in this disclosure."
+                                    if followup
+                                    else QUOTE,
+                                }
+                            ],
+                        }
+                    ],
+                }
+            )
+
+    settings.qa_enabled = True
+    settings.gemini_api_key = "test-only"
+    app.dependency_overrides[get_question_provider] = AcceptanceQuestions

@@ -21,6 +21,7 @@ services:
       APP_QA_ENABLED: "false"
       APP_MARKET_DATA_API_KEY: ""
       APP_SEC_CONTACT_EMAIL: ""
+      ORBIT_ACCEPTANCE_CHAT: ${ORBIT_ACCEPTANCE_CHAT:-0}
       ORBIT_ACCEPTANCE_FIXTURE: /fixtures/current.json
     volumes:
       - ./backend:/app

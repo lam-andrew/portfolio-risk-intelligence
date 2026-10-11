@@ -46,3 +46,4 @@ capture an architecturally significant decision, its context, and its consequenc
 
 - [0023 — Unified dashboard and chart design](0023-unified-dashboard-chart-design.md) — Accepted, September 26, 2026.
 - [0026 — Orbit Atlas interface](0026-orbit-atlas-interface.md) — Accepted direction; implementation under review, October 10, 2026.
+- [0027 — Filing-scoped conversation](0027-filing-scoped-conversation.md) — Proposed implementation; live evaluation pending.
