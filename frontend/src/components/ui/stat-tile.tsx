@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface StatTileProps {
-  label: string;
+  label: ReactNode;
   value: ReactNode;
   /** Short qualifier under the value — units, comparison, or as-of date. */
   detail?: ReactNode;

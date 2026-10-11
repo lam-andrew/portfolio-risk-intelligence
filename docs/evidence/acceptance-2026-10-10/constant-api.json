@@ -1,0 +1,312 @@
+{
+  "holdings": [
+    {
+      "id": 1,
+      "ticker": "AAPL",
+      "quantity": "10.000000"
+    },
+    {
+      "id": 2,
+      "ticker": "MSFT",
+      "quantity": "5.500000"
+    }
+  ],
+  "portfolio/summary": {
+    "positions": [
+      {
+        "id": 1,
+        "ticker": "AAPL",
+        "quantity": "10.000000",
+        "latest_price": "99.88006598",
+        "market_value": "998.80",
+        "weight_pct": "47.59",
+        "price_as_of": "2026-10-10"
+      },
+      {
+        "id": 2,
+        "ticker": "MSFT",
+        "quantity": "5.500000",
+        "latest_price": "200.00000000",
+        "market_value": "1100.00",
+        "weight_pct": "52.41",
+        "price_as_of": "2026-10-10"
+      }
+    ],
+    "total_value": "2098.80",
+    "priced": true
+  },
+  "portfolio/risk": {
+    "holdings": [
+      {
+        "id": 1,
+        "ticker": "AAPL",
+        "volatility_pct": "16.22",
+        "band": "moderate",
+        "observations": 24
+      },
+      {
+        "id": 2,
+        "ticker": "MSFT",
+        "volatility_pct": "0.00",
+        "band": "low",
+        "observations": 24
+      }
+    ],
+    "portfolio_volatility_pct": "7.72",
+    "portfolio_band": "low",
+    "undiversified_volatility_pct": "7.72",
+    "diversification_benefit_pct": "0.00",
+    "window_days": 365,
+    "observations": 24
+  },
+  "portfolio/correlation": {
+    "tickers": [
+      "AAPL",
+      "MSFT"
+    ],
+    "matrix": [
+      [
+        "1.00",
+        null
+      ],
+      [
+        null,
+        null
+      ]
+    ],
+    "most_correlated": [],
+    "least_correlated": [],
+    "average_correlation": null,
+    "window_days": 365,
+    "observations": 24,
+    "high_threshold": "0.75",
+    "low_threshold": "0.30"
+  },
+  "portfolio/concentration": {
+    "hhi": "0.50",
+    "effective_holdings": "2.00",
+    "holdings_count": 2,
+    "top_1_pct": "52.41",
+    "top_3_pct": "100.00",
+    "top_5_pct": "100.00",
+    "overweight": [],
+    "overlaps": [],
+    "overweight_multiple": "2.0",
+    "overlap_threshold": "0.75"
+  },
+  "portfolio/drawdown": {
+    "max_drawdown_pct": "-0.53",
+    "current_drawdown_pct": "-0.53",
+    "episodes": [],
+    "series": [
+      {
+        "date": "2026-09-16",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-17",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-18",
+        "drawdown_pct": "-0.48"
+      },
+      {
+        "date": "2026-09-19",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-20",
+        "drawdown_pct": "-0.48"
+      },
+      {
+        "date": "2026-09-21",
+        "drawdown_pct": "-0.01"
+      },
+      {
+        "date": "2026-09-22",
+        "drawdown_pct": "-0.49"
+      },
+      {
+        "date": "2026-09-23",
+        "drawdown_pct": "-0.01"
+      },
+      {
+        "date": "2026-09-24",
+        "drawdown_pct": "-0.49"
+      },
+      {
+        "date": "2026-09-25",
+        "drawdown_pct": "-0.02"
+      },
+      {
+        "date": "2026-09-26",
+        "drawdown_pct": "-0.50"
+      },
+      {
+        "date": "2026-09-27",
+        "drawdown_pct": "-0.02"
+      },
+      {
+        "date": "2026-09-28",
+        "drawdown_pct": "-0.50"
+      },
+      {
+        "date": "2026-09-29",
+        "drawdown_pct": "-0.03"
+      },
+      {
+        "date": "2026-09-30",
+        "drawdown_pct": "-0.51"
+      },
+      {
+        "date": "2026-10-01",
+        "drawdown_pct": "-0.03"
+      },
+      {
+        "date": "2026-10-02",
+        "drawdown_pct": "-0.51"
+      },
+      {
+        "date": "2026-10-03",
+        "drawdown_pct": "-0.04"
+      },
+      {
+        "date": "2026-10-04",
+        "drawdown_pct": "-0.52"
+      },
+      {
+        "date": "2026-10-05",
+        "drawdown_pct": "-0.04"
+      },
+      {
+        "date": "2026-10-06",
+        "drawdown_pct": "-0.52"
+      },
+      {
+        "date": "2026-10-07",
+        "drawdown_pct": "-0.05"
+      },
+      {
+        "date": "2026-10-08",
+        "drawdown_pct": "-0.53"
+      },
+      {
+        "date": "2026-10-09",
+        "drawdown_pct": "-0.05"
+      },
+      {
+        "date": "2026-10-10",
+        "drawdown_pct": "-0.53"
+      }
+    ],
+    "window_days": 365,
+    "observations": 24
+  },
+  "portfolio/history": {
+    "points": [
+      {
+        "date": "2026-09-16",
+        "value": "2100.00"
+      },
+      {
+        "date": "2026-09-17",
+        "value": "2110.00"
+      },
+      {
+        "date": "2026-09-18",
+        "value": "2099.90"
+      },
+      {
+        "date": "2026-09-19",
+        "value": "2109.90"
+      },
+      {
+        "date": "2026-09-20",
+        "value": "2099.80"
+      },
+      {
+        "date": "2026-09-21",
+        "value": "2109.80"
+      },
+      {
+        "date": "2026-09-22",
+        "value": "2099.70"
+      },
+      {
+        "date": "2026-09-23",
+        "value": "2109.70"
+      },
+      {
+        "date": "2026-09-24",
+        "value": "2099.60"
+      },
+      {
+        "date": "2026-09-25",
+        "value": "2109.60"
+      },
+      {
+        "date": "2026-09-26",
+        "value": "2099.50"
+      },
+      {
+        "date": "2026-09-27",
+        "value": "2109.50"
+      },
+      {
+        "date": "2026-09-28",
+        "value": "2099.40"
+      },
+      {
+        "date": "2026-09-29",
+        "value": "2109.39"
+      },
+      {
+        "date": "2026-09-30",
+        "value": "2099.30"
+      },
+      {
+        "date": "2026-10-01",
+        "value": "2109.29"
+      },
+      {
+        "date": "2026-10-02",
+        "value": "2099.20"
+      },
+      {
+        "date": "2026-10-03",
+        "value": "2109.19"
+      },
+      {
+        "date": "2026-10-04",
+        "value": "2099.10"
+      },
+      {
+        "date": "2026-10-05",
+        "value": "2109.09"
+      },
+      {
+        "date": "2026-10-06",
+        "value": "2099.00"
+      },
+      {
+        "date": "2026-10-07",
+        "value": "2108.99"
+      },
+      {
+        "date": "2026-10-08",
+        "value": "2098.90"
+      },
+      {
+        "date": "2026-10-09",
+        "value": "2108.89"
+      },
+      {
+        "date": "2026-10-10",
+        "value": "2098.80"
+      }
+    ],
+    "start": "2026-09-16",
+    "end": "2026-10-10"
+  }
+}

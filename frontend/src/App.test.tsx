@@ -203,6 +203,18 @@ describe("Dashboard (US-10)", () => {
     expect(screen.getAllByText("2.9").length).toBeGreaterThan(0);
     // "Worst decline" labels both the tile and the drawdown card.
     expect(screen.getAllByText("Worst decline").length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "Volatility" })).toHaveAttribute(
+      "href",
+      "/methodology#portfolio-volatility",
+    );
+    expect(screen.getByRole("link", { name: "Average correlation" })).toHaveAttribute(
+      "href",
+      "/methodology#correlation",
+    );
+    expect(screen.getByRole("link", { name: "Worst decline" })).toHaveAttribute(
+      "href",
+      "/methodology#drawdown",
+    );
   });
 
   it("renders value history as a labelled image", async () => {
@@ -309,6 +321,9 @@ describe("Load states", () => {
 
     renderAt("/");
     expect(await screen.findByText(/could not load your portfolio/i)).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Could not load your portfolio");
+    expect(screen.queryByText(/0 positions/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Portfolio value")).not.toBeInTheDocument();
   });
 
   it("still renders holdings when only the analytics calls fail", async () => {
@@ -328,6 +343,8 @@ describe("Load states", () => {
     renderAt("/");
     expect((await screen.findAllByText("$5,366.30")).length).toBeGreaterThan(0);
     expect(screen.getAllByText("AAPL").length).toBeGreaterThan(0);
+    expect(screen.queryByText(/recovered to peak/i)).not.toBeInTheDocument();
+    expect(screen.getByText("Drawdown unavailable")).toBeInTheDocument();
   });
 });
 

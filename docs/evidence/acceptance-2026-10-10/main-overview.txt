@@ -1,0 +1,154 @@
+- complementary:
+  - generic: Orbit
+  - generic: Risk intelligence
+  - navigation:
+    - generic: Portfolio
+    - link "Overview":
+      - /url: /
+      - text: Overview
+    - link "Holdings":
+      - /url: /holdings
+      - text: Holdings
+    - generic: Risk & Exposure
+    - link "Correlation":
+      - /url: /correlation
+      - text: Correlation
+    - link "Concentration":
+      - /url: /concentration
+      - text: Concentration
+    - link "Stress test":
+      - /url: /stress
+      - text: Stress test
+    - link "Drawdown":
+      - /url: /drawdown
+      - text: Drawdown
+    - generic: Insights
+    - link "SEC filings":
+      - /url: /filings
+      - text: SEC filings
+    - text: Filings Q&A
+    - generic: SOON
+    - generic: Reference
+    - link "How this is calculated":
+      - /url: /methodology
+      - text: How this is calculated
+  - generic: ac
+  - generic "acceptance-a@example.com"
+  - button "Sign out":
+    - text: Sign out
+- main:
+  - heading "Risk overview" [level=1]
+  - paragraph: Personal portfolio · 2 positions
+  - generic: Connected
+  - generic: Portfolio value
+  - generic: $2,097.48
+  - generic: "-0.1% over the window"
+  - img "Portfolio value over time"
+  - generic: Volatility
+  - generic: 16.2%
+  - generic: Moderate
+  - generic: 16.2% without diversification
+  - generic: Average correlation
+  - generic: "1.00"
+  - generic: Closest pair AAPL/MSFT · 1.00
+  - generic: Effective holdings
+  - generic: "2.0"
+  - generic: from 2 positions · MSFT is 52.4%
+  - generic: Worst decline
+  - generic: "-1.1%"
+  - generic: currently -1.1% below peak
+  - heading "Holdings" [level=2]
+  - link "Manage":
+    - /url: /holdings
+  - paragraph: Priced with end-of-day market data.
+  - table:
+    - rowgroup:
+      - row "Ticker Shares Price Value Weight Volatility Actions":
+        - columnheader "Ticker"
+        - columnheader "Shares"
+        - columnheader "Price"
+        - columnheader "Value"
+        - columnheader "Weight"
+        - columnheader "Volatility"
+        - columnheader "Actions":
+          - generic: Actions
+    - rowgroup:
+      - row "AAPL 10 $99.88 $998.80 47.6% 16.2% Moderate Edit AAPL Delete AAPL":
+        - cell "AAPL"
+        - cell "10"
+        - cell "$99.88"
+        - cell "$998.80"
+        - cell "47.6%"
+        - cell "16.2% Moderate":
+          - generic: 16.2%
+          - generic: Moderate
+        - cell "Edit AAPL Delete AAPL":
+          - button "Edit AAPL": Edit
+          - button "Delete AAPL": Delete
+      - row "MSFT 5.5 $199.76 $1,098.68 52.4% 16.2% Moderate Edit MSFT Delete MSFT":
+        - cell "MSFT"
+        - cell "5.5"
+        - cell "$199.76"
+        - cell "$1,098.68"
+        - cell "52.4%"
+        - cell "16.2% Moderate":
+          - generic: 16.2%
+          - generic: Moderate
+        - cell "Edit MSFT Delete MSFT":
+          - button "Edit MSFT": Edit
+          - button "Delete MSFT": Delete
+    - rowgroup:
+      - row "Total $2,097.48":
+        - cell "Total"
+        - cell
+        - cell
+        - cell "$2,097.48"
+        - cell
+        - cell
+        - cell
+  - heading "Correlation" [level=2]
+  - link "Full matrix":
+    - /url: /correlation
+  - paragraph: How your holdings move relative to each other. Highly correlated positions behave like one bet, even when they look diversified.
+  - term: Most correlatedbehaves like one position
+  - definition: AAPL / MSFT · 1.00
+  - term: Least correlated
+  - definition: AAPL / MSFT · 1.00
+  - term: Average pair
+  - definition: "1.00"
+  - heading "Concentration" [level=2]
+  - link "How this is calculated":
+    - /url: /methodology#concentration
+  - generic: HHI 0.50
+  - paragraph: How much of the portfolio depends on any single thing.
+  - generic: "2.0"
+  - generic: effective holdings, from 2
+  - paragraph: Your positions are spread fairly evenly across 2 holdings.
+  - term: Largest
+  - definition: 52.4%
+  - term: Top 3
+  - definition: 100.0%
+  - term: Top 5
+  - definition: 100.0%
+  - heading "Overlapping exposuremove together above ρ 0.75" [level=3]:
+    - text: Overlapping exposure
+    - generic: move together above ρ 0.75
+  - list:
+    - generic: AAPL + MSFT
+    - generic: 100.0%
+    - generic: Behaves like one 100.0% position (lowest pair ρ 1.00)
+  - heading "Drawdown" [level=2]
+  - link "How this is calculated":
+    - /url: /methodology#drawdown
+  - generic: 24 trading days
+  - paragraph: How far the portfolio fell from a high, and whether it recovered.
+  - generic: Worst decline
+  - generic: "-1.1%"
+  - generic: Currently
+  - generic: "-1.1%"
+  - img "Portfolio drawdown over time, deepest -1.1%":
+    - generic: 0%
+    - generic: "-0%"
+    - generic: "-1%"
+    - generic: "-1%"
+    - generic: "-1%"

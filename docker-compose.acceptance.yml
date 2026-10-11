@@ -1,0 +1,40 @@
+# Isolated browser acceptance. No credentials, SEC/model workers or production data.
+name: orbit-acceptance
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: orbit
+      POSTGRES_PASSWORD: orbit
+      POSTGRES_DB: orbit_acceptance
+    tmpfs: [/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orbit -d orbit_acceptance"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+  backend:
+    build: ./backend
+    environment:
+      APP_DATABASE_URL: postgresql+psycopg://orbit:orbit@db:5432/orbit_acceptance
+      APP_CORS_ORIGINS: '["http://127.0.0.1:5187"]'
+      APP_QA_ENABLED: "false"
+      APP_MARKET_DATA_API_KEY: ""
+      APP_SEC_CONTACT_EMAIL: ""
+      ORBIT_ACCEPTANCE_FIXTURE: /fixtures/current.json
+    volumes:
+      - ./backend:/app
+      - ./.acceptance:/fixtures
+    ports: ["127.0.0.1:8087:8000"]
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["sh", "-c", "alembic upgrade head && uvicorn tests.acceptance_app:app --host 0.0.0.0 --port 8000"]
+  frontend:
+    build: ./frontend
+    environment:
+      VITE_API_BASE_URL: http://127.0.0.1:8087/api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports: ["127.0.0.1:5187:5173"]

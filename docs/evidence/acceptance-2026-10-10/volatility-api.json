@@ -1,0 +1,343 @@
+{
+  "holdings": [
+    {
+      "id": 17,
+      "ticker": "AAPL",
+      "quantity": "10.000000"
+    },
+    {
+      "id": 18,
+      "ticker": "NVDA",
+      "quantity": "5.000000"
+    }
+  ],
+  "portfolio/summary": {
+    "positions": [
+      {
+        "id": 17,
+        "ticker": "AAPL",
+        "quantity": "10.000000",
+        "latest_price": "100.000000",
+        "market_value": "1000.00",
+        "weight_pct": "66.67",
+        "price_as_of": "2026-10-10"
+      },
+      {
+        "id": 18,
+        "ticker": "NVDA",
+        "quantity": "5.000000",
+        "latest_price": "100.00000000",
+        "market_value": "500.00",
+        "weight_pct": "33.33",
+        "price_as_of": "2026-10-10"
+      }
+    ],
+    "total_value": "1500.00",
+    "priced": true
+  },
+  "portfolio/risk": {
+    "holdings": [
+      {
+        "id": 17,
+        "ticker": "AAPL",
+        "volatility_pct": "11.47",
+        "band": "low",
+        "observations": 24
+      },
+      {
+        "id": 18,
+        "ticker": "NVDA",
+        "volatility_pct": "11.47",
+        "band": "low",
+        "observations": 24
+      }
+    ],
+    "portfolio_volatility_pct": "11.47",
+    "portfolio_band": "low",
+    "undiversified_volatility_pct": "11.47",
+    "diversification_benefit_pct": "0.00",
+    "window_days": 365,
+    "observations": 24
+  },
+  "portfolio/correlation": {
+    "tickers": [
+      "AAPL",
+      "NVDA"
+    ],
+    "matrix": [
+      [
+        "1.00",
+        "1.00"
+      ],
+      [
+        "1.00",
+        "1.00"
+      ]
+    ],
+    "most_correlated": [
+      {
+        "a": "AAPL",
+        "b": "NVDA",
+        "correlation": "1.00"
+      }
+    ],
+    "least_correlated": [
+      {
+        "a": "AAPL",
+        "b": "NVDA",
+        "correlation": "1.00"
+      }
+    ],
+    "average_correlation": "1.00",
+    "window_days": 365,
+    "observations": 24,
+    "high_threshold": "0.75",
+    "low_threshold": "0.30"
+  },
+  "portfolio/concentration": {
+    "hhi": "0.56",
+    "effective_holdings": "1.80",
+    "holdings_count": 2,
+    "top_1_pct": "66.67",
+    "top_3_pct": "100.00",
+    "top_5_pct": "100.00",
+    "overweight": [],
+    "overlaps": [
+      {
+        "tickers": [
+          "AAPL",
+          "NVDA"
+        ],
+        "combined_weight_pct": "100.00",
+        "min_correlation": "1.00"
+      }
+    ],
+    "overweight_multiple": "2.0",
+    "overlap_threshold": "0.75"
+  },
+  "portfolio/drawdown": {
+    "max_drawdown_pct": "-7.34",
+    "current_drawdown_pct": "-7.34",
+    "episodes": [
+      {
+        "depth_pct": "-7.34",
+        "peak_date": "2026-09-29",
+        "trough_date": "2026-10-10",
+        "recovery_date": null,
+        "decline_days": 11,
+        "recovery_days": null,
+        "recovered": false
+      }
+    ],
+    "series": [
+      {
+        "date": "2026-09-16",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-17",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-18",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-19",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-20",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-21",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-22",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-23",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-24",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-25",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-26",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-27",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-28",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-29",
+        "drawdown_pct": "0"
+      },
+      {
+        "date": "2026-09-30",
+        "drawdown_pct": "-0.26"
+      },
+      {
+        "date": "2026-10-01",
+        "drawdown_pct": "-0.76"
+      },
+      {
+        "date": "2026-10-02",
+        "drawdown_pct": "-1.46"
+      },
+      {
+        "date": "2026-10-03",
+        "drawdown_pct": "-2.31"
+      },
+      {
+        "date": "2026-10-04",
+        "drawdown_pct": "-3.26"
+      },
+      {
+        "date": "2026-10-05",
+        "drawdown_pct": "-4.22"
+      },
+      {
+        "date": "2026-10-06",
+        "drawdown_pct": "-5.15"
+      },
+      {
+        "date": "2026-10-07",
+        "drawdown_pct": "-5.97"
+      },
+      {
+        "date": "2026-10-08",
+        "drawdown_pct": "-6.64"
+      },
+      {
+        "date": "2026-10-09",
+        "drawdown_pct": "-7.10"
+      },
+      {
+        "date": "2026-10-10",
+        "drawdown_pct": "-7.34"
+      }
+    ],
+    "window_days": 365,
+    "observations": 24
+  },
+  "portfolio/history": {
+    "points": [
+      {
+        "date": "2026-09-16",
+        "value": "1500.90"
+      },
+      {
+        "date": "2026-09-17",
+        "value": "1500.90"
+      },
+      {
+        "date": "2026-09-18",
+        "value": "1504.78"
+      },
+      {
+        "date": "2026-09-19",
+        "value": "1512.31"
+      },
+      {
+        "date": "2026-09-20",
+        "value": "1523.00"
+      },
+      {
+        "date": "2026-09-21",
+        "value": "1536.19"
+      },
+      {
+        "date": "2026-09-22",
+        "value": "1551.03"
+      },
+      {
+        "date": "2026-09-23",
+        "value": "1566.54"
+      },
+      {
+        "date": "2026-09-24",
+        "value": "1581.67"
+      },
+      {
+        "date": "2026-09-25",
+        "value": "1595.37"
+      },
+      {
+        "date": "2026-09-26",
+        "value": "1606.65"
+      },
+      {
+        "date": "2026-09-27",
+        "value": "1614.68"
+      },
+      {
+        "date": "2026-09-28",
+        "value": "1618.86"
+      },
+      {
+        "date": "2026-09-29",
+        "value": "1618.86"
+      },
+      {
+        "date": "2026-09-30",
+        "value": "1614.67"
+      },
+      {
+        "date": "2026-10-01",
+        "value": "1606.60"
+      },
+      {
+        "date": "2026-10-02",
+        "value": "1595.24"
+      },
+      {
+        "date": "2026-10-03",
+        "value": "1581.42"
+      },
+      {
+        "date": "2026-10-04",
+        "value": "1566.15"
+      },
+      {
+        "date": "2026-10-05",
+        "value": "1550.49"
+      },
+      {
+        "date": "2026-10-06",
+        "value": "1535.51"
+      },
+      {
+        "date": "2026-10-07",
+        "value": "1522.21"
+      },
+      {
+        "date": "2026-10-08",
+        "value": "1511.45"
+      },
+      {
+        "date": "2026-10-09",
+        "value": "1503.89"
+      },
+      {
+        "date": "2026-10-10",
+        "value": "1500.00"
+      }
+    ],
+    "start": "2026-09-16",
+    "end": "2026-10-10"
+  }
+}
