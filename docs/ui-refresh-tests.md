@@ -79,3 +79,37 @@ geometry, API values and interaction controls. Full reader/chat behavior is adde
 ADR 0027. See [Atlas verification](atlas-verification-2026-10-10.md) for current automated
 results, route screenshots in both themes and remaining UAT. Historical evidence above
 is retained as a record of the earlier refresh, not a claim of Atlas acceptance.
+
+## Atlas correlation scaling refinement — October 10, 2026
+
+Owner review found that automatic table layout stretched the row-label column, while
+shared table padding made values tall rectangles. The overview also hid grids above six
+holdings. The matrix now uses a bounded label column based on ticker length, equal square
+value cells, and sizes based on both holding count and available space. Cells shrink from
+80px to a 44px touch target; larger matrices scroll within a 400px overview / 640px detail
+region with pinned column and row labels. All holdings remain available in both views.
+Selected-pair feedback now works in the overview too. API values, null handling, and risk
+calculations are unchanged. This is a reversible refinement under ADR 0026, with no new
+architecture decision or story/sprint status change (US-6 #6, UI #93).
+
+Verification: 121 frontend tests passed, including 2/7/18/50-holding completeness and
+large-overview pair selection. ESLint, Prettier, TypeScript, production build and production
+dependency audit passed (zero vulnerabilities). Existing button-export Fast Refresh and
+filing-reader test `act` warnings remain. Backend code is unchanged.
+
+A temporary browser fixture mounted the production CorrelationCard and stylesheet with
+explicitly synthetic 2/5/12/30/50-holding inputs at 1440px and 390px, overview and full mode:
+20 layouts, all n² values retained, square cells at least 44px, no page-level overflow.
+The fixture was removed after inspection. The last pair in a 50-holding mobile matrix was
+selected after scrolling; headers stayed pinned. The five-holding authenticated acceptance
+app was also checked in both themes; its matrix fits the 390px phone width without scrolling.
+See [measured geometry](evidence/correlation-scaling/measurements.json),
+[desktop dark](evidence/correlation-scaling/desktop-dark.png),
+[desktop light](evidence/correlation-scaling/desktop-light.png),
+[mobile dark](evidence/correlation-scaling/mobile-dark.png),
+[mobile light](evidence/correlation-scaling/mobile-light.png),
+[overview mobile](evidence/correlation-scaling/overview-mobile-dark.png),
+[12-holding layout](evidence/correlation-scaling/twelve-desktop-dark.png), and
+[50-holding mobile selection](evidence/correlation-scaling/fifty-mobile-dark.png).
+These checks establish layout/interaction behavior, not new financial-engine evidence.
+Owner acceptance and PR review remain pending.

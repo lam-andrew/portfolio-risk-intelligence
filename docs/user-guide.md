@@ -222,3 +222,13 @@ six holdings, the largest five are shown individually and the rest are grouped a
 **Other holdings**. Missing prices are not assigned invented weights. Stress-test bars
 show the five largest dollar losses on a common scale starting at zero; select a ticker
 below the bars for its exact value. The full holdings table remains available below.
+
+### Correlation with larger portfolios
+
+The overview and full correlation page include every holding with price history returned
+by the API. Square cells adapt to the holding count and available width. For larger
+portfolios, scroll inside the matrix; ticker labels stay pinned along the top and left.
+Select any cell to inspect its pair and exact value below or beside the matrix. A dash
+means the correlation is unavailable, not zero. The **Full matrix** link opens the roomier
+correlation page. Keyboard users can focus the scroll region and use arrow keys, or Tab
+to a cell and activate it with Enter/Space.
