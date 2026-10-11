@@ -528,12 +528,14 @@ The keyless stack starts with Q&A disabled, while cached source search and risk 
 Offline tests exercise contracts and safeguards; they do not establish live model quality.
 
 
-## Proposed local embedding boundary — October 2 experiment
+## Opt-in local embedding boundary — October 10 integration
 
-The diagram below is a proposed integration, not the current application deployment.
-The isolated prototype implements only the internal embedding service and benchmark.
-See [ADR 0024](adr/0024-local-embedding-homelab-prototype.md) and
-[experiment evidence](local-embedding-spike.md).
+The diagram below is implemented behind an optional development Compose overlay. It is
+not the current preview deployment or a provisioned homelab. Embedding and generation
+interfaces are independent; migration 0008 preserves the original index alongside local
+384-dimensional windows. Retrieval ranks distinct parent passages by their best window,
+keeping the public citation contract. See [ADR 0025](adr/0025-opt-in-local-embedding-integration.md),
+[setup and rollback](local-embedding-integration.md), and [prototype evidence](local-embedding-spike.md).
 
 ```mermaid
 C4Container

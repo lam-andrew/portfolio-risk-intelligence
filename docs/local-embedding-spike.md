@@ -140,3 +140,7 @@ The raw output and source export remain in ignored local cache, not in the repos
    messaging. Do not treat a service outage as evidence that a filing lacks an answer.
 6. Accept/supersede the architecture decision only after evidence supports the switch;
    record deployment design separately before provisioning or publishing Orbit.
+
+## October 10 integration follow-up
+
+The prototype now has an opt-in application path. See [integration behavior and validation](local-embedding-integration.md) and [ADR 0025](adr/0025-opt-in-local-embedding-integration.md). Historical measurements above are unchanged; target-host and live quality acceptance remain pending.
