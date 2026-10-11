@@ -165,27 +165,35 @@ If downloads are unconfigured, the operator must set `APP_SEC_CONTACT_EMAIL` loc
 recreate backend/worker services. Never enter a personal password or model API key on this
 screen. Source search requires no LLM. Optional grounded questions are described below.
 
-## Asking questions about a company
+## Reading and asking about a specific filing
 
-Select a held or watched company under **SEC filings**. The **Ask about [ticker]** card
-shows how many filing passages are ready. Preparation runs in the background when the
-operator enables the model service; free-tier limits can pause it. Source search remains
-available even when questions are disabled.
+Choose a ticker link in **Holdings**, or a company under **SEC filings**, then select
+**Open filing** on a specific document. The reader shows issuer, form, date, accession
+and **Original SEC filing**. It contains indexed text passages, with pagination, rather
+than the original document layout or exhibits. Reading needs no model service.
 
-When ready, enter a question such as “What supply chain risks does the company disclose?”
-and select **Ask question**. The answer shows individual claims alongside exact supporting
-quotations, the filing date, section and a link to the original SEC filing. Check those
-sources and dates. Choosing a different company clears the previous question and answer.
+Select **Ask about this filing** to open the contextual chat. On desktop the reader and
+chat scroll independently. On mobile chat fills the screen; **Back** or Escape returns
+to the reader. Opening chat or selecting a suggested question does not spend model calls;
+a suggestion fills the composer and **Send question** submits it.
 
-If support cannot be established, Orbit says it could not find enough evidence. That is
-not proof that the company has no such risk. A quota/service error is shown separately and
-can be retried later. Answers reflect the bounded cached corpus and may miss disclosures;
-they do not provide forecasts, trade recommendations or personalized advice.
+Preparation applies to this filing only. When ready, ask a question, inspect its exact
+citations, and ask a follow-up such as “Does it name those suppliers?” A citation opens
+the relevant passage and highlights the supporting quote; on mobile this returns to the
+reader. Closing/reopening chat preserves this session and draft. Changing filings, signing
+out or reloading clears it. Only the latest 20 exchanges are retained in memory, and up to
+three are sent as follow-up context. Older context may need to be restated explicitly.
 
-The model service receives your question and public filing excerpts. Google may use
-free-tier submissions for product improvement, so keep personal or confidential information
-out of questions. Orbit does not attach your portfolio quantities or account details and
-stores no question history. Live model quality and user acceptance are still being evaluated.
+If evidence is insufficient, Orbit abstains. This does not prove a disclosure or risk is
+absent. Quota, preparation and service errors are distinct. Retryable failures preserve
+unsent text. A changed document requires **Reopen filing** so old evidence is not reused.
+Questions never automatically retry. Existing free-tier and application budgets still apply.
+
+Google's Gemini service receives the explicit question, limited prior conversation and
+public excerpts. Google may use free-tier inputs for product improvement: avoid private
+information. Orbit attaches no portfolio quantities or account details and persists no
+transcripts. Answers are not forecasts or investment advice. Live quality and UAT remain
+pending; controlled-provider tests prove mechanics, not factual model performance.
 
 ---
 

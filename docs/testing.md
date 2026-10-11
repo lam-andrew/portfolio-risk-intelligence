@@ -210,3 +210,9 @@ Final local suites: 316 backend plus seven separate PostgreSQL cases; 101 fronte
 Required production dependency audits passed; development-tool advisories remain
 explicitly recorded. Board/issue review and integration gates remain open; this is
 agent-executed acceptance, not Andrew's final sign-off or a deployment claim.
+
+### Atlas acceptance boundary
+
+See [October 10 Atlas verification](atlas-verification-2026-10-10.md) for the scoped
+reader/chat tests, complete frontend/backend results, native PostgreSQL checks and both-theme
+browser evidence. The disposable browser provider does not establish live model quality.
