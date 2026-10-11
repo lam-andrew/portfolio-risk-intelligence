@@ -111,7 +111,7 @@ describe("CorrelationCard compact mode (dashboard)", () => {
       </MemoryRouter>,
     );
 
-    // An n x n grid does not belong in a summary column — the pairs do.
+    // Overview retains the matrix as well as the pair summary.
     expect(screen.getByRole("table")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /full matrix/i })).toHaveAttribute(
       "href",
@@ -125,12 +125,33 @@ describe("CorrelationCard compact mode (dashboard)", () => {
     expect(screen.getByRole("table")).toBeInTheDocument();
   });
 
-  it("shrinks cells as the matrix grows so a wide one still fits", () => {
-    const tickers = Array.from({ length: 18 }, (_, i) => `T${i}`);
+  it.each([2, 7, 18, 50])("retains all %i holdings and their pair values", (count) => {
+    const tickers = Array.from({ length: count }, (_, i) => `T${i}`);
     const matrix = tickers.map((_, i) => tickers.map((_, j) => (i === j ? "1.00" : "0.30")));
     renderCard({ ...base, tickers, matrix });
+    const table = screen.getByRole("table");
+    expect(within(table).getAllByRole("button")).toHaveLength(count * count);
+    expect(within(table).getAllByRole("columnheader")).toHaveLength(count + 1);
+    expect(within(table).getAllByRole("rowheader")).toHaveLength(count);
+    fireEvent.click(screen.getByRole("button", { name: `Inspect T${count - 1} / T0: 0.30` }));
+    expect(screen.getByRole("status")).toHaveTextContent(`T${count - 1} / T0`);
+  });
 
-    const cells = screen.getAllByText("0.30");
-    expect(Number(cells[0].style.width.replace("px", ""))).toBeLessThan(52);
+  it("keeps a larger dashboard matrix available and allows pair inspection", () => {
+    const tickers = Array.from({ length: 12 }, (_, i) => `T${i}`);
+    const matrix = tickers.map((_, i) => tickers.map((_, j) => (i === j ? "1.00" : null)));
+    render(
+      <MemoryRouter>
+        <CorrelationCard correlation={{ ...base, tickers, matrix }} compact />
+      </MemoryRouter>,
+    );
+    expect(within(screen.getByRole("table")).getAllByRole("button")).toHaveLength(144);
+    expect(screen.getByRole("region", { name: /scroll to explore all holdings/ })).toHaveAttribute(
+      "tabindex",
+      "0",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Inspect T11 / T0: —" }));
+    expect(screen.getByRole("status")).toHaveTextContent("T11 / T0");
+    expect(screen.getByRole("status")).toHaveTextContent("—");
   });
 });
