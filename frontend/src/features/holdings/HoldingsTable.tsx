@@ -29,7 +29,7 @@ export function HoldingsTable({
   }
 
   return (
-    <div className="relative overflow-x-auto">
+    <div className="atlas-holdings relative overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-border text-left">

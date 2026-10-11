@@ -32,8 +32,8 @@ export function ValueBars({ items, label, formatValue, unit }: Props) {
       >
         <defs>
           <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="var(--accent)" />
-            <stop offset="1" stopColor="var(--accent)" stopOpacity=".15" />
+            <stop offset="0" stopColor="var(--chart)" />
+            <stop offset="1" stopColor="var(--chart)" stopOpacity=".15" />
           </linearGradient>
         </defs>
         {[0, 0.5, 1].map((f) => (
@@ -88,7 +88,7 @@ export function ValueBars({ items, label, formatValue, unit }: Props) {
                   x2={x + bar - 5}
                   y1={y + 5}
                   y2={y + 5}
-                  stroke={p.label === active.label ? "var(--accent)" : "var(--muted-foreground)"}
+                  stroke={p.label === active.label ? "var(--chart)" : "var(--muted-foreground)"}
                   strokeWidth="1.5"
                 />
               )}

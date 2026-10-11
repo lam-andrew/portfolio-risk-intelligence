@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 
@@ -32,6 +32,16 @@ function renderCard(correlation: PortfolioCorrelation) {
 }
 
 describe("CorrelationCard (US-6)", () => {
+  it("lets keyboard and touch users inspect a signed pair without changing the matrix", () => {
+    renderCard(base);
+    const button = screen.getByRole("button", { name: "Inspect AAPL / BND: -0.15" });
+    button.focus();
+    fireEvent.click(button);
+    expect(button).toHaveFocus();
+    expect(button).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("status")).toHaveTextContent("AAPL / BND");
+    expect(screen.getByRole("status")).toHaveTextContent("-0.15");
+  });
   it("renders the full matrix with headers", () => {
     renderCard(base);
 
@@ -74,7 +84,7 @@ describe("CorrelationCard (US-6)", () => {
       most_correlated: [],
       least_correlated: [],
     });
-    expect(screen.getAllByText("—").length).toBe(2);
+    expect(screen.getAllByRole("button", { name: /Inspect .*: —/ })).toHaveLength(2);
   });
 
   it("prompts for more holdings when there are fewer than two", () => {
@@ -94,7 +104,7 @@ describe("CorrelationCard (US-6)", () => {
 });
 
 describe("CorrelationCard compact mode (dashboard)", () => {
-  it("omits the grid and links to the full matrix", () => {
+  it("shows a small grid and links to the full matrix", () => {
     render(
       <MemoryRouter>
         <CorrelationCard correlation={base} compact />
@@ -102,7 +112,7 @@ describe("CorrelationCard compact mode (dashboard)", () => {
     );
 
     // An n x n grid does not belong in a summary column — the pairs do.
-    expect(screen.queryByRole("table")).not.toBeInTheDocument();
+    expect(screen.getByRole("table")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /full matrix/i })).toHaveAttribute(
       "href",
       "/correlation",
