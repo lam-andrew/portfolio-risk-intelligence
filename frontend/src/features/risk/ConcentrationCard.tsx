@@ -35,8 +35,6 @@ export function ConcentrationCard({
 
   const effective = Number(data.effective_holdings);
   const count = data.holdings_count;
-  // Concentrated when the portfolio behaves like less than half its holding count.
-  const concentrated = effective < count / 2;
 
   return (
     <Card>
@@ -61,9 +59,8 @@ export function ConcentrationCard({
               </span>
             </div>
             <p className="mt-2 text-[13px] text-muted-foreground">
-              {concentrated
-                ? `Your ${count} positions behave like about ${effective.toFixed(1)} equally-weighted ones.`
-                : `Your positions are spread fairly evenly across ${count} holdings.`}
+              Your position weights have the same concentration as about {effective.toFixed(1)}{" "}
+              equally weighted holdings. This measure does not account for correlation.
             </p>
           </div>
 

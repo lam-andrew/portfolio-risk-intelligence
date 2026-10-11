@@ -309,6 +309,9 @@ describe("Load states", () => {
 
     renderAt("/");
     expect(await screen.findByText(/could not load your portfolio/i)).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Could not load your portfolio");
+    expect(screen.queryByText(/0 positions/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Portfolio value")).not.toBeInTheDocument();
   });
 
   it("still renders holdings when only the analytics calls fail", async () => {

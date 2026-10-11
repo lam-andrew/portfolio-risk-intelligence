@@ -31,7 +31,7 @@ function Loading() {
 
 function LoadError({ message }: { message: string }) {
   return (
-    <Card>
+    <Card role="alert">
       <CardHeader>
         <CardTitle>Could not load your portfolio</CardTitle>
         <CardDescription>{message}</CardDescription>
@@ -88,7 +88,7 @@ export default function App() {
  *  exists — otherwise every request would 401 on the sign-in screen. */
 function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Promise<void> }) {
   const { state, refresh } = usePortfolio();
-  const positions = state.kind === "ready" ? state.data.summary.positions.length : 0;
+  const positions = state.kind === "ready" ? state.data.summary.positions.length : null;
 
   return (
     <Routes>
@@ -99,7 +99,11 @@ function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Pro
             email={email}
             onSignOut={onSignOut}
             title="Risk overview"
-            subtitle={`Personal portfolio · ${positions} ${positions === 1 ? "position" : "positions"}`}
+            subtitle={
+              positions === null
+                ? "Personal portfolio"
+                : `Personal portfolio · ${positions} ${positions === 1 ? "position" : "positions"}`
+            }
           >
             <Loaded state={state}>
               {(data) => <DashboardPage data={data} onChanged={refresh} />}

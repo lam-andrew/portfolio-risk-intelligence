@@ -344,8 +344,8 @@ export function MethodologyPage({ data }: { data: PortfolioData }) {
           {effective !== null && holdingsCount > 0 && (
             <p className="text-foreground">
               Your portfolio: <YourFigure label="holdings" value={String(holdingsCount)} />{" "}
-              <YourFigure label="effective" value={Number(effective).toFixed(2)} /> — behaving like
-              far fewer positions than you hold.
+              <YourFigure label="effective" value={Number(effective).toFixed(2)} /> — the equivalent
+              number of equally weighted holdings, based on position weights alone.
             </p>
           )}
           <p>
