@@ -126,3 +126,67 @@ def test_busy_service_rejects_work_without_parallel_inference():
         finally:
             release.set()
         assert pending.result().status_code == 200
+
+
+def test_window_endpoint_reports_exact_version_and_source_bounds():
+    from model import VERSION
+
+    with TestClient(create_app(fake_encoder())) as client:
+        text = "risk " * 1200
+        result = client.post("/windows", json={"text": text}).json()
+        assert result["version"] == VERSION
+        assert result["windows"] == [list(w) for w in fake_encoder().windows(text)]
+        assert client.post("/windows", json={"text": " "}).status_code == 422
+        assert client.post("/windows", json={"text": "x" * 8193}).status_code == 422
+
+
+def test_priority_query_waits_for_current_batch_and_excludes_new_background_work():
+    from time import monotonic, sleep
+
+    from fastapi import HTTPException
+
+    from service import InferenceGate
+
+    gate = InferenceGate()
+    query_entered, release_query = Event(), Event()
+
+    def query():
+        with gate.claim(query=True):
+            query_entered.set()
+            assert release_query.wait(5)
+
+    with ThreadPoolExecutor() as pool:
+        with gate.claim():
+            pending = pool.submit(query)
+            deadline = monotonic() + 5
+            while not gate.query_waiting and monotonic() < deadline:
+                sleep(0.001)
+            assert gate.query_waiting
+            with pytest.raises(HTTPException):
+                with gate.claim():
+                    pytest.fail("Background request bypassed waiting query")
+            with pytest.raises(HTTPException):
+                with gate.claim(query=True):
+                    pytest.fail("More than one query queued")
+        try:
+            assert query_entered.wait(5)
+        finally:
+            release_query.set()
+        pending.result()
+        with gate.claim():
+            pass
+
+
+def test_query_timeout_clears_priority_waiter():
+    from fastapi import HTTPException
+
+    from service import InferenceGate
+
+    gate = InferenceGate()
+    with gate.claim():
+        with pytest.raises(HTTPException):
+            with gate.claim(query=True, timeout=0):
+                pytest.fail("Active inference was bypassed")
+        assert not gate.query_waiting
+    with gate.claim():
+        pass

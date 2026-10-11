@@ -175,3 +175,7 @@ authenticated question routing, semantic retrieval, complete-company readiness o
 navigation. They are not counted toward the 20-case evaluation. Full evaluation and user
 acceptance remain pending. Raw local evidence stays under ignored `data/cache/us12-evaluation/`;
 no cached filing text, credentials, thought signatures or private questions are committed.
+
+## October 10 integration follow-up
+
+The prototype now has an opt-in application path. See [integration behavior and validation](local-embedding-integration.md) and [ADR 0025](adr/0025-opt-in-local-embedding-integration.md). Historical measurements above are unchanged; target-host and live quality acceptance remain pending.

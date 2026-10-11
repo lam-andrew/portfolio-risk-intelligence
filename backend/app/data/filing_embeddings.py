@@ -8,10 +8,11 @@ from sqlalchemy import and_, func, select
 from sqlalchemy.orm import Session
 
 from app.data.filing_schedule import tracked_tickers
+from app.data.local_embeddings import LOCAL_VERSION
 from app.data.model_budget import ModelLimitError, pause, reserve
-from app.data.question_provider import ModelError, QuestionProvider
+from app.data.question_provider import EmbeddingProvider, ModelError
 from app.engines.rag.grounding import Evidence
-from app.models import Filing, FilingPassage, FilingSync, PassageEmbedding
+from app.models import Filing, FilingPassage, FilingSync, LocalPassageWindow, PassageEmbedding
 
 
 @dataclass(frozen=True)
@@ -29,6 +30,23 @@ class SourcePassage:
 
 
 def coverage(session: Session, cik: str, version: str) -> tuple[int, int]:
+    if version == LOCAL_VERSION:
+        total = (
+            session.scalar(
+                select(func.count(FilingPassage.id)).join(Filing).where(Filing.cik == cik)
+            )
+            or 0
+        )
+        ready = (
+            session.scalar(
+                select(func.count(func.distinct(LocalPassageWindow.passage_id)))
+                .join(FilingPassage)
+                .join(Filing)
+                .where(Filing.cik == cik, LocalPassageWindow.version == version)
+            )
+            or 0
+        )
+        return total, ready
     total, ready = session.execute(
         select(func.count(FilingPassage.id), func.count(PassageEmbedding.passage_id))
         .join(Filing, Filing.accession == FilingPassage.accession)
@@ -43,8 +61,10 @@ def coverage(session: Session, cik: str, version: str) -> tuple[int, int]:
     return total, ready
 
 
-def prepare_batch(session: Session, provider: QuestionProvider) -> int:
+def prepare_batch(session: Session, provider: EmbeddingProvider) -> int:
     """One batch; missing rows are the queue. Called only by the lock-owning worker."""
+    if provider.local_embeddings:
+        return prepare_local_passage(session, provider)
     tracked_ciks = select(FilingSync.cik).where(FilingSync.ticker.in_(tracked_tickers()))
     rows = list(
         session.scalars(
@@ -95,6 +115,8 @@ def retrieve(
     session: Session, cik: str, version: str, vector: Sequence[float]
 ) -> list[SourcePassage]:
     """Rank only this issuer/version. Exact cosine ranking avoids ANN filtering losses."""
+    if version == LOCAL_VERSION:
+        return retrieve_local(session, cik, version, vector)
     query = (
         select(FilingPassage, Filing)
         .join(Filing, Filing.accession == FilingPassage.accession)
@@ -122,3 +144,91 @@ def retrieve(
         ),
     )
     return [SourcePassage(p, f) for p, f, _ in ranked[:8]]
+
+
+def prepare_local_passage(session: Session, provider: EmbeddingProvider) -> int:
+    """One bounded passage, all windows atomic; a restart resumes at the next missing row."""
+    tracked_ciks = select(FilingSync.cik).where(FilingSync.ticker.in_(tracked_tickers()))
+    already_prepared = select(LocalPassageWindow.passage_id).where(
+        LocalPassageWindow.version == provider.embedding_version
+    )
+    passage = session.scalar(
+        select(FilingPassage)
+        .join(Filing)
+        .where(Filing.cik.in_(tracked_ciks), FilingPassage.id.not_in(already_prepared))
+        .order_by(Filing.filed_on.desc(), FilingPassage.id)
+        .limit(1)
+    )
+    if passage is None:
+        return 0
+    passage_id, original_text = passage.id, passage.text
+    # Release read transaction before CPU/HTTP work. No hosted budget or API key is needed.
+    session.rollback()
+    windows = provider.embed_passage(original_text)
+    if not windows:
+        raise ModelError("Local filing search returned no source windows.")
+    current = session.scalar(
+        select(FilingPassage)
+        .join(Filing)
+        .where(FilingPassage.id == passage_id, Filing.cik.in_(tracked_ciks))
+        .execution_options(populate_existing=True)
+        .with_for_update(of=FilingPassage)
+    )
+    if current is not None and current.text == original_text:
+        session.add_all(
+            [
+                LocalPassageWindow(
+                    passage_id=passage_id,
+                    version=provider.embedding_version,
+                    ordinal=i,
+                    start_offset=window.start,
+                    end_offset=window.end,
+                    vector=window.vector,
+                )
+                for i, window in enumerate(windows)
+            ]
+        )
+    session.commit()
+    return 1
+
+
+def retrieve_local(
+    session: Session, cik: str, version: str, vector: Sequence[float]
+) -> list[SourcePassage]:
+    """Rank each parent passage by its best window; return original source IDs and offsets."""
+    if session.get_bind().dialect.name == "postgresql":
+        ranked = (
+            select(
+                LocalPassageWindow.passage_id,
+                func.min(LocalPassageWindow.vector.cosine_distance(list(vector))).label("distance"),
+            )
+            .join(FilingPassage)
+            .join(Filing)
+            .where(Filing.cik == cik, LocalPassageWindow.version == version)
+            .group_by(LocalPassageWindow.passage_id)
+            .subquery()
+        )
+        rows = session.execute(
+            select(FilingPassage, Filing)
+            .join(Filing)
+            .join(ranked, ranked.c.passage_id == FilingPassage.id)
+            .order_by(ranked.c.distance, Filing.filed_on.desc(), FilingPassage.id)
+            .limit(8)
+        ).all()
+        return [SourcePassage(p, f) for p, f in rows]
+    rows_with_vectors = session.execute(
+        select(FilingPassage, Filing, LocalPassageWindow.vector)
+        .join(Filing)
+        .join(LocalPassageWindow, LocalPassageWindow.passage_id == FilingPassage.id)
+        .where(Filing.cik == cik, LocalPassageWindow.version == version)
+    ).all()
+    q = np.asarray(vector)
+    best: dict[int, tuple[float, FilingPassage, Filing]] = {}
+    for passage, filing, values in rows_with_vectors:
+        distance = -float(np.dot(q, values) / (np.linalg.norm(q) * np.linalg.norm(values)))
+        if passage.id not in best or distance < best[passage.id][0]:
+            best[passage.id] = (distance, passage, filing)
+    ordered = sorted(
+        best.values(), key=lambda row: (row[0], -row[2].filed_on.toordinal(), row[1].id)
+    )
+    return [SourcePassage(p, f) for _, p, f in ordered[:8]]
