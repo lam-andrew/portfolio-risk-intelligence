@@ -11,7 +11,7 @@ from decimal import Decimal
 from math import cos, pi, sin, sqrt
 from pathlib import Path
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from sqlalchemy.engine import make_url
 
 from app.api.holdings import get_symbol_provider
@@ -72,8 +72,11 @@ class AcceptanceProvider:
 provider = AcceptanceProvider()
 
 
-def acceptance_service(session: SessionDep) -> MarketDataService:
-    if json.loads(FIXTURE.read_text())["profile"] == "error":
+def acceptance_service(session: SessionDep, request: Request) -> MarketDataService:
+    profile = json.loads(FIXTURE.read_text())["profile"]
+    if profile == "error" or (
+        profile == "analytics_error" and request.url.path != "/api/portfolio/summary"
+    ):
         raise HTTPException(503, "Acceptance fixture: market data temporarily unavailable")
     return MarketDataService(session, provider)
 

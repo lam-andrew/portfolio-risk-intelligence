@@ -77,7 +77,11 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
         />
 
         <StatTile
-          label="Volatility"
+          label={
+            <Link to="/methodology#portfolio-volatility" className="underline underline-offset-4">
+              Volatility
+            </Link>
+          }
           value={pct(risk?.portfolio_volatility_pct)}
           badge={<RiskBadge band={risk?.portfolio_band ?? null} />}
           detail={
@@ -88,7 +92,11 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
         />
 
         <StatTile
-          label="Average correlation"
+          label={
+            <Link to="/methodology#correlation" className="underline underline-offset-4">
+              Average correlation
+            </Link>
+          }
           value={correlation?.average_correlation ?? "—"}
           detail={
             correlation?.most_correlated[0] !== undefined
@@ -98,12 +106,18 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
         />
 
         <StatTile
-          label="Worst decline"
+          label={
+            <Link to="/methodology#drawdown" className="underline underline-offset-4">
+              Worst decline
+            </Link>
+          }
           value={pct(drawdown?.max_drawdown_pct)}
           detail={
-            drawdown?.current_drawdown_pct != null && Number(drawdown.current_drawdown_pct) < -0.05
-              ? `currently ${pct(drawdown.current_drawdown_pct)} below peak`
-              : "recovered to peak"
+            drawdown?.current_drawdown_pct == null
+              ? "Drawdown unavailable"
+              : Number(drawdown.current_drawdown_pct) < -0.05
+                ? `currently ${pct(drawdown.current_drawdown_pct)} below peak`
+                : "recovered to peak"
           }
         />
       </section>

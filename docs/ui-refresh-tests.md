@@ -68,6 +68,6 @@ visual density, spacing and chart emphasis remains pending; issue #93 stays open
 
 [The core acceptance sweep](core-acceptance-2026-10-10.md) exercised real browser/API/
 PostgreSQL flows, chart keyboard controls and a narrow dashboard. It found and fixed
-three misleading/error-state presentation behaviors, with red/green regression proof.
+five presentation/navigation defects, with red/green regression proof.
 The updated frontend suite passes 101 tests. Screenshots use disposable synthetic
 portfolios; no personal holdings or model credentials are included.

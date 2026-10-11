@@ -8,7 +8,7 @@ Scope and estimates remain unchanged: the seven Sprint 2 stories total 23 points
 
 - Baseline: `main` at `236d64e`, with a browser smoke check of sign-in, dashboard,
   reload persistence and sign-out. This was **not** the full acceptance suite on main.
-- Full run: UI branch `cac2730`, followed by corrective commit `daf0b3b` on
+- Full run: UI branch `cac2730`, followed by corrective commits beginning with `daf0b3b` on
   `codex/core-acceptance`. The PR is stacked on `codex/ui-chart-refresh` (#94).
 - Application: real React, FastAPI routes/authentication, migrated PostgreSQL 16,
   real cache and risk engine. Prices and symbol recognition use the isolated test
@@ -43,9 +43,9 @@ Evidence paths below are relative to [the evidence directory](evidence/acceptanc
 | FR-10 / US-8 #8 | W6-UAT-8-01 | Recovered series: worst -40%, currently at peak; peak Oct 8, trough Oct 9, recovery Oct 10; each interval one calendar day. | `recovered-api.json`, `recovered.png` |
 | FR-10 / US-8 #8 | W6-UAT-8-02 | Ongoing series: worst/current -25%; Oct 9 peak, Oct 10 trough; “not recovered,” no invented recovery date. | `ongoing-api.json`, `ongoing.png` |
 | FR-12 / US-10 #10 | W6-UAT-10-01 | Four-holding dashboard $10,000; volatility 9.3% (API 9.32), average correlation .48, weights 30/25/25/20. Keyboard Home changed chart date; Tab/Enter selected QQQ. Desktop and narrow layout inspected; no document overflow (375px content/client width under requested 390px viewport). Holdings table scrolls within its container. | `restored-api.json`, `restored-dashboard.png`, `mobile-dashboard.png` |
-| FR-12 / US-10 #10 | W6-UAT-10-02 | Empty account showed add/import guidance. Controlled 503 showed error without metrics; false “0 positions” fixed and alert semantics added. Restoring provider/reloading returned correct values; holdings identical before/after. | `error-state.png`, `overlap-api.json`, `restored-api.json` |
+| FR-12 / US-10 #10 | W6-UAT-10-02 | Empty account showed add/import guidance. Controlled 503 showed error without metrics; false “0 positions” fixed and alert semantics added. Restoring provider/reloading returned correct values; holdings identical before/after. | `error-state.png`, `partial-analysis.png`, `overlap-api.json`, `restored-api.json` |
 | FR-12 support / US-19 #62 | W6-UAT-19-01 | Reviewed return, volatility, correlation, concentration and drawdown definitions against ADR 0012. Fixed unconditional “far fewer” claim at 3.92/4. Historical/fixed-holding/look-through limits and no-advice explanation present. | `methodology.txt`, corrective tests |
-| FR-12 support / US-19 #62 | W6-UAT-19-02; W7-19-05 | Followed correlation, concentration and drawdown metric links and all nine contents links to correct anchors. Examples matched API (3.92 effective holdings, VOO/VTI 1.00, ongoing decline -25%). Empty account showed formulas without another account's examples. | `methodology-links.json`, `methodology.txt`, `empty-methodology.txt`, relevant API captures |
+| FR-12 support / US-19 #62 | W6-UAT-19-02; W7-19-05 | Followed all four dashboard metric explanation links and all nine contents links to correct anchors. Examples matched API (3.92 effective holdings, VOO/VTI 1.00, ongoing decline -25%). Empty account showed formulas without another account's examples. | `metric-links.json`, `methodology-links.json`, `methodology.txt`, `empty-methodology.txt`, relevant API captures |
 | AR-1 / US-14 #14 | TC-14-01 | All three disposable containers built/started, migrations applied, API database health connected. Authenticated real browser rendered persisted API holdings. Ports deliberately differ from normal stack. | `auth-health.json`, Compose harness and screenshots |
 | FR-1 / US-1 #1 | TC-1-03 | Empty account D: entered AAPL 10 in UI, reloaded successfully; ZZZZ rejected, count unchanged. Symbol validation used controlled provider. | `manual-invalid.png` |
 | FR-4 / US-3 #3 | TC-3-03 | Added MSFT 4, changed AAPL 10→12.5; value became $1,250 at $100. Cancel retained MSFT; confirmation removed it after reload and from fresh risk response. | `manual-edited-deleted.png`, `managed-api.json` |
@@ -85,9 +85,20 @@ Evidence paths below are relative to [the evidence directory](evidence/acceptanc
 3. **US-10:** Failed loads fabricated “0 positions” and lacked an alert role.
    Unknown count stays omitted; load failure is announced as an alert.
 
-Commit `daf0b3b` contains fixes and regression assertions. With original production
+4. **US-19:** Dashboard volatility had no direct explanation link. Metric labels
+   now link directly to volatility, correlation and drawdown methodology sections;
+   concentration retains its existing explanation link. All four were followed in
+   the running browser and personalized figures checked against `final-api.json`.
+5. **US-10:** A partial analytics failure left priced holdings visible but called
+   an unavailable drawdown “recovered to peak.” It now explicitly says “Drawdown
+   unavailable.” Controlled browser retest retained the holding/value and displayed
+   unavailable risk figures, without the false recovery claim.
+
+Commit `daf0b3b` contains the first three fixes and regression assertions. With original production
 files restored temporarily, the three targeted tests failed (34 other tests passed).
-Restoring fixes yielded **37/37 passing** targeted tests. No risk formulas, API
+Restoring fixes yielded **37/37 passing** targeted tests. The final two gaps were also
+proved by **two failing tests / 28 passing** before correction and included in the
+final passing frontend suite. No risk formulas, API
 contracts, dependencies, story estimates or sprint assignments changed; ADR 0012
 and ADR 0013 still apply, so no new architectural decision is needed.
 
@@ -137,7 +148,8 @@ docker compose -f docker-compose.acceptance.yml up -d --build
 
 Open `http://127.0.0.1:5187`, create disposable accounts and enter/import only test
 holdings. Keep credentials in ignored local files. Available price profiles:
-`correlated`, `constant`, `concentration`, `overlap`, `recovered`, `ongoing`, `error`.
+`correlated`, `constant`, `concentration`, `overlap`, `recovered`, `ongoing`, `error`,
+`analytics_error` (summary succeeds; analytic endpoints fail).
 For a profile change, update `.acceptance/current.json`, then clear **only this
 fixture database's** price cache before reloading:
 

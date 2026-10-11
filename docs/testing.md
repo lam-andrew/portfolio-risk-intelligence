@@ -205,7 +205,7 @@ acceptance or change any sprint assignment.
 
 [Execution results and reproducible fixture](core-acceptance-2026-10-10.md) record
 14 Sprint 2 browser UAT procedures, five Sprint 1 carryover checks, and W7-19-05.
-Three presentation defects were fixed with demonstrated failing/passing regressions.
+Five presentation/navigation defects were fixed with demonstrated failing/passing regressions.
 Final local suites: 316 backend plus seven separate PostgreSQL cases; 101 frontend.
 Required production dependency audits passed; development-tool advisories remain
 explicitly recorded. Board/issue review and integration gates remain open; this is
