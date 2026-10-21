@@ -4,6 +4,7 @@ The worker is the scheduler. No SEC I/O or queue dependency is added to portfoli
 """
 
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 from sqlalchemy import and_, or_, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
@@ -16,8 +17,10 @@ from app.core.config import settings
 from app.models import FilingSync, Holding, WatchlistEntry
 
 
-def tracked_tickers() -> CompoundSelect[tuple[str]]:
+def tracked_tickers() -> CompoundSelect[Any]:
     """One global set; public work must not depend on which account requested it."""
+    # SQLAlchemy 2.0 and 2.1 parameterize result rows differently. Consumers select
+    # the named ticker column; its mapped String type is unchanged across both.
     return select(Holding.ticker).union(select(WatchlistEntry.ticker))
 
 
@@ -42,7 +45,7 @@ def schedule_due(session: Session, *, now: datetime | None = None) -> int:
         return 0
     now = now or datetime.now(UTC)
     tracked = tracked_tickers().subquery()
-    tickers = list(
+    tickers: list[str] = list(
         session.scalars(
             select(tracked.c.ticker)
             .outerjoin(FilingSync, FilingSync.ticker == tracked.c.ticker)
