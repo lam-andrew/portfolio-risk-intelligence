@@ -305,3 +305,8 @@ CIK/accession authorization, document readiness, fresh evidence on each turn, bo
 history and citation navigation are required. See ADR 0027 and the Atlas verification
 record. This adds acceptance detail to US-11/US-12 without changing their recorded sprint
 assignments or estimates. No story is marked Done by the existence of this implementation.
+
+
+## Sprint 3 SAC specification and completion plan
+
+October 20, 2026. The Risk and Exposure engine remains the SAC under FR-7 through FR-12. The [SAC specification](sac-specification.md) consolidates the existing covariance, correlation, concentration, drawdown and stress implementation for instructor feedback. The [Sprint 3 plan](sprint3-plan.md) preserves US-9/11/12 at 21 original points and records the seven Sprint 2 carryover completion items separately. The [test matrix](sprint3-tests.md) links final-build acceptance procedures and October 20 regression results. No requirement, estimate or sprint field changes in this documentation update.

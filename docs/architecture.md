@@ -552,3 +552,8 @@ Generation now receives limited prior exchanges, disclosed in the UI; provider c
 remain server-side. No new services, storage tables, dependencies or deployment requirements.
 Open local-embedding PR #98 requires reconciliation with these scoped predicates before
 combined deployment; it is not silently included or marked accepted by this PR.
+
+
+## Risk engine component flow and Sprint 3 validation
+
+October 20, 2026. The [SAC specification](sac-specification.md) gives the component flow, algorithm conventions, implementation boundaries and remaining validation. FastAPI orchestrates cache/provider access and calls pure numerical modules; React consumes the API. Existing ADRs 0004, 0012 and 0018 remain authoritative. Historical metrics can use the priced subset; stress requires complete same-date pricing, so their coverage must not be presented as interchangeable. This documentation update introduces no new service, persistence model or API contract. The separate Proxmox VM remains planned technical deployment work, not an achieved hosting result.
