@@ -217,3 +217,16 @@ Expected result and postconditions: Correct section opens, formulas match ADR 00
 October 20: Python 3.12 container, source e123023d48daa67516f1e31e5d8e12d80eb510f8. `pytest tests/test_volatility.py tests/test_correlation.py tests/test_concentration.py tests/test_drawdown.py tests/test_stress.py --junitxml=/tmp/orbit-week9-risk.xml`: **99 passed, zero failed/skipped**, 4.66 seconds. One existing Starlette/httpx deprecation warning. Pure numerical tests and authenticated SQLite/provider-fake API tests; no live market/SEC/model calls. No fresh coverage, frontend suite, native PostgreSQL run or final-build UAT is claimed.
 
 [Sanitized execution summary](evidence/sprint3-planning/risk-regression.json); full JUnit/logs retained with local verification artifacts. Unit outputs match the assertions in the linked test files; later integrated-build results must be recorded separately.
+
+## Current review check finding
+
+October 20, 2026: PR #104's frontend production dependency audit failed on
+`follow-redirects` 1.16.0, reporting one high-severity vulnerable dependency and
+advisories GHSA-q3jh-wrc6-jgq8 and GHSA-8r9p-f939-6h3c. The audit output reports a
+fix is available. [Failed audit evidence](https://github.com/lam-andrew/portfolio-risk-intelligence/actions/runs/39546688571/job/119046337108).
+
+This documentation change does not modify application dependencies. Review and
+update the dependency in a focused maintenance change, rerun the audit and
+applicable regression/build checks, then reassess merge readiness. The earlier
+successful PR #103 checks remain historical evidence and do not override this
+new finding. No merge or deployed exploitability conclusion is claimed.
