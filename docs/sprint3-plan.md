@@ -101,3 +101,25 @@ No functional story added, removed, split, re-estimated or reassigned. Prioritiz
 ![Sprint 3 burndown](evidence/sprint3-planning/burndown.png)
 
 [Algorithm specification](sac-specification.md) · [Test specifications](sprint3-tests.md)
+
+## PR integration checkpoint — October 20, 2026
+
+Maintenance #105, frontend dependency updates #97 and Sprint 2 documentation #95
+are merged to main after review and passing checks. The incompatible standalone
+Node type upgrade #88 is closed; coordinated tooling/runtime work remains #85.
+The production redirect dependency audit finding is repaired by #105.
+
+The Atlas/research/demo/planning stack is consolidated through #94 into the
+remaining draft Q&A review #92. Parent-branch merges are not a main release or
+a story acceptance. The review fixed a desktop/mobile theme synchronization bug
+and reconciled local embeddings with filing-scoped readiness and retrieval.
+Combined verification: 380 backend and 122 frontend passes, plus eight native
+PostgreSQL passes and migration rollback/re-upgrade. Nine ordinary-suite skips
+comprise those eight native cases and the opt-in real-encoder check. See
+[the integration evidence](us12-question-tests.md#atlaslocal-retrieval-integration--october-20-2026).
+
+Before main integration, complete the labeled live-model evaluation and owner
+acceptance required by #92. OptiPlex performance, separate-VM deployment and
+backups remain unverified technical work. Story assignments, estimates and board
+completion status are unchanged; implementation and green automated tests do not
+close these acceptance gates.
