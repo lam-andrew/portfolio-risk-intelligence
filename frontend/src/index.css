@@ -781,7 +781,7 @@ summary:focus-visible {
 
 .atlas-correlation-detail {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(240px, 1fr);
+  grid-template-columns: minmax(0, var(--matrix-max-width)) minmax(240px, 1fr);
   gap: 28px;
   align-items: start;
 }
@@ -815,4 +815,83 @@ progress::-webkit-progress-value {
 }
 progress::-moz-progress-bar {
   background: var(--chart);
+}
+
+/* Isolate the analytical matrix from ordinary data-table spacing. */
+.correlation-scroll {
+  overflow: auto;
+  max-height: 640px;
+  position: relative;
+  overscroll-behavior: contain;
+}
+.correlation-scroll-compact {
+  max-height: 400px;
+}
+.correlation-matrix {
+  table-layout: fixed;
+  width: 100%;
+  min-width: var(--matrix-min-width);
+  max-width: var(--matrix-max-width);
+  border-collapse: separate;
+  border-spacing: 3px;
+  font-family: "IBM Plex Mono", monospace;
+}
+.orbit-shell .correlation-matrix thead,
+.orbit-shell .correlation-matrix tbody tr:hover {
+  background: transparent;
+}
+.correlation-matrix thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 32px;
+  background: var(--surface);
+}
+.correlation-matrix thead th:first-child {
+  left: 0;
+  z-index: 3;
+}
+.correlation-column-label,
+.correlation-row-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--faint);
+}
+.correlation-row-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  text-align: right;
+  padding-right: 8px;
+}
+.orbit-shell .correlation-matrix .correlation-cell {
+  padding: 0;
+  vertical-align: middle;
+}
+.correlation-cell-button {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.correlation-cell-button[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 2px var(--foreground);
+}
+.correlation-cell-button:focus-visible {
+  outline-offset: -3px;
+}
+
+.atlas-correlation-detail > [role="status"] {
+  width: 100%;
+  max-width: 420px;
+}
+.correlation-column-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

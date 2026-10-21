@@ -20,20 +20,20 @@ from app.core.config import settings
 from app.data.provider import PriceBar, UnknownSymbolError
 from app.data.service import MarketDataService
 from app.main import app
+from tests.acceptance_symbols import is_acceptance_symbol
 
 if make_url(settings.database_url).database != "orbit_acceptance":
     raise RuntimeError("Browser acceptance requires the disposable orbit_acceptance database")
 
 FIXTURE = Path(os.environ.get("ORBIT_ACCEPTANCE_FIXTURE", "/fixtures/current.json"))
-KNOWN = {"AAPL", "MSFT", "NVDA", "TSLA", "VTI", "VOO", "QQQ", "BND", "BIG", "MID", "A", "B"}
 
 
 class AcceptanceProvider:
     def symbol_exists(self, ticker: str) -> bool:
-        return ticker in KNOWN
+        return is_acceptance_symbol(ticker, FIXTURE)
 
     def get_daily_prices(self, ticker: str, start: date, end: date) -> list[PriceBar]:
-        if ticker not in KNOWN:
+        if not self.symbol_exists(ticker):
             raise UnknownSymbolError(ticker)
         profile = json.loads(FIXTURE.read_text())["profile"]
         prices = [100 * 1.01 ** ((t + 1) // 2) * 0.99 ** (t // 2) for t in range(25)]
