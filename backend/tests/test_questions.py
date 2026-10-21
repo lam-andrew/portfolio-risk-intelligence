@@ -31,6 +31,7 @@ def db():
 
 
 class FakeQuestions:
+    local_embeddings = False
     embedding_version = EMBEDDING_VERSION
     model = "offline-test-model"
 

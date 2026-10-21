@@ -550,10 +550,43 @@ The reader is explicitly indexed passages, not a complete reconstruction of SEC 
 The chat is optional, kept only in client memory, and cleared on filing/account changes.
 Generation now receives limited prior exchanges, disclosed in the UI; provider credentials
 remain server-side. No new services, storage tables, dependencies or deployment requirements.
-Open local-embedding PR #98 requires reconciliation with these scoped predicates before
-combined deployment; it is not silently included or marked accepted by this PR.
+The October 20 PR integration reconciles local embeddings with these scoped predicates:
+both readiness counts and exact ranking filter by issuer, accession and embedding version
+before aggregation or limiting. The provider is still opt-in; live quality and target-host
+acceptance remain pending. See the integration addendum in ADR 0027.
 
 
 ## Risk engine component flow and Sprint 3 validation
 
 October 20, 2026. The [SAC specification](sac-specification.md) gives the component flow, algorithm conventions, implementation boundaries and remaining validation. FastAPI orchestrates cache/provider access and calls pure numerical modules; React consumes the API. Existing ADRs 0004, 0012 and 0018 remain authoritative. Historical metrics can use the priced subset; stress requires complete same-date pricing, so their coverage must not be presented as interchangeable. This documentation update introduces no new service, persistence model or API contract. The separate Proxmox VM remains planned technical deployment work, not an achieved hosting result.
+
+
+## Opt-in local embedding boundary — October 10 integration
+
+The diagram below is implemented behind an optional development Compose overlay. It is
+not the current preview deployment or a provisioned homelab. Embedding and generation
+interfaces are independent; migration 0008 preserves the original index alongside local
+384-dimensional windows. Retrieval ranks distinct parent passages by their best window,
+keeping the public citation contract. See [ADR 0025](adr/0025-opt-in-local-embedding-integration.md),
+[setup and rollback](local-embedding-integration.md), and [prototype evidence](local-embedding-spike.md).
+
+```mermaid
+C4Container
+    System_Boundary(host, "Proposed Orbit homelab VM / Docker Compose") {
+        Container(api, "API", "FastAPI", "Authenticated questions and retrieval orchestration")
+        Container(worker, "Preparation worker", "Python", "Resumable, bounded filing backfill")
+        Container(embed, "Shared embedding service", "ONNX Runtime / CPU", "One loaded BGE model; private endpoint")
+        ContainerDb(db, "Corpus and vector index", "PostgreSQL 16 / pgvector", "Public filings, source offsets and versioned vectors")
+    }
+    System_Ext(gemini, "Gemini", "Answer generation and support verification")
+    Rel(api, embed, "Encode question", "Internal HTTP")
+    Rel(worker, embed, "Encode filing windows", "Internal HTTP")
+    Rel(worker, db, "Read passages and persist vectors", "SQL")
+    Rel(api, db, "Retrieve issuer-specific evidence", "SQL")
+    Rel(api, gemini, "Question and selected public evidence", "HTTPS")
+```
+
+Resource estimates from the user-supplied read-only homelab inspection: 2 vCPUs, 6 GiB RAM
+and 48 GiB disk in a separate guest on the 16 GB OptiPlex. No guest has been provisioned
+for Orbit. Existing applications remain separate. Model and database services would not
+be exposed through host ports; private frontend ingress and backup setup remain deployment work.

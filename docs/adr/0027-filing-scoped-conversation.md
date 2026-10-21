@@ -67,3 +67,18 @@ PR #98 is a separate unmerged branch: its `retrieve_local`/coverage path must re
 accession filtering and native integration tests when that branch is reconciled. Do not merge
 these branches by taking one side of the questions module wholesale. Neither provider readiness
 nor US-12 acceptance is declared complete by this redesign.
+
+## Integration addendum — October 20, 2026
+
+Reconcile ADR 0025's optional local index with this existing document API. Local
+readiness counts only distinct parent passages in the selected accession. Local
+retrieval applies issuer, accession and version predicates before ranking/aggregation
+and the eight-parent limit, in both PostgreSQL and offline SQLite verification.
+Issuer-wide legacy requests omit the accession and retain their prior behavior.
+The same scoped evidence feeds generation, quote checks and the independent verifier.
+
+Retain local embedding budget separation and preflight checks in the shared answer
+function; failed preparation/search does not spend the user's question allowance.
+History bounds, authorization/revision rechecks, original-source citations and the
+risk engine remain unchanged. This reconciles two already specified flows; it does
+not adopt a new model or approve live quality, target-host performance or deployment.

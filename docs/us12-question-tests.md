@@ -209,3 +209,31 @@ acceptance. Existing issuer endpoint regression cases remain in place.
 Implementation: `backend/tests/test_filing_chat.py`, `test_questions_postgres.py`,
 `frontend/src/pages/FilingReaderPage.test.tsx`. Results, screenshots and remaining live
 checks: [Atlas verification](atlas-verification-2026-10-10.md).
+
+## October 10 integration follow-up
+
+The prototype now has an opt-in application path. See [integration behavior and validation](local-embedding-integration.md) and [ADR 0025](adr/0025-opt-in-local-embedding-integration.md). Historical measurements above are unchanged; target-host and live quality acceptance remain pending.
+
+## Atlas/local retrieval integration — October 20, 2026
+
+The combined branches initially failed two new regressions: selected-document
+readiness counted another unprepared filing, and local ranking included a better
+match from another accession. These are integration defects, not live model scores.
+Both pass after applying accession predicates before local coverage and ranking.
+
+- `test_filing_chat_local.py`: selected filing readiness independent of other filings;
+  scoped follow-up evidence/citations despite a higher-ranking other filing; no hosted
+  embedding-budget reservation on the local path. Both tests failed before the fix.
+- `test_questions_postgres.py`: native local accession/issuer filtering and scoped
+  coverage, alongside existing version/ranking/cascade checks.
+- Combined backend: **380 passed, 9 skipped**. Eight native cases passed separately
+  in a new disposable PostgreSQL database; the ninth skip is the opt-in real encoder
+  test, not rerun here. Migration 0008 upgrade/downgrade/re-upgrade passed.
+- Frontend: **122 passed**, lint (existing Fast Refresh warning), formatting, types,
+  production build and zero-vulnerability production dependency audit.
+- Backend Ruff and strict mypy passed. Existing Starlette/httpx warning remains.
+
+The reviewed maintenance, Sprint 2 documentation and dependency PRs landed on main.
+The feature stack is consolidated for joint review, with Q&A still unreleased. The
+20-case live evaluation, owner acceptance and OptiPlex measurements remain pending;
+none is established by these deterministic tests. No demo database was modified.

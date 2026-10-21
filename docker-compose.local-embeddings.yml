@@ -1,0 +1,56 @@
+# Opt-in development overlay. Model provisioning is explicit; no host encoder port.
+# docker compose -f docker-compose.yml -f docker-compose.local-embeddings.yml ...
+services:
+  provision-encoder:
+    build:
+      context: ./experiments/local_embeddings
+      target: runtime
+    command: ["python", "download_model.py"]
+    profiles: ["model-setup"]
+    volumes: ["encoder_models:/models"]
+    healthcheck:
+      disable: true
+
+  encoder:
+    build:
+      context: ./experiments/local_embeddings
+      target: runtime
+    environment:
+      EMBEDDING_THREADS: "1"
+    volumes: ["encoder_models:/models:ro"]
+    networks: [inference]
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpus: 1.0
+    pids_limit: 64
+    read_only: true
+    tmpfs: ["/tmp:size=16m"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+
+  backend:
+    environment:
+      APP_EMBEDDING_PROVIDER: local
+      APP_LOCAL_EMBEDDING_URL: http://encoder:8081
+    networks: [default, inference]
+    depends_on:
+      encoder:
+        condition: service_healthy
+
+  embedding-worker:
+    environment:
+      APP_EMBEDDING_PROVIDER: local
+      APP_LOCAL_EMBEDDING_URL: http://encoder:8081
+      # This worker has no reason to receive the generator's secret.
+      APP_GEMINI_API_KEY: ""
+    networks: [default, inference]
+    depends_on:
+      encoder:
+        condition: service_healthy
+
+networks:
+  inference:
+    internal: true
+volumes:
+  encoder_models:
