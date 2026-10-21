@@ -113,3 +113,16 @@ See [measured geometry](evidence/correlation-scaling/measurements.json),
 [50-holding mobile selection](evidence/correlation-scaling/fifty-mobile-dark.png).
 These checks establish layout/interaction behavior, not new financial-engine evidence.
 Owner acceptance and PR review remain pending.
+
+## PR review correction — October 20, 2026
+
+The Atlas shell can mount desktop and mobile theme controls together. Independent
+component state left the other control's label and next toggle stale. A two-control
+regression failed before the fix (one failure, two passes); the controls now observe
+the shared document theme through a subscription. Both labels and successive toggles
+remain synchronized, including when preference storage is unavailable.
+
+The Atlas UI branch passed 104 frontend tests, lint (existing Fast Refresh warning),
+types and production build with the source mounted in the existing test container.
+GitHub CI validates the refreshed dependency lockfile separately before merge. This
+is a UI defect correction, not new owner UAT or a change to risk calculations.
