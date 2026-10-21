@@ -527,6 +527,39 @@ Its missing-row queue and shared budgets survive restarts. Migration 0007 owns t
 The keyless stack starts with Q&A disabled, while cached source search and risk still work.
 Offline tests exercise contracts and safeguards; they do not establish live model quality.
 
+## 19. Atlas document research (October 10, 2026)
+
+[ADR 0027](adr/0027-filing-scoped-conversation.md) supersedes section 18's single-turn
+UI and its “question only” payload description for the new document routes. The legacy
+issuer routes remain compatible. Atlas uses:
+
+- GET `/api/filings/{ticker}/documents/{accession}`: metadata, revision and up to 40
+  safe-text passages; `offset` pages sequentially and `passage_id` locates a cited page.
+- GET `…/questions/status`: readiness for this document/version only.
+- POST `…/questions`: `{question, revision, history: [{accession, question, answer}]}`.
+  Maximum three exchanges and 6000 history characters, plus a 1000-character current question.
+
+Membership and CIK/accession validation precede retrieval. CIK, accession and embedding
+version filter the candidate set before ranking. Each answer independently retrieves and
+validates sources. Prior answers are untrusted context, not evidence. Recheck the login,
+membership, revision and source passages after model I/O. Invalid context returns 422;
+changed/unprepared documents 409; inaccessible documents 404; model/budget limits 429;
+service failures 503. Abstention remains a successful response with no claims.
+
+The reader is explicitly indexed passages, not a complete reconstruction of SEC HTML.
+The chat is optional, kept only in client memory, and cleared on filing/account changes.
+Generation now receives limited prior exchanges, disclosed in the UI; provider credentials
+remain server-side. No new services, storage tables, dependencies or deployment requirements.
+The October 20 PR integration reconciles local embeddings with these scoped predicates:
+both readiness counts and exact ranking filter by issuer, accession and embedding version
+before aggregation or limiting. The provider is still opt-in; live quality and target-host
+acceptance remain pending. See the integration addendum in ADR 0027.
+
+
+## Risk engine component flow and Sprint 3 validation
+
+October 20, 2026. The [SAC specification](sac-specification.md) gives the component flow, algorithm conventions, implementation boundaries and remaining validation. FastAPI orchestrates cache/provider access and calls pure numerical modules; React consumes the API. Existing ADRs 0004, 0012 and 0018 remain authoritative. Historical metrics can use the priced subset; stress requires complete same-date pricing, so their coverage must not be presented as interchangeable. This documentation update introduces no new service, persistence model or API contract. The separate Proxmox VM remains planned technical deployment work, not an achieved hosting result.
+
 
 ## Opt-in local embedding boundary — October 10 integration
 

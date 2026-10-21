@@ -29,11 +29,15 @@ class SourcePassage:
         )
 
 
-def coverage(session: Session, cik: str, version: str) -> tuple[int, int]:
+def coverage(
+    session: Session, cik: str, version: str, *, accession: str | None = None
+) -> tuple[int, int]:
     if version == LOCAL_VERSION:
         total = (
             session.scalar(
-                select(func.count(FilingPassage.id)).join(Filing).where(Filing.cik == cik)
+                select(func.count(FilingPassage.id))
+                .join(Filing)
+                .where(Filing.cik == cik, *([Filing.accession == accession] if accession else []))
             )
             or 0
         )
@@ -42,7 +46,11 @@ def coverage(session: Session, cik: str, version: str) -> tuple[int, int]:
                 select(func.count(func.distinct(LocalPassageWindow.passage_id)))
                 .join(FilingPassage)
                 .join(Filing)
-                .where(Filing.cik == cik, LocalPassageWindow.version == version)
+                .where(
+                    Filing.cik == cik,
+                    LocalPassageWindow.version == version,
+                    *([Filing.accession == accession] if accession else []),
+                )
             )
             or 0
         )
@@ -56,7 +64,7 @@ def coverage(session: Session, cik: str, version: str) -> tuple[int, int]:
                 PassageEmbedding.passage_id == FilingPassage.id, PassageEmbedding.version == version
             ),
         )
-        .where(Filing.cik == cik)
+        .where(Filing.cik == cik, *([Filing.accession == accession] if accession else []))
     ).one()
     return total, ready
 
@@ -112,17 +120,24 @@ def prepare_batch(session: Session, provider: EmbeddingProvider) -> int:
 
 
 def retrieve(
-    session: Session, cik: str, version: str, vector: Sequence[float]
+    session: Session,
+    cik: str,
+    version: str,
+    vector: Sequence[float],
+    *,
+    accession: str | None = None,
 ) -> list[SourcePassage]:
     """Rank only this issuer/version. Exact cosine ranking avoids ANN filtering losses."""
     if version == LOCAL_VERSION:
-        return retrieve_local(session, cik, version, vector)
+        return retrieve_local(session, cik, version, vector, accession=accession)
     query = (
         select(FilingPassage, Filing)
         .join(Filing, Filing.accession == FilingPassage.accession)
         .join(PassageEmbedding, PassageEmbedding.passage_id == FilingPassage.id)
         .where(Filing.cik == cik, PassageEmbedding.version == version)
     )
+    if accession is not None:
+        query = query.where(Filing.accession == accession)
     if session.get_bind().dialect.name == "postgresql":
         rows = session.execute(
             query.order_by(
@@ -193,7 +208,12 @@ def prepare_local_passage(session: Session, provider: EmbeddingProvider) -> int:
 
 
 def retrieve_local(
-    session: Session, cik: str, version: str, vector: Sequence[float]
+    session: Session,
+    cik: str,
+    version: str,
+    vector: Sequence[float],
+    *,
+    accession: str | None = None,
 ) -> list[SourcePassage]:
     """Rank each parent passage by its best window; return original source IDs and offsets."""
     if session.get_bind().dialect.name == "postgresql":
@@ -204,7 +224,11 @@ def retrieve_local(
             )
             .join(FilingPassage)
             .join(Filing)
-            .where(Filing.cik == cik, LocalPassageWindow.version == version)
+            .where(
+                Filing.cik == cik,
+                LocalPassageWindow.version == version,
+                *([Filing.accession == accession] if accession else []),
+            )
             .group_by(LocalPassageWindow.passage_id)
             .subquery()
         )
@@ -220,7 +244,11 @@ def retrieve_local(
         select(FilingPassage, Filing, LocalPassageWindow.vector)
         .join(Filing)
         .join(LocalPassageWindow, LocalPassageWindow.passage_id == FilingPassage.id)
-        .where(Filing.cik == cik, LocalPassageWindow.version == version)
+        .where(
+            Filing.cik == cik,
+            LocalPassageWindow.version == version,
+            *([Filing.accession == accession] if accession else []),
+        )
     ).all()
     q = np.asarray(vector)
     best: dict[int, tuple[float, FilingPassage, Filing]] = {}

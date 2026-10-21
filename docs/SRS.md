@@ -241,6 +241,7 @@ the authoritative form. Sprint 1's six stories are reproduced in full in
 | US-8 | See historical drawdown | Core | 2 | 2 |
 | US-6 | See correlation among holdings | Core | 2 | 5 |
 | US-10 | Risk dashboard | Core | 2 | 5 |
+| US-19 | Risk methodology and explanations (FR-12 support) | Core | 2 | 2 |
 | US-9 | Run a stress test | Core | 3 | 8 |
 | US-11 | Ingest filings for a holding | Secondary | 3 | 5 |
 | US-12 | Ask a grounded question | Secondary | 3 | 8 |
@@ -249,6 +250,11 @@ the authoritative form. Sprint 1's six stories are reproduced in full in
 | US-18 | Automated brokerage connection | Stretch | — | — |
 
 ---
+
+Sprint 2 now totals **23 points**. US-19 received a 2-point estimate approved by
+Andrew on September 28, 2026; the six original estimates remain unchanged.
+See [the Sprint 2 plan](sprint2-plan.md) and [test specifications](sprint2-tests.md)
+for current acceptance criteria, DoD and requirement-to-test mapping.
 
 ## 6. Traceability matrix
 
@@ -295,3 +301,18 @@ Traceability: **FR-16 → US-21 / issue #90 → AF-01–AF-06** in
 [automatic-following test specifications](us21-following-tests.md), including results and
 remaining user acceptance. FR-13 / US-11 continues to cover bounded filing extraction and
 retrieval. FR-14 / US-12 grounded Q&A is implemented early on September 26; live evaluation and user acceptance remain pending. Sprint 3 and the eight-point estimate are unchanged. See ADR 0022 and the US-12 test specifications.
+
+
+### Atlas refinement — October 10, 2026
+
+The owner requested a document-specific refinement of FR-13/FR-14: holding → selected
+filing → safe internal reader → optional scoped conversational questions. Server-side
+CIK/accession authorization, document readiness, fresh evidence on each turn, bounded
+history and citation navigation are required. See ADR 0027 and the Atlas verification
+record. This adds acceptance detail to US-11/US-12 without changing their recorded sprint
+assignments or estimates. No story is marked Done by the existence of this implementation.
+
+
+## Sprint 3 SAC specification and completion plan
+
+October 20, 2026. The Risk and Exposure engine remains the SAC under FR-7 through FR-12. The [SAC specification](sac-specification.md) consolidates the existing covariance, correlation, concentration, drawdown and stress implementation for instructor feedback. The [Sprint 3 plan](sprint3-plan.md) preserves US-9/11/12 at 21 original points and records the seven Sprint 2 carryover completion items separately. The [test matrix](sprint3-tests.md) links final-build acceptance procedures and October 20 regression results. No requirement, estimate or sprint field changes in this documentation update.

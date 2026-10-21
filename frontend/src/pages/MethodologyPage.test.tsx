@@ -124,6 +124,16 @@ describe("MethodologyPage (US-19)", () => {
     expect(screen.queryByText("2.88")).not.toBeInTheDocument();
   });
 
+  it("does not call an almost equal allocation far fewer holdings", () => {
+    renderPage({
+      ...full,
+      concentration: { ...full.concentration!, holdings_count: 4, effective_holdings: "3.92" },
+    });
+    expect(screen.getByText("3.92")).toBeInTheDocument();
+    expect(screen.queryByText(/far fewer positions/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/based on position weights alone/i)).toBeInTheDocument();
+  });
+
   it("states the limitations rather than omitting them", () => {
     renderPage(full);
 

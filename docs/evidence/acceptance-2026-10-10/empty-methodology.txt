@@ -1,0 +1,216 @@
+- complementary:
+  - generic: Orbit
+  - navigation:
+    - link "Overview":
+      - /url: /
+      - generic: Overview
+    - link "Holdings":
+      - /url: /holdings
+      - generic: Holdings
+    - link "Correlation":
+      - /url: /correlation
+      - generic: Correlation
+    - link "Concentration":
+      - /url: /concentration
+      - generic: Concentration
+    - link "Stress test":
+      - /url: /stress
+      - generic: Stress test
+    - link "Drawdown":
+      - /url: /drawdown
+      - generic: Drawdown
+    - link "SEC filings":
+      - /url: /filings
+      - generic: SEC filings
+    - link "How this is calculated" [active]:
+      - /url: /methodology
+      - generic: How this is calculated
+  - generic: ac
+  - button "Sign out":
+    - text: Sign out
+- main:
+  - heading "How this is calculated" [level=1]
+  - paragraph: The method behind every risk figure, and what it does not model
+  - button "Switch to light mode": Light mode
+  - generic: Connected
+  - paragraph: "Every risk figure in Orbit comes from one pipeline: adjusted closing prices become daily returns, and those returns become volatility, correlation, concentration and drawdown. This page explains each step, the judgement behind it, and — at the end — what the analysis does not model."
+  - paragraph: Nothing here is a forecast or a recommendation. Every number describes what has already happened over a measured window.
+  - navigation "Contents":
+    - link "01 The price series":
+      - /url: "#prices"
+    - link "02 From prices to returns":
+      - /url: "#returns"
+    - link "03 Volatility of one holding":
+      - /url: "#volatility"
+    - link "04 Volatility of the whole portfolio":
+      - /url: "#portfolio-volatility"
+    - link "05 Correlation between holdings":
+      - /url: "#correlation"
+    - link "06 Concentration and overlap":
+      - /url: "#concentration"
+    - link "07 Drawdown":
+      - /url: "#drawdown"
+    - link "08 Hypothetical stress tests":
+      - /url: "#stress"
+    - link "09 What to scrutinize":
+      - /url: "#limitations"
+  - generic: "01"
+  - heading "The price series" [level=2]
+  - paragraph:
+    - text: "Everything starts from one number per holding per day: the"
+    - strong: adjusted close
+    - text: — the closing price corrected for stock splits and dividend payments.
+  - paragraph: "This is not cosmetic. If a stock does a 4-for-1 split, its raw closing price drops about 75% overnight while shareholders lose nothing. Feed raw closes into the math and that appears as a −75% daily return: one fabricated event that would dominate a whole year of volatility."
+  - generic: Used · adjusted close
+  - paragraph: Corporate actions are already accounted for, so a return reflects only market movement.
+  - generic: Rejected · raw close
+  - paragraph: Splits and dividends register as enormous fake price moves and inflate every figure downstream.
+  - generic: "02"
+  - heading "From prices to returns" [level=2]
+  - paragraph: Risk is about movement, not price level — a $700 ETF is not riskier than a $16 stock because its number is bigger. So prices become proportional daily changes, which are comparable across holdings.
+  - code: r(t) = P(t) / P(t−1) − 1
+  - strong: P(t)
+  - text: — adjusted close on day t
+  - strong: r(t)
+  - text: — that day's return (0.0165 = +1.65%)
+  - paragraph:
+    - text: Note that
+    - emphasis: "n"
+    - text: prices give
+    - emphasis: n−1
+    - text: returns.
+  - generic: Used · simple returns
+  - paragraph:
+    - text: A portfolio's return is
+    - emphasis: exactly
+    - text: the weighted sum of its holdings' returns. That identity is what makes the portfolio covariance math valid.
+  - generic: Rejected · log returns
+  - paragraph:
+    - text: Neatly additive across
+    - emphasis: time
+    - text: and common in academic work, but only approximately additive across
+    - emphasis: holdings
+    - text: — the direction that matters here.
+  - generic: "03"
+  - heading "Volatility of one holding" [level=2]
+  - paragraph: Volatility is the annualized standard deviation of daily returns — how far returns typically land from their own average.
+  - code: σ_daily = √( Σ (r(i) − r̄)² / (n − 1) )
+  - code: σ_annual = σ_daily × √252
+  - strong: n − 1
+  - text: — sample correction, because we hold a sample of history rather than all of it
+  - strong: "252"
+  - text: — conventional US trading days per year
+  - paragraph:
+    - text: The square root matters.
+    - emphasis: Variance
+    - text: scales linearly with time, and volatility is the square root of variance — so 25 days of returns have 25× the variance but only √25 = 5× the standard deviation. A holding with a 1% daily standard deviation is reported at roughly 15.9% annualized. Multiplying by 252 instead would overstate risk about sixteenfold.
+  - strong: The assumption.
+  - text: √252 scaling assumes daily returns are independent of each other. Real markets show volatility clustering — turbulent days follow turbulent days — so a single annualized number understates how bad a bad stretch gets. It is the standard convention, not a guarantee.
+  - generic: "04"
+  - heading "Volatility of the whole portfolio" [level=2]
+  - paragraph: The obvious approach — weight each holding's volatility by position size and average them — is wrong, and systematically so. It assumes every holding moves in lockstep. When one falls on a day another rises, the moves partially cancel and the portfolio swings less than its parts. A weighted average cannot see that.
+  - code: σₚ = √( wᵀ Σ w ) × √252
+  - strong: w
+  - text: — position weights (market value ÷ total)
+  - strong: Σ
+  - text: — covariance matrix of the aligned daily returns
+  - generic: Used · covariance matrix
+  - paragraph: Every pairwise co-movement enters the calculation, so offsetting moves reduce the result exactly as they do in reality.
+  - generic: Rejected · weighted average
+  - paragraph: Simple, and always higher than the truth. It would also make correlation pointless — diversification could never show up in the numbers.
+  - strong: Why alignment matters.
+  - text: A covariance between two holdings is only meaningful when each pair of observations comes from the same trading day. Before any of this runs, the engine restricts every holding to the days they all share. Comparing Monday's move in one stock against Tuesday's in another would produce a number that looks fine and means nothing.
+  - generic: "05"
+  - heading "Correlation between holdings" [level=2]
+  - paragraph: Covariance already captures co-movement, but its size depends on how volatile the two holdings are, so raw values are not comparable across pairs. Correlation divides out both standard deviations.
+  - code: ρ(i,j) = Cov(i,j) / ( σᵢ × σⱼ )
+  - text: Always between
+  - strong: −1
+  - text: and
+  - strong: "+1"
+  - text: ": +1 identical, 0 unrelated, −1 exactly opposite."
+  - paragraph:
+    - text: That normalization is what lets a low-volatility bond fund and a high-volatility growth stock be compared on one scale. Correlation is deliberately
+    - strong: not annualized
+    - text: ": scaling the covariance and both standard deviations by the same √252 cancels out entirely, so daily and annualized correlation are the same number."
+  - generic: "06"
+  - heading "Concentration and overlap" [level=2]
+  - paragraph: Concentration asks how much of the portfolio depends on any single thing. The base measure is the Herfindahl-Hirschman Index — the sum of squared weights, the standard concentration measure in economics. Squaring punishes large weights disproportionately, so one dominant position moves it far more than several modest ones.
+  - code: HHI = Σ wᵢ²
+  - code: effective holdings = 1 / HHI
+  - text: HHI runs from
+  - strong: 1/n
+  - text: (perfectly equal) to
+  - strong: "1"
+  - text: (everything in one holding).
+  - paragraph:
+    - text: "The reciprocal turns an abstract index into a count:"
+    - emphasis: the number of equally-weighted positions that would be exactly this concentrated
+    - text: .
+  - paragraph:
+    - text: A position is flagged overweight above
+    - strong: twice an equal-weight share
+    - text: ", a baseline chosen to scale with portfolio size: a flat “10%” rule is meaningless for a three-holding portfolio, where nothing can be under 10%, and far too permissive for a fifty-holding one."
+  - paragraph:
+    - text: "The second kind of concentration is harder to see. Several holdings can each be modest while moving as one, so their combined weight behaves like a single much larger position. Orbit detects this by reusing the correlation matrix: holdings are grouped when each correlates at or above 0.75 with"
+    - emphasis: every
+    - text: member already in the group.
+  - strong: Why agreement with the whole group.
+  - text: "If membership only required matching one member, a chain would form: A matches B, B matches C, so A, B and C get reported as one tight cluster even when A and C are unrelated. Requiring every pair to clear the threshold keeps a reported group honest."
+  - generic: "07"
+  - heading "Drawdown" [level=2]
+  - paragraph: "Volatility describes movement in both directions, which is not what investors actually feel. Drawdown describes the part they do: how far the portfolio fell from a high, how long it took, and whether it came back."
+  - code: drawdown(t) = value(t) / running_peak(t) − 1
+  - strong: running_peak(t)
+  - text: — the highest value reached
+  - emphasis: up to
+  - text: time t. Always ≤ 0.
+  - paragraph: The reference must be the running peak, not the highest value overall. Consider 100 → 150 → 120. Measured against the global maximum of 150, the first point would be reported as 33% underwater — at a moment when the portfolio had never been worth more. Against the running peak it is correctly 0%.
+  - paragraph:
+    - text: Orbit also identifies discrete
+    - strong: episodes
+    - text: ": each opens when value drops below its running peak and closes when that peak is regained, carrying peak and trough dates and both durations."
+  - strong: An unrecovered decline is reported, not dropped.
+  - text: If the portfolio is still below a prior peak when the window ends, that episode has no recovery date. It would be easy to skip it as incomplete — but an ongoing drawdown is precisely the one worth seeing.
+  - generic: "08"
+  - heading "Hypothetical stress tests" [level=2]
+  - paragraph: Choose an assumed 10%, 20% or 35% decline applied equally to every holding. We hold your share quantities fixed and use adjusted closes from the latest date shared by all holdings within the last 30 days. The result is a conditional dollar impact, with no assigned probability or time horizon.
+  - code: baseline(i) = shares(i) × adjusted close(i)
+  - code: loss(i) = baseline(i) × decline fraction
+  - code: after(i) = baseline(i) − loss(i)
+  - generic: Portfolio totals sum the holding rows. A hypothetical $1,000 position under a 20% decline loses $200 and becomes $800.
+  - paragraph: "Baseline and loss round half-up to cents per holding before totals are summed. The displayed loss percentage uses those rounded totals. One usable price per holding is enough: no volatility estimate is fitted, so the 20-return statistical minimum does not apply. Missing prices or no common date means no estimate, never a partial total."
+  - generic: These are equal price shocks, not historical crisis replays or forecasts. Bonds and ETFs receive the same shock as stocks; diversification, sector sensitivity, fees, taxes and currency changes are not modeled. Adjusted closes are an analytical baseline, not live quotes, and cached prices may be stale. The overview may use newer individual dates; the stress screen shows its common pricing date.
+  - generic: "09"
+  - heading "What to scrutinize" [level=2]
+  - paragraph:
+    - text: Each metric is implemented correctly against its own definition. Whether those definitions are
+    - emphasis: sufficient
+    - text: for your decisions is a separate question, and answering it means knowing what the analysis leaves out.
+  - heading "Volatility" [level=3]
+  - list:
+    - listitem: Treats upside and downside identically — a holding that jumps +8% scores as risky as one that falls −8%.
+    - listitem: Invites normal-distribution intuitions under which large daily moves look nearly impossible. Real markets produce them far more often.
+    - listitem: Uses one fixed window, weighting a day eleven months ago exactly as heavily as yesterday.
+  - heading "Correlation" [level=3]
+  - list:
+    - listitem: Correlations rise in crises. Holdings that look independent in calm markets tend to fall together in a selloff, so measured diversification is largest exactly when it is least reliable.
+    - listitem: Captures linear relationships only. Two holdings related non-linearly can show near-zero correlation while being far from independent.
+  - heading "Concentration" [level=3]
+  - list:
+    - listitem: HHI knows only weights — it has no concept of sector, geography or currency. Ten equally-weighted semiconductor stocks score as perfectly diversified.
+    - listitem: Overlap is inferred from price co-movement, not from what the funds actually hold. It is a good proxy, not a holdings-level comparison.
+    - listitem: The 0.75 overlap cut-off and the 2× overweight multiple are framing conventions, not derived optima.
+  - heading "Drawdown" [level=3]
+  - list:
+    - listitem: It is a backtest of today's holdings, not your history. Share quantities are held constant across the whole window, so it answers “how would this portfolio have behaved”, not “what happened to me”.
+    - listitem: No contributions, withdrawals or rebalancing, so it is not a performance record.
+    - listitem: "The window truncates: a one-year view cannot show a decline that began before it."
+  - heading "Not implemented" [level=3]
+  - list:
+    - listitem: Historical stress testing and differentiated sector or factor shocks.
+    - listitem: Risk-adjusted return — no Sharpe or Sortino ratio.
+    - listitem: Value at Risk or expected shortfall.
+    - listitem: Factor, sector or benchmark-relative decomposition.
+  - strong: The standing constraint.
+  - text: Historical metrics describe the past; stress tests apply explicit hypothetical assumptions. Orbit measures, contextualizes and explains risk — it does not predict prices, and nothing it reports is investment advice.

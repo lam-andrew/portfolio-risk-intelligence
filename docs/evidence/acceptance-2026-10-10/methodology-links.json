@@ -1,0 +1,47 @@
+[
+  {
+    "href": "#prices",
+    "url": "http://127.0.0.1:5187/methodology#prices",
+    "heading": "The price series"
+  },
+  {
+    "href": "#returns",
+    "url": "http://127.0.0.1:5187/methodology#returns",
+    "heading": "From prices to returns"
+  },
+  {
+    "href": "#volatility",
+    "url": "http://127.0.0.1:5187/methodology#volatility",
+    "heading": "Volatility of one holding"
+  },
+  {
+    "href": "#portfolio-volatility",
+    "url": "http://127.0.0.1:5187/methodology#portfolio-volatility",
+    "heading": "Volatility of the whole portfolio"
+  },
+  {
+    "href": "#correlation",
+    "url": "http://127.0.0.1:5187/methodology#correlation",
+    "heading": "Correlation between holdings"
+  },
+  {
+    "href": "#concentration",
+    "url": "http://127.0.0.1:5187/methodology#concentration",
+    "heading": "Concentration and overlap"
+  },
+  {
+    "href": "#drawdown",
+    "url": "http://127.0.0.1:5187/methodology#drawdown",
+    "heading": "Drawdown"
+  },
+  {
+    "href": "#stress",
+    "url": "http://127.0.0.1:5187/methodology#stress",
+    "heading": "Hypothetical stress tests"
+  },
+  {
+    "href": "#limitations",
+    "url": "http://127.0.0.1:5187/methodology#limitations",
+    "heading": "What to scrutinize"
+  }
+]

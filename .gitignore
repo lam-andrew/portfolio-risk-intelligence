@@ -76,3 +76,6 @@ data/cache/
 .vscode/
 *.swp
 *~
+
+# Disposable acceptance fixtures and captured runtime evidence
+.acceptance/

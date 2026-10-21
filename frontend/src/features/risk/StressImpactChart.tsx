@@ -1,3 +1,4 @@
+import { ValueBars } from "@/components/charts/ValueBars";
 import { useId } from "react";
 
 import type { PortfolioStress } from "@/api/client";
@@ -5,7 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { formatCurrency } from "@/features/holdings/format";
 
 /** A value bridge, not a time series. Coordinates only scale values returned by the API. */
-export function StressImpactChart({ data }: { data: PortfolioStress }) {
+export function StressImpactChart({
+  data,
+  compact = false,
+}: {
+  data: PortfolioStress;
+  compact?: boolean;
+}) {
   const patternId = `stress-loss-${useId().replace(/:/g, "")}`;
   const baseline = Number(data.baseline_value);
   const loss = Number(data.loss);
@@ -28,15 +35,17 @@ export function StressImpactChart({ data }: { data: PortfolioStress }) {
   const afterHeight = Math.min(after / baseline, 1) * 180;
   const afterTop = 200 - afterHeight;
   const largest = [...data.positions].sort((a, b) => Number(b.loss) - Number(a.loss)).slice(0, 5);
-  const maxLoss = Math.max(0, ...largest.map((p) => Number(p.loss)));
 
   return (
-    <div className="grid gap-4 xl:grid-cols-2">
+    <div className={compact ? "" : "grid gap-4 xl:grid-cols-2"}>
       <Card>
         <CardHeader>
-          <CardTitle>From baseline to stressed value</CardTitle>
+          <CardTitle>
+            {compact ? "What a shock could mean" : "From baseline to stressed value"}
+          </CardTitle>
           <CardDescription>
-            The red step is the estimated loss. This compares values, not movement over time.
+            {data.scenario.name} · Hypothetical. The red step is the estimated loss. This compares
+            values, not movement over time.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -64,6 +73,10 @@ export function StressImpactChart({ data }: { data: PortfolioStress }) {
                 aria-label={`Starting value ${formatCurrency(data.baseline_value)}, estimated loss ${formatCurrency(data.loss)}, remaining value ${formatCurrency(data.stressed_value)}. Scale starts at zero.`}
               >
                 <defs>
+                  <linearGradient id={`${patternId}-bar`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stopColor="var(--chart)" />
+                    <stop offset="1" stopColor="var(--chart)" stopOpacity=".18" />
+                  </linearGradient>
                   <pattern
                     id={patternId}
                     width="8"
@@ -99,8 +112,8 @@ export function StressImpactChart({ data }: { data: PortfolioStress }) {
                   y="20"
                   width="140"
                   height="180"
-                  rx="3"
-                  fill="var(--accent)"
+                  rx="9"
+                  fill="var(--chart)"
                   fillOpacity="0.45"
                 >
                   <title>Baseline value</title>
@@ -136,8 +149,8 @@ export function StressImpactChart({ data }: { data: PortfolioStress }) {
                   y={afterTop}
                   width="140"
                   height={afterHeight}
-                  rx="3"
-                  fill="var(--accent)"
+                  rx="9"
+                  fill={`url(#${patternId}-bar)`}
                 >
                   <title>Value after scenario</title>
                 </rect>
@@ -163,47 +176,37 @@ export function StressImpactChart({ data }: { data: PortfolioStress }) {
           </figure>
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>What contributes most to the loss?</CardTitle>
-          <CardDescription>
-            {data.positions.length > 5
-              ? "The five largest dollar losses; every holding is listed below."
-              : "Holdings ranked by estimated dollar loss."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ol aria-label="Largest loss contributions" className="flex flex-col gap-4">
-            {largest.map((p) => (
-              <li key={p.ticker}>
-                <div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
-                  <span className="font-mono font-medium">{p.ticker}</span>
-                  <span className="font-mono tabular-nums text-down">{formatCurrency(p.loss)}</span>
-                </div>
-                <svg
-                  viewBox="0 0 100 8"
-                  preserveAspectRatio="none"
-                  className="h-2 w-full"
-                  aria-hidden="true"
-                >
-                  <rect width="100" height="8" rx="2" fill="var(--surface-2)" />
-                  <rect
-                    width={maxLoss > 0 ? (Number(p.loss) / maxLoss) * 100 : 0}
-                    height="8"
-                    rx="2"
-                    fill="var(--down)"
-                    fillOpacity="0.8"
-                  />
-                </svg>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-5 text-xs text-muted-foreground">
-            Bars use the same dollar scale, starting at zero. With an equal price shock, position
-            size determines the loss contribution.
-          </p>
-        </CardContent>
-      </Card>
+      {!compact && (
+        <Card>
+          <CardHeader>
+            <CardTitle>What contributes most to the loss?</CardTitle>
+            <CardDescription>
+              {data.positions.length > 5
+                ? "The five largest dollar losses; every holding is listed below."
+                : "Holdings ranked by estimated dollar loss."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ValueBars
+              items={largest.map((p) => ({ label: p.ticker, value: Number(p.loss) }))}
+              label="Loss by holding"
+              unit="Loss · USD"
+              formatValue={(v) => formatCurrency(String(v))}
+            />
+            <ol aria-label="Largest loss contributions" className="sr-only">
+              {largest.map((p) => (
+                <li key={p.ticker}>
+                  {p.ticker}: {formatCurrency(p.loss)}
+                </li>
+              ))}
+            </ol>
+            <p className="mt-5 text-xs text-muted-foreground">
+              Bars use the same dollar scale, starting at zero. With an equal price shock, position
+              size determines the loss contribution.
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

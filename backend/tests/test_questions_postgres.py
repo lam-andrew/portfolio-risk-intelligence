@@ -9,7 +9,7 @@ from sqlalchemy import delete, select, text
 from sqlalchemy.orm import Session
 
 from app.core.database import engine
-from app.data.filing_embeddings import retrieve
+from app.data.filing_embeddings import coverage, retrieve
 from app.data.gemini import EMBEDDING_VERSION
 from app.data.model_budget import ModelLimitError, reserve
 from app.embedding_worker import LOCK_ID
@@ -35,6 +35,23 @@ def test_native_cosine_ranking_issuer_version_and_cascade():
             session.commit()
             rows = retrieve(session, "0000000001", EMBEDDING_VERSION, VECTOR)
             assert [r.passage.id for r in rows] == [first, second]
+            scoped = retrieve(
+                session, "0000000001", EMBEDDING_VERSION, VECTOR, accession="0000000001-26-000002"
+            )
+            assert [r.passage.id for r in scoped] == [second]
+            assert coverage(
+                session, "0000000001", EMBEDDING_VERSION, accession="0000000001-26-000002"
+            ) == (1, 1)
+            assert (
+                retrieve(
+                    session,
+                    "0000000002",
+                    EMBEDDING_VERSION,
+                    VECTOR,
+                    accession="0000000001-26-000002",
+                )
+                == []
+            )
             assert (
                 session.scalar(text("SELECT vector_dims(vector) FROM passage_embeddings LIMIT 1"))
                 == 768
@@ -115,6 +132,16 @@ def test_native_local_windows_rank_by_best_window_and_preserve_remote_index():
             rows = retrieve(session, "0000000001", LOCAL_VERSION, vector)
             assert [row.passage.id for row in rows] == [first, second]
             assert coverage(session, "0000000001", LOCAL_VERSION) == (2, 2)
+            accession = "0000000001-26-000002"
+            assert [
+                row.passage.id
+                for row in retrieve(
+                    session, "0000000001", LOCAL_VERSION, vector, accession=accession
+                )
+            ] == [second]
+            assert coverage(session, "0000000001", LOCAL_VERSION, accession=accession) == (1, 1)
+            assert coverage(session, "0000000002", LOCAL_VERSION, accession=accession) == (0, 0)
+            assert retrieve(session, "0000000002", LOCAL_VERSION, vector, accession=accession) == []
             assert coverage(session, "0000000001", EMBEDDING_VERSION) == (2, 2)
             assert (
                 session.scalar(

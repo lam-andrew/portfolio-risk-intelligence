@@ -442,3 +442,60 @@ export async function askFilingQuestion(ticker: string, question: string): Promi
     await api.post<FilingAnswer>(`/filings/${encodeURIComponent(ticker)}/questions`, { question })
   ).data;
 }
+
+/** Atlas reader: bounded pages of safe text, never raw SEC HTML. */
+export interface ReaderPassage {
+  id: number;
+  ordinal: number;
+  section: string;
+  text: string;
+  start_offset: number;
+  end_offset: number;
+}
+export interface FilingDocument {
+  ticker: string;
+  accession: string;
+  form: string;
+  filed_on: string;
+  source_url: string;
+  revision: string;
+  content_kind: "indexed_passages";
+  total_passages: number;
+  offset: number;
+  next_offset: number | null;
+  passages: ReaderPassage[];
+}
+export interface ConversationTurn {
+  accession: string;
+  question: string;
+  answer: string;
+}
+const documentPath = (ticker: string, accession: string) =>
+  `/filings/${encodeURIComponent(ticker)}/documents/${encodeURIComponent(accession)}`;
+export async function getFilingDocument(
+  ticker: string,
+  accession: string,
+  params: { offset?: number; passage_id?: number } = {},
+  signal?: AbortSignal,
+): Promise<FilingDocument> {
+  return (await api.get<FilingDocument>(documentPath(ticker, accession), { params, signal })).data;
+}
+export async function getDocumentQuestionStatus(
+  ticker: string,
+  accession: string,
+  signal?: AbortSignal,
+): Promise<QuestionStatus> {
+  return (
+    await api.get<QuestionStatus>(documentPath(ticker, accession) + "/questions/status", { signal })
+  ).data;
+}
+export async function askDocumentQuestion(
+  ticker: string,
+  accession: string,
+  body: { question: string; revision: string; history: ConversationTurn[] },
+  signal?: AbortSignal,
+): Promise<FilingAnswer> {
+  return (
+    await api.post<FilingAnswer>(documentPath(ticker, accession) + "/questions", body, { signal })
+  ).data;
+}

@@ -134,6 +134,7 @@ function mockAll(overrides: { positions?: typeof positions } = {}) {
   vi.spyOn(client, "getPortfolioHistory").mockResolvedValue(history);
   vi.spyOn(client, "getPortfolioConcentration").mockResolvedValue(concentration);
   vi.spyOn(client, "getPortfolioDrawdown").mockResolvedValue(drawdown);
+  vi.spyOn(client, "getPortfolioStress").mockRejectedValue(new Error("Preview unavailable"));
   vi.spyOn(client, "getStressScenarios").mockResolvedValue([
     { id: "decline-10", name: "Broad decline · 10%", shock_pct: "-10" },
   ]);
@@ -162,7 +163,27 @@ describe("Dashboard (US-10)", () => {
   it("shows the brand and the risk overview heading", async () => {
     renderAt("/");
     expect(await screen.findByRole("heading", { name: /risk overview/i })).toBeInTheDocument();
-    expect(screen.getAllByText(APP_NAME).length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "Orbit home" })).toBeInTheDocument();
+  });
+
+  it("keeps mobile navigation keyboard focus inside and restores it on Escape", async () => {
+    renderAt("/");
+    const open = await screen.findByRole("button", { name: "Open navigation" });
+    open.focus();
+    fireEvent.click(open);
+    const drawer = screen.getByRole("dialog", { name: "Navigation" });
+    expect(within(drawer).getByRole("link", { name: "Overview" })).toHaveFocus();
+    const first = within(drawer).getByRole("button", { name: /Switch to .* mode/ });
+    const signOut = within(drawer).getByRole("button", { name: "Sign out" });
+    signOut.focus();
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(first).toHaveFocus();
+    fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+    expect(signOut).toHaveFocus();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(open).toHaveFocus();
+    expect(document.body.style.overflow).not.toBe("hidden");
   });
 
   it("presents summary tiles before the detail", async () => {
@@ -178,14 +199,26 @@ describe("Dashboard (US-10)", () => {
     expect(screen.getByText("Moderate")).toBeInTheDocument();
 
     expect(screen.getByText("Average correlation")).toBeInTheDocument();
-    expect(screen.getByText("Effective holdings")).toBeInTheDocument();
-    // 2.88 effective appears in the tile and in the concentration card below.
+    expect(screen.getByText(/effective holdings, from/i)).toBeInTheDocument();
+    // Effective holdings remains available in the concentration detail.
     expect(screen.getAllByText("2.9").length).toBeGreaterThan(0);
     // "Worst decline" labels both the tile and the drawdown card.
     expect(screen.getAllByText("Worst decline").length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "Volatility" })).toHaveAttribute(
+      "href",
+      "/methodology#portfolio-volatility",
+    );
+    expect(screen.getByRole("link", { name: "Average correlation" })).toHaveAttribute(
+      "href",
+      "/methodology#correlation",
+    );
+    expect(screen.getByRole("link", { name: "Worst decline" })).toHaveAttribute(
+      "href",
+      "/methodology#drawdown",
+    );
   });
 
-  it("renders a value sparkline as a labelled image", async () => {
+  it("renders value history as a labelled image", async () => {
     renderAt("/");
     expect(
       await screen.findByRole("img", { name: /portfolio value over time/i }),
@@ -196,7 +229,9 @@ describe("Dashboard (US-10)", () => {
     renderAt("/");
     await screen.findByText("Portfolio value");
 
-    const table = screen.getAllByRole("table")[0];
+    const table = screen
+      .getAllByRole("table")
+      .find((table) => within(table).queryByText("Shares"))!;
     expect(within(table).getByText("AAPL")).toBeInTheDocument();
     expect(screen.getByText(/how your holdings move relative/i)).toBeInTheDocument();
   });
@@ -272,7 +307,11 @@ describe("Navigation (US-10)", () => {
 });
 
 describe("Load states", () => {
-  beforeEach(() => vi.restoreAllMocks());
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(client, "getStressScenarios").mockResolvedValue([]);
+    vi.spyOn(client, "getPortfolioStress").mockRejectedValue(new Error("Preview unavailable"));
+  });
 
   it("surfaces an error when the portfolio cannot be loaded", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue({ id: 1, email: "owner@example.com" });
@@ -289,8 +328,21 @@ describe("Load states", () => {
 
     renderAt("/");
     expect(await screen.findByText(/could not load your portfolio/i)).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Could not load your portfolio");
+    expect(screen.queryByText(/0 positions/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Portfolio value")).not.toBeInTheDocument();
   });
 
+  it("does not label a missing current drawdown as a recovery", async () => {
+    mockAll();
+    vi.spyOn(client, "getPortfolioDrawdown").mockResolvedValue({
+      ...drawdown,
+      current_drawdown_pct: null,
+    });
+    renderAt("/drawdown");
+    expect(await screen.findByText("Unavailable")).toBeInTheDocument();
+    expect(screen.queryByText("At peak")).not.toBeInTheDocument();
+  });
   it("still renders holdings when only the analytics calls fail", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue({ id: 1, email: "owner@example.com" });
     vi.spyOn(client, "getHealth").mockResolvedValue(health);
@@ -308,11 +360,17 @@ describe("Load states", () => {
     renderAt("/");
     expect((await screen.findAllByText("$5,366.30")).length).toBeGreaterThan(0);
     expect(screen.getAllByText("AAPL").length).toBeGreaterThan(0);
+    expect(screen.queryByText(/recovered to peak/i)).not.toBeInTheDocument();
+    expect(screen.getByText("Drawdown unavailable")).toBeInTheDocument();
   });
 });
 
 describe("Authentication gate (US-13)", () => {
-  beforeEach(() => vi.restoreAllMocks());
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(client, "getStressScenarios").mockResolvedValue([]);
+    vi.spyOn(client, "getPortfolioStress").mockRejectedValue(new Error("Preview unavailable"));
+  });
 
   it("shows the sign-in screen when there is no session", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
@@ -395,9 +453,7 @@ describe("Authentication gate (US-13)", () => {
     fireEvent.click(screen.getByRole("button", { name: /sign out/i }));
 
     // Signing out returns to "/", which for a signed-out visitor is the landing page.
-    expect(
-      await screen.findByRole("heading", { name: /know what your portfolio is really doing/i }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /know what you own/i })).toBeInTheDocument();
     expect(screen.queryByText("Portfolio value")).not.toBeInTheDocument();
   });
 
@@ -410,15 +466,17 @@ describe("Authentication gate (US-13)", () => {
 });
 
 describe("Public landing page", () => {
-  beforeEach(() => vi.restoreAllMocks());
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(client, "getStressScenarios").mockResolvedValue([]);
+    vi.spyOn(client, "getPortfolioStress").mockRejectedValue(new Error("Preview unavailable"));
+  });
 
   it("greets a signed-out visitor at the root instead of a bare sign-in form", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
     renderAt("/");
 
-    expect(
-      await screen.findByRole("heading", { name: /know what your portfolio is really doing/i }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /know what you own/i })).toBeInTheDocument();
     // The form belongs on its own route, not here.
     expect(screen.queryByLabelText(/password/i)).not.toBeInTheDocument();
   });
@@ -427,15 +485,13 @@ describe("Public landing page", () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
     renderAt("/holdings");
 
-    expect(
-      await screen.findByRole("heading", { name: /know what your portfolio is really doing/i }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /know what you own/i })).toBeInTheDocument();
   });
 
   it("offers a route to sign in", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
     renderAt("/");
-    await screen.findByRole("heading", { name: /know what your portfolio is really doing/i });
+    await screen.findByRole("heading", { name: /know what you own/i });
 
     const links = screen.getAllByRole("link", {
       name: /sign in|analyze my portfolio|get started/i,
@@ -449,14 +505,14 @@ describe("Public landing page", () => {
     const summary = vi.spyOn(client, "getPortfolioSummary");
     renderAt("/");
 
-    await screen.findByRole("heading", { name: /know what your portfolio is really doing/i });
+    await screen.findByRole("heading", { name: /know what you own/i });
     expect(summary).not.toHaveBeenCalled();
   });
 
   it("states the product boundaries a risk tool has to be explicit about", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
     renderAt("/");
-    await screen.findByRole("heading", { name: /know what your portfolio is really doing/i });
+    await screen.findByRole("heading", { name: /know what you own/i });
 
     // EX-1, EX-3 and EX-4 in the SRS are requirements, so they are asserted, not assumed.
     expect(screen.getByRole("heading", { name: /predict prices/i })).toBeInTheDocument();
@@ -467,7 +523,7 @@ describe("Public landing page", () => {
   it("uses the configured product name rather than a hard-coded one", async () => {
     vi.spyOn(client, "getCurrentUser").mockResolvedValue(null);
     renderAt("/");
-    await screen.findByRole("heading", { name: /know what your portfolio is really doing/i });
+    await screen.findByRole("heading", { name: /know what you own/i });
 
     expect(
       screen.getByRole("heading", { name: new RegExp(`what ${APP_NAME} will not do`, "i") }),

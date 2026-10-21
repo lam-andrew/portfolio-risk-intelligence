@@ -24,6 +24,22 @@ or outside the repository. Commit only sanitized metadata, scores and defect sum
 never the SEC corpus, credentials or private questions. Record the commit SHA, candidate
 model, embedding version, evaluation date and corpus accession/hash snapshot for each run.
 
+## Integrated Atlas execution boundary — October 20
+
+Run the production document route
+`POST /api/filings/{ticker}/documents/{accession}/questions` with the reader's
+revision. Freeze the selected accession, model/embedding version and any bounded
+conversation history with each label. Readiness is per selected filing, not every
+filing for the issuer. For the opt-in local path, capture retrieval at the local
+window-ranking boundary while retaining original passage IDs. A hosted-index
+result does not establish local-index quality.
+
+The twenty cases and thresholds below are unchanged. Use LIVE-02 as a follow-up
+to LIVE-01 in the same selected filing; record the exact prior exchange and verify
+that it is context only. Period-specific cases must select a filing containing
+their pre-labeled fact. Do not infer missing source support from a service error.
+This update specifies the integrated evaluation; no live case has newly passed.
+
 ## Twenty cases
 
 ### Answerable: factual, semantic and period-specific retrieval (AC1)

@@ -1,0 +1,77 @@
+- complementary:
+  - generic: Orbit
+  - navigation:
+    - link "Overview":
+      - /url: /
+      - generic: Overview
+    - link "Holdings":
+      - /url: /holdings
+      - generic: Holdings
+    - link "Correlation":
+      - /url: /correlation
+      - generic: Correlation
+    - link "Concentration":
+      - /url: /concentration
+      - generic: Concentration
+    - link "Stress test":
+      - /url: /stress
+      - generic: Stress test
+    - link "Drawdown":
+      - /url: /drawdown
+      - generic: Drawdown
+    - link "SEC filings":
+      - /url: /filings
+      - generic: SEC filings
+    - link "How this is calculated":
+      - /url: /methodology
+      - generic: How this is calculated
+  - generic: ac
+  - button "Sign out":
+    - text: Sign out
+- main:
+  - heading "Concentration" [level=1]
+  - paragraph: Where the portfolio is overexposed
+  - button "Switch to light mode": Light mode
+  - generic: Connected
+  - heading "Concentration" [level=2]
+  - link "How this is calculated":
+    - /url: /methodology#concentration
+  - generic: HHI 0.26
+  - paragraph: How much of the portfolio depends on any single thing.
+  - 'img "Portfolio allocation: VOO 30.0%, QQQ 25.0%, VTI 25.0%, BND 20.0%"':
+    - 'generic "VOO: 30.0%"'
+    - 'generic "QQQ: 25.0%"'
+    - 'generic "VTI: 25.0%"'
+    - 'generic "BND: 20.0%"'
+    - generic: 30.0%
+    - generic: VOO
+  - group "Highlight portfolio allocation":
+    - button "VOO 30.0%" [pressed]:
+      - generic: VOO
+      - generic: 30.0%
+    - button "QQQ 25.0%":
+      - generic: QQQ
+      - generic: 25.0%
+    - button "VTI 25.0%":
+      - generic: VTI
+      - generic: 25.0%
+    - button "BND 20.0%":
+      - generic: BND
+      - generic: 20.0%
+    - paragraph: Priced holdings · Weight by market value
+  - generic: "3.9"
+  - generic: effective holdings, from 4
+  - paragraph: Your position weights have the same concentration as about 3.9 equally weighted holdings. This measure does not account for correlation.
+  - term: Largest
+  - definition: 30.0%
+  - term: Top 3
+  - definition: 80.0%
+  - term: Top 5
+  - definition: 100.0%
+  - heading "Overlapping exposuremove together above ρ 0.75" [level=3]:
+    - text: Overlapping exposure
+    - generic: move together above ρ 0.75
+  - list:
+    - generic: QQQ + VOO + VTI
+    - generic: 80.0%
+    - generic: Behaves like one 80.0% position (lowest pair ρ 0.93)
