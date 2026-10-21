@@ -20,6 +20,20 @@ class PassageEmbedding(Base):
     vector: Mapped[list[float]] = mapped_column(Vector(768).with_variant(JSON(), "sqlite"))
 
 
+class LocalPassageWindow(Base):
+    """All windows for one passage/version are persisted together, never partially ready."""
+
+    __tablename__ = "local_passage_windows"
+    passage_id: Mapped[int] = mapped_column(
+        ForeignKey("filing_passages.id", ondelete="CASCADE"), primary_key=True
+    )
+    version: Mapped[str] = mapped_column(String(160), primary_key=True)
+    ordinal: Mapped[int] = mapped_column(primary_key=True)
+    start_offset: Mapped[int]
+    end_offset: Mapped[int]
+    vector: Mapped[list[float]] = mapped_column(Vector(384).with_variant(JSON(), "sqlite"))
+
+
 class ModelBudget(Base):
     __tablename__ = "model_budgets"
 

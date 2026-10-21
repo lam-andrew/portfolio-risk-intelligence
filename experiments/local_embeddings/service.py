@@ -1,14 +1,49 @@
-"""Internal experiment, separate from the application Compose stack."""
+"""Private encoder: one inference at a time, one bounded priority-query waiter."""
 
 import os
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, contextmanager
 from pathlib import Path
-from threading import Lock
+from threading import Condition
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, StrictBool, field_validator
 
 from model import VERSION, Encoder
+
+
+class InferenceGate:
+    def __init__(self):
+        self.condition = Condition()
+        self.active = False
+        self.query_waiting = False
+
+    @contextmanager
+    def claim(self, query=False, timeout=10):
+        with self.condition:
+            if self.query_waiting or (self.active and not query):
+                raise HTTPException(
+                    503, "Embedding service is busy", headers={"Retry-After": "1"}
+                )
+            if self.active:
+                self.query_waiting = True
+                try:
+                    if not self.condition.wait_for(
+                        lambda: not self.active, timeout=timeout
+                    ):
+                        raise HTTPException(
+                            503,
+                            "Embedding service is busy",
+                            headers={"Retry-After": "1"},
+                        )
+                finally:
+                    self.query_waiting = False
+            self.active = True
+        try:
+            yield
+        finally:
+            with self.condition:
+                self.active = False
+                self.condition.notify_all()
 
 
 class Request(BaseModel):
@@ -23,8 +58,12 @@ class Request(BaseModel):
         return texts
 
 
+class WindowRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=8192)
+
+
 def create_app(encoder=None) -> FastAPI:
-    gate = Lock()
+    gate = InferenceGate()
 
     @asynccontextmanager
     async def lifespan(app):
@@ -42,17 +81,23 @@ def create_app(encoder=None) -> FastAPI:
 
     @app.post("/embed")
     def embed(body: Request):
-        if not gate.acquire(blocking=False):
-            raise HTTPException(
-                503, "Embedding service is busy", headers={"Retry-After": "1"}
-            )
-        try:
-            vectors = app.state.encoder.embed(body.texts, body.query)
-            return {"version": VERSION, "vectors": vectors}
-        except ValueError as exc:
-            raise HTTPException(422, "Input exceeds embedding limits") from exc
-        finally:
-            gate.release()
+        with gate.claim(query=body.query):
+            try:
+                vectors = app.state.encoder.embed(body.texts, body.query)
+                return {"version": VERSION, "vectors": vectors}
+            except ValueError as exc:
+                raise HTTPException(422, "Input exceeds embedding limits") from exc
+
+    @app.post("/windows")
+    def windows(body: WindowRequest):
+        with gate.claim():
+            try:
+                return {
+                    "version": VERSION,
+                    "windows": app.state.encoder.windows(body.text),
+                }
+            except ValueError as exc:
+                raise HTTPException(422, "Input exceeds embedding limits") from exc
 
     return app
 

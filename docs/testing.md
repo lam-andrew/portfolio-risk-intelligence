@@ -192,3 +192,10 @@ frontend tests**, plus **four native PostgreSQL tests** run separately. Ruff, my
 Prettier, TypeScript and production build pass; existing warnings are unchanged. Desktop
 and 390px mobile controlled browser checks passed with synthetic data. User acceptance
 remains pending; the story has no new sprint assignment or estimate.
+
+### US-12 local embeddings — October 10 integration
+
+The opt-in local provider adds HTTP/window validation, atomic preparation, preserved source
+citations, bounded query priority and native pgvector coverage. The [integration evidence](local-embedding-integration.md#recorded-checks--october-10)
+records executed checks and the separate real-model smoke. The 20-case live quality
+assessment and OptiPlex runtime verification remain pending; US-12 is not accepted.
