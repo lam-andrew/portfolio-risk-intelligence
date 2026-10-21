@@ -167,13 +167,14 @@ Goal: a running, deployable app that ingests a portfolio and shows a real risk m
 - US-4 Retrieve + cache market data (5)
 - US-5 Volatility (holding + portfolio) (3)
 
-### Sprint 2 (Wks 6–8) — full risk core + dashboard → **Product Demo I** · 21 pts
+### Sprint 2 (Wks 6–8) — full risk core + dashboard → **Product Demo I** · 23 pts
 - US-2 Upload portfolio via CSV (3)
 - US-13 Authenticate (3)
 - US-7 Concentration/exposure (3)
 - US-8 Historical drawdown (2)
 - US-6 Correlation among holdings (5)
 - US-10 Risk dashboard + visualizations (5)
+- US-19 Risk methodology and explanations (2; estimated September 28)
 
 ### Sprint 3 (Wks 9–11) — algorithmic centerpiece + secondary feature · 21 pts
 - US-9 Stress testing (8) — rounds out the risk engine (**Week 9 Significant Algorithmic Component** deliverable)
@@ -220,13 +221,17 @@ US-9 stress testing adds hypothetical equal price shocks through the authenticat
 see [the stress-test methodology](docs/adr/0018-hypothetical-portfolio-stress-tests.md).
 Early implementation on September 18 does not change its Sprint 3 assignment.
 
-Current academic sprint evidence: [Sprint 1 backlog and Definition of Done](docs/sprint1-plan.md)
-(working artifact for Weeks 3-5; it does not replace the submitted Week 2 report).
+Current academic sprint evidence: [Sprint 2 plan and Definition of Done](docs/sprint2-plan.md)
+and [Sprint 2 acceptance specifications](docs/sprint2-tests.md), dated September 28.
+The [Sprint 1 plan](docs/sprint1-plan.md) retains its historical snapshot;
+five acceptance procedures carry into Sprint 2 for verification.
 
 [Sprint 1 acceptance test specifications](docs/sprint1-tests.md) record the
 September 8 evidence snapshot. The Sprint 2 subtotal was corrected from
 18 to 21 on September 8 (arithmetic only; no story estimates or assignments changed).
-The estimated Sprint 1-3 baseline totals 62 points, excluding unestimated additions.
+On September 28, Andrew approved 2 points for US-19, bringing Sprint 2 to 23
+and the estimated Sprint 1-3 scope to 64 points, excluding unestimated additions.
+The original six Sprint 2 estimates remain unchanged.
 
 - **Branching:** feature branches → PR → CI must pass → merge to `main`.
 - **Issues:** each user story is an issue, labeled by tier (`core`, `secondary`, `stretch`, `architectural`) and sprint; tracked on the GitHub Project board.
