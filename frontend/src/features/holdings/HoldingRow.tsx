@@ -70,9 +70,11 @@ export function HoldingRow({ position, risk, onChanged }: HoldingRowProps) {
   return (
     <>
       <tr className="border-b border-border/60 last:border-0">
-        <td className="px-2 py-3 font-medium text-foreground">{position.ticker}</td>
+        <td data-label="Ticker" className="px-2 py-3 font-medium text-foreground">
+          {position.ticker}
+        </td>
 
-        <td className="px-2 py-3 text-right">
+        <td data-label="Shares" className="px-2 py-3 text-right">
           {mode === "editing" ? (
             <Input
               aria-label={`Shares of ${position.ticker}`}
@@ -91,17 +93,26 @@ export function HoldingRow({ position, risk, onChanged }: HoldingRowProps) {
           )}
         </td>
 
-        <td className="px-2 py-3 text-right font-mono tabular-nums text-muted-foreground">
+        <td
+          data-label="Price"
+          className="px-2 py-3 text-right font-mono tabular-nums text-muted-foreground"
+        >
           {formatCurrency(position.latest_price)}
         </td>
-        <td className="px-2 py-3 text-right font-mono tabular-nums text-foreground">
+        <td
+          data-label="Value"
+          className="px-2 py-3 text-right font-mono tabular-nums text-foreground"
+        >
           {formatCurrency(position.market_value)}
         </td>
-        <td className="px-2 py-3 text-right font-mono tabular-nums text-muted-foreground">
+        <td
+          data-label="Weight"
+          className="px-2 py-3 text-right font-mono tabular-nums text-muted-foreground"
+        >
           {formatPercent(position.weight_pct)}
         </td>
 
-        <td className="px-2 py-3 text-right">
+        <td data-label="Volatility" className="px-2 py-3 text-right">
           <span className="inline-flex items-center justify-end gap-2">
             <span className="font-mono tabular-nums text-foreground">
               {formatPercent(risk?.volatility_pct ?? null)}
@@ -110,7 +121,7 @@ export function HoldingRow({ position, risk, onChanged }: HoldingRowProps) {
           </span>
         </td>
 
-        <td className="px-2 py-3">
+        <td data-label="Actions" className="px-2 py-3">
           <div className="flex items-center justify-end gap-1.5">
             {mode === "view" && (
               <>

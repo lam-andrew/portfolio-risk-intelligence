@@ -23,3 +23,19 @@ it("still switches appearance when local storage is blocked", () => {
   fireEvent.click(screen.getByRole("button", { name: "Switch to dark mode" }));
   expect(document.documentElement).toHaveClass("dark");
 });
+
+it("keeps desktop and mobile controls synchronized", () => {
+  render(
+    <>
+      <ThemeToggle />
+      <ThemeToggle />
+    </>,
+  );
+  fireEvent.click(screen.getAllByRole("button", { name: "Switch to dark mode" })[1]);
+  expect(document.documentElement).toHaveClass("dark");
+  expect(screen.getAllByRole("button", { name: "Switch to light mode" })).toHaveLength(2);
+  fireEvent.click(screen.getAllByRole("button", { name: "Switch to light mode" })[0]);
+  expect(document.documentElement).not.toHaveClass("dark");
+  expect(screen.getAllByRole("button", { name: "Switch to dark mode" })).toHaveLength(2);
+  expect(localStorage.getItem("orbit-theme")).toBe("light");
+});

@@ -45,3 +45,4 @@ capture an architecturally significant decision, its context, and its consequenc
 | [0022](0022-grounded-filing-questions.md) | Portable grounded questions with a free-tier model adapter | Proposed; live evaluation pending |
 
 - [0023 — Unified dashboard and chart design](0023-unified-dashboard-chart-design.md) — Accepted, September 26, 2026.
+- [0026 — Orbit Atlas interface](0026-orbit-atlas-interface.md) — Accepted direction; implementation under review, October 10, 2026.

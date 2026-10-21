@@ -6,36 +6,36 @@
    default (the <html> element carries the `dark` class); the light palette is the fallback. */
 @layer base {
   :root {
-    --background: #f5f6f9;
+    --background: #f4f7fc;
     --surface: #ffffff;
-    --surface-2: #eef1f5;
-    --border: #e7eaef;
-    --foreground: #101620;
-    --muted-foreground: #4a525e;
-    --faint: #7a838f;
-    --accent: #2a78d6;
+    --surface-2: #edf3ff;
+    --border: #ccd9ec;
+    --foreground: #162b48;
+    --muted-foreground: #536b8d;
+    --faint: #536b8d;
+    --accent: #2d55dd;
     --accent-foreground: #ffffff;
     --up: #0f8a3c;
     --warn: #b9791a;
-    --down: #d03b3b;
-    --ring: #2a78d6;
+    --down: #b44c69;
+    --ring: #2d55dd;
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: #090c11;
-    --surface: #111620;
-    --surface-2: #171d28;
-    --border: #212a36;
-    --foreground: #eaeef4;
-    --muted-foreground: #a7b1c0;
-    --faint: #6c7686;
-    --accent: #4a93f0;
-    --accent-foreground: #06101f;
+    --background: #080f20;
+    --surface: #101d34;
+    --surface-2: #162d56;
+    --border: #263b60;
+    --foreground: #f3f7ff;
+    --muted-foreground: #98aacc;
+    --faint: #98aacc;
+    --accent: #2d55dd;
+    --accent-foreground: #ffffff;
     --up: #3ec38a;
     --warn: #e0a13a;
-    --down: #f0655f;
-    --ring: #4a93f0;
+    --down: #f0a0ab;
+    --ring: #83a6ff;
   }
 
   body {
@@ -167,57 +167,169 @@
   }
 }
 
-/* Shared product treatment: one palette across every route and financial chart. */
+/* Atlas: shared semantic surfaces and honest, inspectable analytical marks. */
+:root {
+  --chart: #4266ce;
+  --chart-2: #587df3;
+  --chart-3: #3981a7;
+  --chart-4: #647596;
+  --chart-5: #8a9fcf;
+  --analytical: #edf3ff;
+  --link: #2d55dd;
+}
+.dark {
+  --chart: #83a6ff;
+  --chart-3: #88c6e7;
+  --chart-5: #b3c8f6;
+  --analytical: #132548;
+  --link: #a4beff;
+}
+h1,
+h2,
+h3,
+.atlas-value {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+}
+a.text-accent,
+button.text-accent {
+  color: var(--link);
+}
 .orbit-shell {
-  margin: 16px;
-  min-height: calc(100vh - 32px);
-  border: 1px solid var(--border);
-  border-radius: 30px;
-  background:
-    radial-gradient(
-      ellipse 440px 220px at 0 0,
-      color-mix(in srgb, var(--accent) 9%, transparent),
-      transparent
-    ),
-    var(--background);
+  min-height: 100vh;
+  background: var(--background);
+}
+.atlas-topbar {
+  border-bottom: 1px solid var(--border);
+  padding: 22px max(24px, calc((100vw - 1520px) / 2));
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+.atlas-wordmark {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -1px;
+}
+.atlas-topnav {
+  display: flex;
+  flex: 1;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 18px;
+  font-size: 14px;
+}
+.atlas-topnav a {
+  color: var(--muted-foreground);
+  padding: 12px 4px;
+}
+.atlas-topnav a[aria-current="page"] {
+  color: var(--foreground);
+}
+.atlas-main {
+  max-width: 1600px;
+  margin: auto;
+  padding: 40px;
+  min-width: 0;
+}
+.atlas-page-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  align-items: center;
+}
+.atlas-page-header h1 {
+  font-size: clamp(26px, 2.7vw, 38px);
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.8px;
+}
+.atlas-page-header p {
+  margin-top: 12px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+.atlas-risk-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.atlas-risk-nav a {
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+.atlas-risk-nav a[aria-current="page"] {
+  background: var(--accent);
+  color: white;
 }
 .orbit-panel {
-  border-radius: 24px;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 3%, transparent);
+  border-radius: 20px;
 }
 .orbit-stat {
-  min-height: 152px;
-  justify-content: center;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  min-height: 126px;
+  padding: 12px 0;
+  gap: 12px;
+}
+.orbit-stat > span:first-child {
+  font-family: "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+.orbit-stat .atlas-value {
+  font-size: clamp(24px, 2.7vw, 40px);
 }
 .orbit-stat-featured {
-  background: var(--accent);
-  color: var(--accent-foreground);
-  border-color: transparent;
+  color: var(--foreground);
 }
-.orbit-stat-featured .text-muted-foreground,
-.orbit-stat-featured .text-up,
-.orbit-stat-featured .text-down {
-  color: var(--accent-foreground);
+.atlas-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+  gap: 24px;
+}
+.atlas-hero-grid > .orbit-panel {
+  background: var(--analytical);
+}
+.atlas-support-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.atlas-evidence {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
 }
 .orbit-nav-symbol {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--surface-2);
+  display: none;
 }
-.orbit-nav-active .orbit-nav-symbol {
-  background: var(--accent);
-  color: var(--accent-foreground);
+.orbit-nav-active {
+  background: var(--analytical);
 }
 .orbit-auth {
-  background: radial-gradient(
-    ellipse 450px 350px at 20% 10%,
-    color-mix(in srgb, var(--accent) 10%, transparent),
-    transparent
-  );
+  background: var(--background);
+}
+.atlas-auth-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  gap: 80px;
+  width: 100%;
+  max-width: 1100px;
+  align-items: start;
 }
 .chart-axis {
   fill: var(--muted-foreground);
@@ -227,32 +339,30 @@
 }
 .chart-bar {
   transition:
-    height 250ms ease,
-    y 250ms ease;
+    height 180ms ease,
+    y 180ms ease;
 }
 .chart-choice {
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 6px 12px;
+  border-radius: 10px;
+  padding: 10px 14px;
   font-size: 12px;
   color: var(--muted-foreground);
 }
 .chart-choice[aria-pressed="true"] {
   background: var(--accent);
-  border-color: transparent;
-  color: var(--accent-foreground);
+  color: white;
 }
 .allocation-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
+  gap: 18px;
   align-items: center;
 }
 .allocation-key {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  border-radius: 14px;
+  border-radius: 10px;
   padding: 10px 12px;
   font-size: 12px;
   color: var(--muted-foreground);
@@ -261,80 +371,186 @@
 .allocation-key[aria-pressed="true"] {
   background: var(--surface-2);
   color: var(--foreground);
+  outline: 1px solid var(--border);
 }
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
+textarea:focus-visible,
 select:focus-visible,
 summary:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 3px;
 }
-.orbit-shell table tbody tr {
-  transition: background-color 120ms;
-}
 .orbit-shell table tbody tr:hover {
-  background-color: var(--surface-2);
+  background: var(--surface-2);
 }
 .orbit-shell progress {
-  accent-color: var(--accent);
+  accent-color: var(--chart);
+  width: 100%;
+  height: 8px;
 }
-@media (min-width: 640px) {
-  .allocation-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(140px, 0.8fr);
-  }
+.orbit-shell table thead {
+  background: var(--surface-2);
+}
+.orbit-shell table td {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+.atlas-footer {
+  border-top: 1px solid var(--border);
+  margin-top: 36px;
+  padding-top: 22px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.atlas-risk-menu {
+  position: relative;
+}
+.atlas-risk-menu > div {
+  position: absolute;
+  top: 44px;
+  left: 0;
+  min-width: 210px;
+  background: var(--surface);
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  z-index: 30;
+  display: grid;
+}
+.atlas-risk-menu summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 12px 0;
+}
+.lp-body,
+.lp-pulse {
+  animation: none;
 }
 @media (min-width: 1024px) {
-  .orbit-desktop-nav .orbit-sidebar {
-    padding: 22px 10px;
-    gap: 28px;
-  }
-  .orbit-desktop-nav .orbit-brand {
-    flex-direction: column;
-    padding: 0;
-  }
-  .orbit-desktop-nav .orbit-brand-caption,
-  .orbit-desktop-nav .orbit-nav-group,
-  .orbit-desktop-nav .orbit-account-email {
+  .atlas-menu-button {
     display: none;
   }
-  .orbit-desktop-nav nav {
-    gap: 16px;
+}
+@media (max-width: 1023px) {
+  .atlas-topnav {
+    display: none;
   }
-  .orbit-desktop-nav .orbit-nav-link {
-    flex-direction: column;
-    gap: 5px;
-    padding: 7px 1px;
-    font-size: 11px;
-    line-height: 1.4;
-    text-align: center;
-    border-radius: 16px;
+  .atlas-topbar {
+    justify-content: space-between;
+    padding: 18px 24px;
   }
-  .orbit-desktop-nav .orbit-nav-symbol {
-    width: 38px;
-    height: 38px;
+  .atlas-main {
+    padding: 28px 24px;
   }
-  .orbit-desktop-nav .orbit-sidebar > div:last-child > div {
-    justify-content: center;
+  .atlas-hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .atlas-hero-grid .allocation-layout {
+    grid-template-columns: 1fr 1fr;
   }
 }
 @media (max-width: 639px) {
-  .orbit-shell {
-    margin: 0;
-    border: 0;
-    border-radius: 0;
+  .atlas-main {
+    padding: 26px 20px;
   }
-  .orbit-panel {
-    border-radius: 20px;
+  .atlas-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .atlas-topbar > .atlas-account {
+    display: none;
+  }
+  .atlas-support-grid,
+  .atlas-auth-grid {
+    grid-template-columns: 1fr;
+  }
+  .atlas-auth-intro {
+    display: none;
+  }
+  .atlas-auth-grid {
+    gap: 24px;
+  }
+  .atlas-hero-grid .allocation-layout {
+    grid-template-columns: 1fr;
   }
   .orbit-stat {
-    min-height: 136px;
+    min-height: 118px;
+  }
+  .orbit-stat .atlas-value {
+    font-size: 26px;
+  }
+  .atlas-risk-nav a {
+    padding: 10px 12px;
+  }
+  .atlas-holdings table,
+  .atlas-holdings tbody,
+  .atlas-holdings tr,
+  .atlas-holdings td {
+    display: block;
+  }
+  .atlas-holdings thead {
+    display: none;
+  }
+  .atlas-holdings tbody tr {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .atlas-holdings td {
+    padding: 6px 0 !important;
+    text-align: right;
+    min-height: 30px;
+  }
+  .atlas-holdings td[data-label]::before {
+    content: attr(data-label);
+    float: left;
+    color: var(--muted-foreground);
+    font:
+      12px Geist,
+      sans-serif;
+  }
+  .atlas-holdings td:first-child {
+    text-align: left;
+    font-size: 18px;
+  }
+  .atlas-holdings tfoot {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .chart-bar,
-  .orbit-shell * {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+.atlas-hero-grid .allocation-layout > [role="group"] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.atlas-hero-grid .allocation-key {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 6px;
+}
+.atlas-hero-grid .allocation-layout > [role="group"] > p {
+  grid-column: 1/-1;
+}
+@media (min-width: 1024px) {
+  .atlas-hero-grid .orbit-chart svg {
+    height: 285px !important;
+  }
+}
+@media (max-width: 1100px) {
+  .atlas-support-grid {
+    grid-template-columns: 1fr;
   }
 }

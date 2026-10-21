@@ -3,13 +3,13 @@ import { LineChart } from "@/components/charts/LineChart";
 import { Link } from "react-router-dom";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkline } from "@/components/ui/sparkline";
 import { StatTile } from "@/components/ui/stat-tile";
 import { formatCurrency } from "@/features/holdings/format";
 import { HoldingsTable } from "@/features/holdings/HoldingsTable";
 import { ConcentrationCard } from "@/features/risk/ConcentrationCard";
 import { CorrelationCard } from "@/features/risk/CorrelationCard";
 import { DrawdownCard } from "@/features/risk/DrawdownCard";
+import { StressPreview } from "@/features/risk/StressPreview";
 import { RiskBadge } from "@/features/risk/RiskBadge";
 import { riskByTicker, type PortfolioData } from "@/hooks/usePortfolio";
 
@@ -53,8 +53,8 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
   const rising = changePct !== null && changePct >= 0;
 
   return (
-    <div className="flex flex-col gap-4">
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="flex flex-col gap-7">
+      <section className="grid grid-cols-2 gap-5 xl:grid-cols-4">
         <StatTile
           featured
           label="Portfolio value"
@@ -68,11 +68,6 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
                 {changePct.toFixed(1)}% over the window
               </span>
             )
-          }
-          chart={
-            values.length > 1 ? (
-              <Sparkline values={values} color="currentColor" label="Portfolio value over time" />
-            ) : undefined
           }
         />
 
@@ -122,29 +117,39 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
         />
       </section>
 
-      {history && history.points.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Portfolio value over time</CardTitle>
-            <CardDescription>
-              Current share quantities replayed at historical prices. This is not your actual
-              investment return.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LineChart
-              points={history.points.map((p) => ({ date: p.date, value: Number(p.value) }))}
-              label="Portfolio value"
-              unit="Value · USD"
-              formatValue={(v) => formatCurrency(String(v))}
-            />
-            <p className="mt-3 text-xs text-muted-foreground">
-              Source: cached market prices · {history.start} to {history.end}
-            </p>
-          </CardContent>
-        </Card>
-      )}
-      <section className="grid gap-4 xl:grid-cols-2">
+      <section className="atlas-hero-grid">
+        {history && history.points.length > 0 ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Portfolio value over time</CardTitle>
+              <CardDescription>
+                Current share quantities replayed at historical prices. This is not your actual
+                investment return.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LineChart
+                points={history.points.map((p) => ({ date: p.date, value: Number(p.value) }))}
+                label="Portfolio value over time"
+                unit="Value · USD"
+                formatValue={(v) => formatCurrency(String(v))}
+              />
+              <p className="mt-3 text-xs text-muted-foreground">
+                Source: cached market prices · {history.start} to {history.end}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle>Portfolio history unavailable</CardTitle>
+              <CardDescription>
+                History appears when market prices are available. Missing data is never shown as a
+                zero return.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        )}
         <Card>
           <CardHeader>
             <CardTitle>Where your exposure sits</CardTitle>
@@ -156,7 +161,11 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
             <AllocationChart positions={summary.positions} />
           </CardContent>
         </Card>
+      </section>
+      <section className="atlas-support-grid">
         {correlation !== null && <CorrelationCard correlation={correlation} compact />}
+        {drawdown !== null && <DrawdownCard data={drawdown} compact />}
+        <StressPreview key={JSON.stringify(summary.positions)} />
       </section>
       <section className="grid gap-4">
         <Card>
@@ -185,8 +194,18 @@ export function DashboardPage({ data, onChanged }: DashboardPageProps) {
 
       <section className="grid gap-4 xl:grid-cols-2">
         {concentration !== null && <ConcentrationCard data={concentration} />}
-        {drawdown !== null && <DrawdownCard data={drawdown} />}
       </section>
+      <div className="atlas-evidence">
+        <div>
+          <h2 className="text-xl">From measured exposure to primary-source evidence.</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Explore the disclosures behind the companies you hold.
+          </p>
+        </div>
+        <Link to="/filings" className="rounded-xl bg-accent px-5 py-3 text-sm text-white">
+          Explore SEC filings →
+        </Link>
+      </div>
     </div>
   );
 }
