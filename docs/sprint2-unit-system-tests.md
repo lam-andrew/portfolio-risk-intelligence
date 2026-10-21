@@ -23,19 +23,12 @@ API integration means real routes/services with isolated SQLite and a fake provi
 
 | Story / requirement | Unit/system specifications | UAT | Outcome |
 |---|---|---|---|
-
 | [US-13](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/13) / FR-15 | W7-13-01–05 | W6-UAT-13-01–02 | 5 passed |
-
 | [US-2](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/2) / FR-2 and FR-3 | W7-2-01–05 | W6-UAT-2-01–02 | 5 passed |
-
 | [US-6](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/6) / FR-8 | W7-6-01–05 | W6-UAT-6-01–02 | 5 passed |
-
 | [US-7](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/7) / FR-9 | W7-7-01–05 | W6-UAT-7-01–02 | 5 passed |
-
 | [US-8](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/8) / FR-10 | W7-8-01–05 | W6-UAT-8-01–02 | 5 passed |
-
 | [US-10](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/10) / FR-12 | W7-10-01–05 | W6-UAT-10-01–02 | 5 passed |
-
 | [US-19](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/62) / FR-12 support | W7-19-01–05 | W6-UAT-19-01–02 | 4 passed; 1 not executed |
 
 

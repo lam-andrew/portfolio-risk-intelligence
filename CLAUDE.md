@@ -102,9 +102,10 @@ document routine coding choices — that creates noise, not signal.
 
 ## Current status
 
-Sprint 2 (Weeks 6–8), planning baseline September 28, 2026. Seven selected stories:
-US-13, US-2, US-6, US-7, US-8, US-10 and US-19, totaling 23 points. Original six
-estimates remain unchanged; Andrew approved US-19 at 2 points. Existing core
-implementations predate the sprint; do not count them as new Week 6 delivery.
-Five Sprint 1 acceptance procedures remain to be verified. See
-`docs/sprint2-plan.md` and `docs/sprint2-tests.md`; require evidence before Done.
+Sprint 3 (Weeks 9–11), October 20, 2026. US-9 (8), US-11 (5) and US-12 (8)
+retain the 21-point Sprint 3 scope. The seven Sprint 2 stories retain their original
+Sprint 2 assignments and 23-point total; implementation does not establish acceptance.
+GitHub Issues and the Project board remain authoritative. Sprint 2 documents preserve
+their dated planning/test snapshots, not current completion claims. The Sprint 3 plan
+and SAC specification are under review in PR #104. Require reviewed integration,
+passing checks and the applicable acceptance evidence before marking stories Done.
