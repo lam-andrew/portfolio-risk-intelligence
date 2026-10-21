@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-20",
+  "timezone": "America/Los_Angeles",
+  "revision": "e123023d48daa67516f1e31e5d8e12d80eb510f8",
+  "environment": "Python 3.12 Docker backend; pure risk functions and isolated SQLite/provider-fake API tests",
+  "command": "pytest tests/test_volatility.py tests/test_correlation.py tests/test_concentration.py tests/test_drawdown.py tests/test_stress.py",
+  "passed": 99,
+  "failed": 0,
+  "skipped": 0,
+  "elapsed_seconds": 4.66,
+  "cases_by_file": {
+    "tests.test_volatility": 24,
+    "tests.test_correlation": 15,
+    "tests.test_concentration": 18,
+    "tests.test_drawdown": 15,
+    "tests.test_stress": 27
+  },
+  "limitations": [
+    "No live provider calls",
+    "No new coverage measurement",
+    "No final-build browser UAT",
+    "One existing Starlette/httpx deprecation warning"
+  ]
+}
