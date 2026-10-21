@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 
 import type { PortfolioCorrelation } from "@/api/client";
@@ -29,11 +29,7 @@ function fmt(value: string | null): string {
 
 interface CorrelationCardProps {
   correlation: PortfolioCorrelation;
-  /** Dashboard mode: show the pairs that matter instead of the full grid.
-   *
-   *  An n x n matrix stops being readable in a summary column past a handful of holdings —
-   *  at 18 tickers it is 324 cells and forces sideways scrolling. The pairs are the
-   *  actionable part anyway, so the overview states those and links to the full matrix. */
+  /** Dashboard mode keeps every holding in a bounded, scrollable matrix. */
   compact?: boolean;
 }
 
@@ -63,10 +59,20 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
   const top = correlation.most_correlated[0];
   const bottom = correlation.least_correlated[0];
 
-  // Shrink cells as the matrix grows so it fits the page rather than overflowing it.
   const count = tickers.length;
-  const cell = count > 20 ? 34 : count > 14 ? 42 : count > 9 ? 48 : 52;
-  const fontSize = 11;
+  // Bound the label column to its ticker text; values stay 44–80px square touch targets.
+  const labelWidth = Math.max(
+    48,
+    Math.min(88, Math.max(...tickers.map((ticker) => ticker.length)) * 7 + 12),
+  );
+  const preferredCell = Math.max(
+    44,
+    Math.min(80, Math.floor(((compact ? 400 : 640) - 35) / count) - 3),
+  );
+  const matrixStyle = {
+    "--matrix-min-width": `${labelWidth + 6 + count * 47}px`,
+    "--matrix-max-width": `${labelWidth + 6 + count * (preferredCell + 3)}px`,
+  } as CSSProperties;
 
   return (
     <Card>
@@ -97,97 +103,108 @@ export function CorrelationCard({ correlation, compact = false }: CorrelationCar
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col gap-5">
-          {(!compact || count <= 6) && (
-            <>
-              <div className="overflow-x-auto">
-                <table className="border-separate border-spacing-[3px]">
-                  <thead>
-                    <tr>
-                      <th />
-                      {tickers.map((ticker) => (
-                        <th
-                          key={ticker}
-                          scope="col"
-                          className="px-1 pb-1 font-mono text-[10.5px] font-medium text-faint"
-                        >
-                          {ticker}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {tickers.map((rowTicker, i) => (
-                      <tr key={rowTicker}>
-                        <th
-                          scope="row"
-                          className="pr-2 text-right font-mono text-[10.5px] font-medium text-faint"
-                        >
-                          {rowTicker}
-                        </th>
-                        {tickers.map((colTicker, j) => {
-                          const raw = matrix[i]?.[j] ?? null;
-                          const value = raw === null ? null : Number(raw);
-                          const style =
-                            value === null
-                              ? { background: "var(--surface-2)", color: "var(--faint)" }
-                              : cellStyle(value);
-                          return (
-                            <td
-                              key={colTicker}
-                              title={`${rowTicker} / ${colTicker}: ${fmt(raw)}`}
-                              className="rounded-xl text-center font-mono tabular-nums"
-                              style={{
-                                ...style,
-                                width: cell,
-                                height: Math.round(cell * 0.66),
-                                fontSize,
-                              }}
-                            >
-                              <button
-                                type="button"
-                                className="h-full min-h-11 w-full min-w-11 rounded-lg"
-                                aria-label={`Inspect ${rowTicker} / ${colTicker}: ${fmt(raw)}`}
-                                aria-pressed={pair[0] === i && pair[1] === j}
-                                onClick={() => setPair([i, j])}
-                              >
-                                {fmt(raw)}
-                              </button>
-                            </td>
-                          );
-                        })}
-                      </tr>
+        <div
+          className={compact ? "flex flex-col gap-5" : "atlas-correlation-detail"}
+          style={matrixStyle}
+        >
+          <div className="min-w-0 space-y-4">
+            <p className="text-xs text-faint">
+              {count} holdings · Select a cell to inspect a pair. Scroll for larger portfolios.
+            </p>
+            <div
+              className={`correlation-scroll ${compact ? "correlation-scroll-compact" : ""}`}
+              role="region"
+              aria-label="Correlation matrix, scroll to explore all holdings"
+              tabIndex={0}
+            >
+              <table className="correlation-matrix" style={matrixStyle}>
+                <caption className="sr-only">Correlation among all {count} holdings</caption>
+                <colgroup>
+                  <col style={{ width: labelWidth }} />
+                  {tickers.map((ticker) => (
+                    <col key={ticker} />
+                  ))}
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th />
+                    {tickers.map((ticker) => (
+                      <th
+                        key={ticker}
+                        scope="col"
+                        title={ticker}
+                        className="correlation-column-label"
+                      >
+                        {ticker}
+                      </th>
                     ))}
-                  </tbody>
-                </table>
-              </div>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tickers.map((rowTicker, i) => (
+                    <tr key={rowTicker}>
+                      <th scope="row" className="correlation-row-label">
+                        {rowTicker}
+                      </th>
+                      {tickers.map((colTicker, j) => {
+                        const raw = matrix[i]?.[j] ?? null;
+                        const value = raw === null ? null : Number(raw);
+                        const style =
+                          value === null
+                            ? { background: "var(--surface-2)", color: "var(--faint)" }
+                            : cellStyle(value);
+                        return (
+                          <td
+                            key={colTicker}
+                            title={`${rowTicker} / ${colTicker}: ${fmt(raw)}`}
+                            className="correlation-cell"
+                          >
+                            <button
+                              type="button"
+                              className="correlation-cell-button"
+                              style={style}
+                              aria-label={`Inspect ${rowTicker} / ${colTicker}: ${fmt(raw)}`}
+                              aria-pressed={pair[0] === i && pair[1] === j}
+                              onClick={() => setPair([i, j])}
+                            >
+                              {fmt(raw)}
+                            </button>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              <div className="flex items-center gap-3 text-[11px] text-faint">
-                <span>−1.0</span>
-                <span
-                  className="h-2 max-w-[200px] flex-1 rounded-full"
-                  style={{
-                    background: `linear-gradient(90deg, ${cellStyle(-1).background}, ${cellStyle(0).background}, ${cellStyle(1).background})`,
-                  }}
-                />
-                <span>+1.0</span>
-                <span className="ml-1">diversifying → moves together</span>
-              </div>
-            </>
-          )}
+            <div className="flex flex-wrap items-center gap-3 text-[11px] text-faint">
+              <span>−1.0</span>
+              <span
+                className="h-2 max-w-[200px] flex-1 rounded-full"
+                style={{
+                  background: `linear-gradient(90deg, ${cellStyle(-1).background}, ${cellStyle(0).background}, ${cellStyle(1).background})`,
+                }}
+              />
+              <span>+1.0</span>
+              <span className="ml-1">diversifying → moves together</span>
+            </div>
+          </div>
 
-          {!compact && (
-            <div role="status" className="rounded-xl bg-surface-2 p-5">
-              <p className="font-mono text-xs text-muted-foreground">
-                SELECTED PAIR · {tickers[pair[0]]} / {tickers[pair[1]]}
-              </p>
-              <p className="atlas-value my-3 text-4xl">{fmt(matrix[pair[0]]?.[pair[1]] ?? null)}</p>
+          <div role="status" className={`rounded-xl bg-surface-2 ${compact ? "p-3" : "p-5"}`}>
+            <p className="font-mono text-xs text-muted-foreground">
+              SELECTED PAIR · {tickers[pair[0]]} / {tickers[pair[1]]}
+            </p>
+            <p className={`atlas-value my-3 ${compact ? "text-2xl" : "text-4xl"}`}>
+              {fmt(matrix[pair[0]]?.[pair[1]] ?? null)}
+            </p>
+            {!compact && (
               <p className="text-sm text-muted-foreground">
                 Daily-return co-movement in the observed window. Undefined pairs are shown as a
                 dash, never a measured zero.
               </p>
-            </div>
-          )}
+            )}
+          </div>
           <dl className="grid gap-x-6 gap-y-1 border-t border-border pt-4 text-sm sm:grid-cols-2">
             {top !== undefined && (
               <>

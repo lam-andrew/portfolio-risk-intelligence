@@ -95,8 +95,11 @@ September 19, 2026, without changing Sprint 3 or the five-point estimate.
 
 ### Grounded filing questions (US-12, early implementation September 26)
 
-The filings screen now includes a question form, preparation progress, cited claims and an
-explicit insufficient-evidence response. A separate **embedding-worker** container uses the
+From a holding, open a specific SEC filing in the Atlas reader and select **Ask about
+this filing**. Contextual chat includes preparation progress, cited claims and an explicit
+insufficient-evidence response. Follow-ups use up to three prior exchanges; citations
+navigate to source passages. The server restricts both hosted and optional local retrieval
+to the selected filing. A separate **embedding-worker** container uses the
 backend image to prepare tracked issuers. All vectors stay in PostgreSQL/pgvector; model I/O
 uses a replaceable backend adapter. See [ADR 0022](docs/adr/0022-grounded-filing-questions.md)
 and [verification / pending live acceptance](docs/us12-question-tests.md).
@@ -114,10 +117,21 @@ preparation time and the live evaluation. Before enabling them:
 
 Leave Q&A disabled for a keyless setup. Other features and source search continue to work.
 No paid fallback is configured. Questions and excerpts go to Google, whose free-tier terms
-allow product-improvement use; keep questions free of confidential information. Orbit saves
-no conversation history. Free quotas can pause preparation or answers. Local request budgets,
+allow product-improvement use; keep questions free of confidential information. Orbit persists
+no conversation history on the server; the browser keeps a bounded session in memory and
+clears it when you leave the filing or sign out. Free quotas can pause preparation or answers. Local request budgets,
 model versions, container boundaries and migration rules are recorded in ADR 0022.
 Live quality evaluation and user acceptance are **pending**; US-12 remains Sprint 3 / 8 points.
+
+### Local embeddings — opt-in integration October 10
+
+The CPU-only BGE/ONNX prototype now has an opt-in application integration: independent
+embedding/generation adapters, resumable window preparation, a separate 384-dimensional
+index and priority for queries. The default remains Gemini; generation quota still applies.
+See the [setup and rollback guide](docs/local-embedding-integration.md),
+[ADR 0025](docs/adr/0025-opt-in-local-embedding-integration.md) and
+[prototype measurements](docs/local-embedding-spike.md). Retrieval-quality evaluation,
+OptiPlex runtime measurements and homelab deployment remain pending.
 
 ### Quality attributes the architecture targets
 

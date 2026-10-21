@@ -7,6 +7,8 @@ for the full list of variables.
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -54,6 +56,17 @@ class Settings(BaseSettings):
     qa_enabled: bool = False
     qa_provider: str = "gemini"
     gemini_api_key: str = Field(default="", repr=False)
+
+    embedding_provider: Literal["gemini", "local"] = "gemini"
+    local_embedding_url: str = "http://encoder:8081"
+
+    @property
+    def embedding_configured(self) -> bool:
+        return self.qa_enabled and (
+            bool(self.local_embedding_url.strip())
+            if self.embedding_provider == "local"
+            else self.qa_configured
+        )
 
     @property
     def qa_configured(self) -> bool:

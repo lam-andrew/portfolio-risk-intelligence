@@ -554,3 +554,344 @@ summary:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+/* The reader remains mounted when chat closes; independent scroll retains position. */
+.atlas-reader-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+.atlas-reader-grid.chat-open {
+  grid-template-columns: minmax(0, 1.55fr) minmax(350px, 1fr);
+}
+.atlas-reader,
+.atlas-chat {
+  min-width: 0;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  height: calc(100dvh - 310px);
+  min-height: 480px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.atlas-reader-header,
+.atlas-chat-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  flex: none;
+}
+.atlas-reader-body,
+.atlas-chat-history {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 28px;
+  flex: 1;
+}
+.atlas-reader-body {
+  scrollbar-gutter: stable;
+}
+.atlas-passage {
+  margin-bottom: 32px;
+  padding: 18px;
+  border-left: 3px solid transparent;
+  scroll-margin-top: 24px;
+}
+.atlas-passage.cited {
+  border-color: var(--chart);
+  background: var(--surface-2);
+  border-radius: 10px;
+}
+.atlas-passage mark {
+  background: color-mix(in srgb, var(--chart) 30%, var(--surface));
+  color: var(--foreground);
+}
+.atlas-chat-header {
+  flex-wrap: nowrap;
+  padding: 20px;
+}
+.atlas-chat-history {
+  padding: 20px;
+}
+.atlas-suggestion {
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 13px;
+  min-height: 44px;
+}
+.atlas-suggestion:hover {
+  background: var(--surface-2);
+}
+.atlas-exchange {
+  margin-top: 24px;
+  font-size: 14px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.atlas-question {
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  margin-bottom: 24px;
+}
+.atlas-answer {
+  padding: 0 4px;
+}
+.atlas-citation {
+  display: block;
+  text-align: left;
+  padding: 12px;
+  margin-top: 12px;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 12px;
+}
+.atlas-citation:hover {
+  border-color: var(--chart);
+}
+.atlas-composer {
+  flex: none;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.atlas-composer textarea {
+  width: 100%;
+  resize: vertical;
+  max-height: 160px;
+  min-height: 70px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  color: var(--foreground);
+  background: var(--background);
+  font-size: 16px;
+}
+.atlas-company-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.7fr) minmax(0, 1.6fr);
+  gap: 24px;
+  align-items: start;
+}
+.atlas-company-grid > .orbit-panel {
+  position: sticky;
+  top: 20px;
+}
+@media (max-width: 899px) {
+  .atlas-company-grid,
+  .atlas-reader-grid.chat-open {
+    grid-template-columns: 1fr;
+  }
+  .atlas-company-grid > .orbit-panel {
+    position: static;
+  }
+  .atlas-reader {
+    min-height: 620px;
+    height: calc(100dvh - 190px);
+  }
+  .atlas-reader-header {
+    padding: 20px;
+  }
+  .atlas-reader-body {
+    padding: 12px;
+  }
+  .atlas-chat {
+    position: fixed;
+    z-index: 60;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+  }
+  .atlas-chat-header {
+    padding: 16px;
+  }
+  .atlas-composer {
+    padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+  }
+  .atlas-composer textarea {
+    max-height: 100px;
+  }
+  .mobile-reader-hidden {
+    visibility: hidden;
+  }
+}
+
+:root {
+  color-scheme: light;
+}
+.dark {
+  color-scheme: dark;
+}
+.atlas-methodology-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+.atlas-methodology-nav {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.atlas-methodology-nav a {
+  display: block;
+  border-radius: 10px;
+  padding: 12px;
+  min-height: 44px;
+}
+.atlas-methodology-nav a:hover {
+  background: var(--surface-2);
+}
+.atlas-methodology-layout section {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 28px;
+}
+.atlas-methodology-layout .text-accent {
+  color: var(--link);
+}
+@media (max-width: 899px) {
+  .atlas-methodology-layout {
+    grid-template-columns: 1fr;
+  }
+  .atlas-methodology-nav {
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .atlas-methodology-layout section {
+    padding: 20px;
+  }
+}
+
+.atlas-correlation-detail {
+  display: grid;
+  grid-template-columns: minmax(0, var(--matrix-max-width)) minmax(240px, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+.atlas-correlation-detail > dl {
+  grid-column: 1/-1;
+}
+.atlas-concentration-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 48px;
+  align-items: center;
+}
+@media (max-width: 899px) {
+  .atlas-correlation-detail,
+  .atlas-concentration-detail {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+progress {
+  accent-color: var(--chart);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+progress::-webkit-progress-bar {
+  background: var(--surface-2);
+}
+progress::-webkit-progress-value {
+  background: var(--chart);
+}
+progress::-moz-progress-bar {
+  background: var(--chart);
+}
+
+/* Isolate the analytical matrix from ordinary data-table spacing. */
+.correlation-scroll {
+  overflow: auto;
+  max-height: 640px;
+  position: relative;
+  overscroll-behavior: contain;
+}
+.correlation-scroll-compact {
+  max-height: 400px;
+}
+.correlation-matrix {
+  table-layout: fixed;
+  width: 100%;
+  min-width: var(--matrix-min-width);
+  max-width: var(--matrix-max-width);
+  border-collapse: separate;
+  border-spacing: 3px;
+  font-family: "IBM Plex Mono", monospace;
+}
+.orbit-shell .correlation-matrix thead,
+.orbit-shell .correlation-matrix tbody tr:hover {
+  background: transparent;
+}
+.correlation-matrix thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 32px;
+  background: var(--surface);
+}
+.correlation-matrix thead th:first-child {
+  left: 0;
+  z-index: 3;
+}
+.correlation-column-label,
+.correlation-row-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--faint);
+}
+.correlation-row-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  text-align: right;
+  padding-right: 8px;
+}
+.orbit-shell .correlation-matrix .correlation-cell {
+  padding: 0;
+  vertical-align: middle;
+}
+.correlation-cell-button {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.correlation-cell-button[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 2px var(--foreground);
+}
+.correlation-cell-button:focus-visible {
+  outline-offset: -3px;
+}
+
+.atlas-correlation-detail > [role="status"] {
+  width: 100%;
+  max-width: 420px;
+}
+.correlation-column-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

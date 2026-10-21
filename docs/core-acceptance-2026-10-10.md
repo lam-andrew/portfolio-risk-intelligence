@@ -150,6 +150,41 @@ Open `http://127.0.0.1:5187`, create disposable accounts and enter/import only t
 holdings. Keep credentials in ignored local files. Available price profiles:
 `correlated`, `constant`, `concentration`, `overlap`, `recovered`, `ongoing`, `error`,
 `analytics_error` (summary succeeds; analytic endpoints fail).
+
+### Additional demo symbols — October 18, 2026
+
+The isolated provider recognizes a small default list, not the live market universe.
+For a larger CSV rehearsal, add an explicit `extra_symbols` list to ignored
+`.acceptance/current.json`, preserving the current profile:
+
+```json
+{"profile": "overlap", "extra_symbols": ["AMD", "AVGO", "HOOD", "VXUS"]}
+```
+
+The same allowlist controls both import recognition and synthetic price retrieval.
+Symbols not in either list remain rejected, and changes are read on each request.
+These additions do not change production symbol validation or enable network calls.
+Restart only the acceptance backend after first installing this code change; subsequent
+allowlist edits need no restart. Do not restart/remove the ephemeral database.
+
+All prices and histories remain artificial. In the overlap profile, every series ends
+at $100, and added symbols use the common synthetic series. CSV price/value columns do
+not supply historical prices or change these fixtures. Do not present their correlations,
+values or risk results as actual market analysis. Cash and total rows are skipped. Imports
+replace quantities for matching symbols and retain existing holdings absent from the file;
+use an empty account if the demo should contain only the CSV's positions.
+
+The October 18 CSV rehearsal configuration is a local demo adjustment, not a rerun of the
+October 10 acceptance record or a change to Sprint 2 story status. Regression coverage is
+in `backend/tests/test_acceptance_symbols.py` and the existing CSV import tests.
+
+October 18 verification: 61 focused tests passed across acceptance-symbol configuration,
+CSV import, holdings and market data; Ruff lint and format checks passed. A separate
+disposable account imported an 18-position mock brokerage export with zero problems and
+two skipped cash/total rows. Reload returned all 18 positions. Summary, concentration,
+drawdown and the 18-by-18 correlation response returned HTTP 200. A non-configured symbol
+remained rejected. The user's demo holdings were not changed by these checks.
+
 For a profile change, update `.acceptance/current.json`, then clear **only this
 fixture database's** price cache before reloading:
 

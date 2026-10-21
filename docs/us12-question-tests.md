@@ -175,3 +175,65 @@ authenticated question routing, semantic retrieval, complete-company readiness o
 navigation. They are not counted toward the 20-case evaluation. Full evaluation and user
 acceptance remain pending. Raw local evidence stays under ignored `data/cache/us12-evaluation/`;
 no cached filing text, credentials, thought signatures or private questions are committed.
+
+## Atlas document conversation additions — October 10, 2026
+
+FR-13/FR-14, US-11/US-12; ADR 0027. These are controlled-provider contracts, not live-model
+acceptance. Existing issuer endpoint regression cases remain in place.
+
+- **AT-F01 — document access:** signed-in user holds/watches AAPL; request its selected
+  accession, another issuer's accession, untracked ticker and foreign passage ID.
+  Expect safe-text metadata/40-passage pagination only for the authorized document; all
+  mismatches 404. Source text is rendered as React text, never injected HTML.
+- **AT-F02 — document readiness/scope:** prepare one AAPL filing and leave another
+  unprepared. Selected readiness succeeds independently. Ask about suppliers; every
+  retrieved passage and citation belongs to that accession. Native pgvector verifies
+  accession, CIK and version predicates before rank/limit.
+- **AT-F03 — context bounds:** submit a follow-up with one prior exchange, then wrong
+  accession, extra role field, four exchanges, 1501-character answer and >6000 total
+  history characters. Valid context is labeled untrusted for generation/verification;
+  invalid cases return 422 before model calls. Embedding context remains ≤2200 chars.
+- **AT-F04 — revocation/drift:** remove membership, revoke the login, replace passage
+  text or change the document revision during provider I/O. No answer/citations may
+  escape; expect 404/401/409 respectively. Stale revision before a request spends no calls.
+- **AT-F05 — support/failures:** invalid IDs, unsupported claims and abstention produce
+  insufficient evidence without fabricated citations; quota is a distinct 429.
+- **AT-F06 — client lifecycle:** chat starts closed; suggestion fills without submitting;
+  send explicitly invokes the scoped endpoint with revision. Next question includes prior
+  context. Duplicate sends are guarded. Close/reopen preserves draft/history. Filing or
+  account unmount aborts/discards late requests. Service errors preserve draft for retry.
+- **AT-F07 — source navigation/mobile:** citation fetches its page if needed, highlights
+  the exact offset/quote and focuses the passage. Mobile dialog returns to reader on
+  citation/Back/Escape; composer stays within the visible viewport.
+
+Implementation: `backend/tests/test_filing_chat.py`, `test_questions_postgres.py`,
+`frontend/src/pages/FilingReaderPage.test.tsx`. Results, screenshots and remaining live
+checks: [Atlas verification](atlas-verification-2026-10-10.md).
+
+## October 10 integration follow-up
+
+The prototype now has an opt-in application path. See [integration behavior and validation](local-embedding-integration.md) and [ADR 0025](adr/0025-opt-in-local-embedding-integration.md). Historical measurements above are unchanged; target-host and live quality acceptance remain pending.
+
+## Atlas/local retrieval integration — October 20, 2026
+
+The combined branches initially failed two new regressions: selected-document
+readiness counted another unprepared filing, and local ranking included a better
+match from another accession. These are integration defects, not live model scores.
+Both pass after applying accession predicates before local coverage and ranking.
+
+- `test_filing_chat_local.py`: selected filing readiness independent of other filings;
+  scoped follow-up evidence/citations despite a higher-ranking other filing; no hosted
+  embedding-budget reservation on the local path. Both tests failed before the fix.
+- `test_questions_postgres.py`: native local accession/issuer filtering and scoped
+  coverage, alongside existing version/ranking/cascade checks.
+- Combined backend: **380 passed, 9 skipped**. Eight native cases passed separately
+  in a new disposable PostgreSQL database; the ninth skip is the opt-in real encoder
+  test, not rerun here. Migration 0008 upgrade/downgrade/re-upgrade passed.
+- Frontend: **122 passed**, lint (existing Fast Refresh warning), formatting, types,
+  production build and zero-vulnerability production dependency audit.
+- Backend Ruff and strict mypy passed. Existing Starlette/httpx warning remains.
+
+The reviewed maintenance, Sprint 2 documentation and dependency PRs landed on main.
+The feature stack is consolidated for joint review, with Q&A still unreleased. The
+20-case live evaluation, owner acceptance and OptiPlex measurements remain pending;
+none is established by these deterministic tests. No demo database was modified.

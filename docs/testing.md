@@ -210,3 +210,16 @@ Final local suites: 316 backend plus seven separate PostgreSQL cases; 101 fronte
 Required production dependency audits passed; development-tool advisories remain
 explicitly recorded. Board/issue review and integration gates remain open; this is
 agent-executed acceptance, not Andrew's final sign-off or a deployment claim.
+
+### Atlas acceptance boundary
+
+See [October 10 Atlas verification](atlas-verification-2026-10-10.md) for the scoped
+reader/chat tests, complete frontend/backend results, native PostgreSQL checks and both-theme
+browser evidence. The disposable browser provider does not establish live model quality.
+
+### US-12 local embeddings — October 10 integration
+
+The opt-in local provider adds HTTP/window validation, atomic preparation, preserved source
+citations, bounded query priority and native pgvector coverage. The [integration evidence](local-embedding-integration.md#recorded-checks--october-10)
+records executed checks and the separate real-model smoke. The 20-case live quality
+assessment and OptiPlex runtime verification remain pending; US-12 is not accepted.

@@ -1,0 +1,231 @@
+[
+  {
+    "route": "holdings",
+    "mode": "desktop-light",
+    "alerts": [],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "correlation",
+    "mode": "desktop-light",
+    "alerts": [],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "concentration",
+    "mode": "desktop-light",
+    "alerts": [],
+    "pageWidth": 1440,
+    "width": 1440
+  },
+  {
+    "route": "drawdown",
+    "mode": "desktop-light",
+    "alerts": [],
+    "pageWidth": 1440,
+    "width": 1440
+  },
+  {
+    "route": "stress",
+    "mode": "desktop-light",
+    "alerts": [],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "filings",
+    "mode": "desktop-light",
+    "alerts": [],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "methodology",
+    "mode": "desktop-light",
+    "alerts": [],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "holdings",
+    "mode": "desktop-dark",
+    "headings": [
+      "Holdings",
+      "Add a holding",
+      "Import from a CSV"
+    ],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "correlation",
+    "mode": "desktop-dark",
+    "headings": [
+      "Correlation"
+    ],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "concentration",
+    "mode": "desktop-dark",
+    "headings": [
+      "Concentration"
+    ],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "drawdown",
+    "mode": "desktop-dark",
+    "headings": [
+      "Drawdown"
+    ],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "stress",
+    "mode": "desktop-dark",
+    "headings": [
+      "What if every holding fell together?",
+      "Broad decline · 10%",
+      "From baseline to stressed value",
+      "What contributes most to the loss?",
+      "Loss by holding"
+    ],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "filings",
+    "mode": "desktop-dark",
+    "headings": [
+      "Filings that follow your interests",
+      "From your holdings",
+      "Watchlist",
+      "Synthetic acceptance issuer · SEC filings",
+      "Indexed sources",
+      "Search filing passages"
+    ],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "methodology",
+    "mode": "desktop-dark",
+    "headings": [
+      "The price series",
+      "From prices to returns",
+      "Volatility of one holding",
+      "Volatility of the whole portfolio",
+      "Correlation between holdings",
+      "Concentration and overlap",
+      "Drawdown",
+      "Hypothetical stress tests",
+      "What to scrutinize"
+    ],
+    "pageWidth": 1425,
+    "width": 1440
+  },
+  {
+    "route": "holdings",
+    "mode": "mobile-dark",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "correlation",
+    "mode": "mobile-dark",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "concentration",
+    "mode": "mobile-dark",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "drawdown",
+    "mode": "mobile-dark",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "stress",
+    "mode": "mobile-dark",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "filings",
+    "mode": "mobile-dark",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "methodology",
+    "mode": "mobile-dark",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "holdings",
+    "mode": "mobile-light",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "correlation",
+    "mode": "mobile-light",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "concentration",
+    "mode": "mobile-light",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "drawdown",
+    "mode": "mobile-light",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "stress",
+    "mode": "mobile-light",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "filings",
+    "mode": "mobile-light",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "route": "methodology",
+    "mode": "mobile-light",
+    "alerts": [],
+    "pageWidth": 375,
+    "width": 390
+  }
+]
