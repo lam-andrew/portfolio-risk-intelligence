@@ -211,6 +211,14 @@ Required production dependency audits passed; development-tool advisories remain
 explicitly recorded. Board/issue review and integration gates remain open; this is
 agent-executed acceptance, not Andrew's final sign-off or a deployment claim.
 
+## Final-build acceptance — October 23, 2026
+
+[Final-build results](final-build-acceptance-2026-10-23.md) repeat the Sprint 2 procedures
+on the integrated #92 head in an isolated fixture stack, and execute ST-09 and FI-08 on the
+normal stack with live Tiingo/SEC providers, including a live worker interruption. One
+filing-refresh defect was fixed (#106; 123 frontend tests). The US-12 live evaluation and
+Andrew's product review remain open; this is agent-executed evidence, not sign-off.
+
 ### Atlas acceptance boundary
 
 See [October 10 Atlas verification](atlas-verification-2026-10-10.md) for the scoped

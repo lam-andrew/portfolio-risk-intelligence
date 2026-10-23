@@ -139,3 +139,11 @@ in the preceding run). The isolated browser flow was repeated with the charts: a
 scenarios, empty state, quantity edit, keyboard Run and methodology link passed. Desktop dark
 and 390px mobile light screenshots were inspected; no page errors or page-wide overflow.
 ST-09 live-provider/user acceptance remains pending.
+
+### ST-09 execution — October 23, 2026
+
+Agent-run on the integrated #92 head, normal stack with real Tiingo prices and a disposable
+account: 10%, 35% and post-edit 20% scenarios reconciled to the cent against independent
+half-up calculations; holdings were unchanged; keyboard operation worked. Details:
+[final-build acceptance](final-build-acceptance-2026-10-23.md). Andrew's user acceptance
+remains pending, so the story is not Done.

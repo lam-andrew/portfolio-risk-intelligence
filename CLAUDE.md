@@ -106,6 +106,9 @@ Sprint 3 (Weeks 9–11), October 20, 2026. US-9 (8), US-11 (5) and US-12 (8)
 retain the 21-point Sprint 3 scope. The seven Sprint 2 stories retain their original
 Sprint 2 assignments and 23-point total; implementation does not establish acceptance.
 GitHub Issues and the Project board remain authoritative. Sprint 2 documents preserve
-their dated planning/test snapshots, not current completion claims. The Sprint 3 plan
-and SAC specification are under review in PR #104. Require reviewed integration,
-passing checks and the applicable acceptance evidence before marking stories Done.
+their dated planning/test snapshots, not current completion claims. The Sprint 3 plan,
+SAC specification, Atlas UI and local embeddings were consolidated into draft PR #92 on
+October 20; they reach main only when #92 merges. October 23 final-build acceptance is in
+`docs/final-build-acceptance-2026-10-23.md`; the US-12 live evaluation and owner review
+remain open. Require reviewed integration, passing checks and the applicable acceptance
+evidence before marking stories Done.
