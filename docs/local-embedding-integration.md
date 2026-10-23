@@ -34,9 +34,11 @@ The inference container cannot download anything; a missing/incompatible model f
 The encoder has no host port. The **base development stack** still publishes API/database
 ports: do not treat this overlay as a production ingress/security configuration.
 
-Open SEC filings, select a held/watched company and check preparation counts. Counts refer
-to original passages; one passage may produce several internal vectors. Ask a question after
-all indexed passages for the company are ready. Returned citations should still open the
+Open SEC filings, select a held/watched company, open a filing and check its preparation
+count. Counts refer to original passages; one passage may produce several internal vectors.
+Readiness and retrieval are scoped to the selected filing (ADR 0027 October 20 addendum):
+ask a question once that filing's passages are ready, even if other filings for the company
+are still being prepared. Returned citations should still open the
 original SEC filing and quote its text. A full backfill can take time on a small CPU.
 
 For rollback, omit the overlay and recreate API/worker:
@@ -98,7 +100,16 @@ and [Security run 38108993369](https://github.com/lam-andrew/portfolio-risk-inte
 The real-encoder test is opt-in (`APP_TEST_LOCAL_ENCODER=1` and
 `APP_LOCAL_EMBEDDING_URL` pointing at the private provisioned encoder). Normal CI skips it
 so routine tests do not download models or call external APIs. This adds one explicit skip
-in subsequent default backend suite runs. The draft integration is tracked in [PR #98](https://github.com/lam-andrew/portfolio-risk-intelligence/pull/98), stacked on prototype PR #96.
+in subsequent default backend suite runs. The integration was first reviewed in [PR #98](https://github.com/lam-andrew/portfolio-risk-intelligence/pull/98)
+(stacked on prototype PR #96); both were consolidated into draft
+[PR #92](https://github.com/lam-andrew/portfolio-risk-intelligence/pull/92) on October 20.
+
+### Integrated preview — October 23
+
+The normal local stack now runs this overlay from the #92 head after a private database
+backup. The pinned model was provisioned and verified, migration 0008 applied, and the CPU
+encoder (1 CPU / 1 GiB) prepares about 30 original passages per minute on the Apple Silicon
+development host. This is a development measurement, not OptiPlex capacity.
 
 A final budget preflight rejects known cooldowns/daily exhaustion before query encoding,
 while actual reservations still occur after successful retrieval. This avoids wasting CPU

@@ -1,6 +1,9 @@
 # US-12 live evaluation runbook
 
-Status: **20-case evaluation prepared, not executed**. Free-tier activation and two
+Status: **20-case evaluation prepared, not executed**. October 23: labels for NVDA/AMD
+were written and hash-frozen privately before any model output; the local-path retrieval
+trace (top-8 IDs via the app's own encoder client and `retrieve`, no generator call) is
+ready and runs once each selected filing finishes preparation. Free-tier activation and two
 provider-adapter smoke checks completed September 26; corpus preparation is incomplete
 and encountered a provider quota pause. See [activation evidence](us12-question-tests.md#first-live-activation-and-rest-adapter-correction--september-26-2026).
 The smoke checks are not scored evaluation cases. Setup: [free-tier guide](qa-setup.md).

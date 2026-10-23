@@ -17,8 +17,8 @@ Sprint 3 retains its original 21 points (8 + 5 + 8). All three stories are In Pr
 | Story | Original points | Remaining completion focus |
 | --- | --- | --- |
 | US-13 authentication | 3 | Review session and ownership evidence on the selected release revision. |
-| US-2 CSV import | 3 | Review PR #103; repeat import and error handling in the final build. |
-| US-6 correlation | 5 | Review PR #102; final matrix/API comparison at varied portfolio sizes. |
+| US-2 CSV import | 3 | Review in consolidated PR #92 (formerly #103); repeat import and error handling in the final build. |
+| US-6 correlation | 5 | Review in consolidated PR #92 (formerly #102); final matrix/API comparison at varied portfolio sizes. |
 | US-7 concentration | 3 | Verify HHI, overlap grouping and honest interpretation after integration. |
 | US-8 drawdown | 2 | Confirm recovered, ongoing and unavailable states in the release UI. |
 | US-10 dashboard | 5 | Review Atlas changes; verify full, partial, empty and failure states. |
@@ -123,3 +123,13 @@ acceptance required by #92. OptiPlex performance, separate-VM deployment and
 backups remain unverified technical work. Story assignments, estimates and board
 completion status are unchanged; implementation and green automated tests do not
 close these acceptance gates.
+
+## Final-build acceptance checkpoint — October 23, 2026
+
+Agent-run final-build acceptance on the #92 head is recorded in
+[final-build-acceptance-2026-10-23.md](final-build-acceptance-2026-10-23.md): ST-09,
+FI-08 (source comparison, live interruption/resumption, cooldown refresh, unsupported issuer)
+and the Sprint 2 procedures repeated on the integrated build. One filing-refresh defect was
+fixed through #106 into #92. The US-12 twenty-case live evaluation has frozen labels but
+has not been executed. Andrew's product review is pending. No story status, estimate or
+sprint assignment changed.
