@@ -301,6 +301,7 @@ function HoldingFilings({ ticker }: { ticker: string }) {
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [starting, setStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<FilingHit[] | null>(null);
   const [searching, setSearching] = useState(false);
@@ -342,7 +343,7 @@ function HoldingFilings({ ticker }: { ticker: string }) {
 
   async function start() {
     setStarting(true);
-    setError(null);
+    setStartError(null);
     try {
       const sync = await ingestFilings(ticker);
       if (mounted.current) {
@@ -350,7 +351,8 @@ function HoldingFilings({ ticker }: { ticker: string }) {
         setAttempt((n) => n + 1);
       }
     } catch (err) {
-      if (mounted.current) setError(toErrorMessage(err));
+      // Kept apart from status-read errors so background polling cannot clear a cooldown notice.
+      if (mounted.current) setStartError(toErrorMessage(err));
     } finally {
       if (mounted.current) setStarting(false);
     }
@@ -409,6 +411,11 @@ function HoldingFilings({ ticker }: { ticker: string }) {
                   {overview.indexed_count} indexed filings
                 </span>
               </div>
+              {startError && (
+                <p role="alert" className="text-sm text-down">
+                  {startError}
+                </p>
+              )}
               <div role="status" aria-live="polite" className="flex flex-col gap-2">
                 <p className="text-sm">
                   {sync.status === "idle" && overview.configured
