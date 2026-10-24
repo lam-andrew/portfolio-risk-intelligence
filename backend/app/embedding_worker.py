@@ -15,6 +15,7 @@ LOCK_ID = 8940012
 
 
 def main() -> None:
+    settings.require_production_ready(api=False)
     if not settings.embedding_configured:
         print(
             "Filing preparation is disabled until an embedding provider is configured.", flush=True

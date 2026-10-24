@@ -1,6 +1,6 @@
 # 0008. Defer Continuous Deployment until a host is selected
 
-- **Status:** Accepted
+- **Status:** Superseded by [0028](0028-self-hosted-private-deployment.md)
 - **Date:** 2026-08-28
 
 ## Context
