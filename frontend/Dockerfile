@@ -22,7 +22,7 @@ ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 RUN npm run build
 
 
-FROM caddy:2.10.2-alpine AS production
+FROM caddy:2.11.7-alpine AS production
 
 # Caddy needs no root: it listens on an unprivileged port with TLS and the admin API off.
 RUN addgroup -S web && adduser -S -G web web
