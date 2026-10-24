@@ -26,12 +26,13 @@ def main() -> None:
         if not lock.scalar(text("SELECT pg_try_advisory_lock(:key)"), {"key": LOCK_ID}):
             raise RuntimeError("Another embedding worker owns this database.")
         provider = create_embedding_provider()
+        skipped: set[int] = set()  # Passages whose own text was rejected this run.
         try:
             while True:
                 lock.execute(text("SELECT 1"))
                 try:
                     with SessionLocal() as session:
-                        prepared = prepare_batch(session, provider)
+                        prepared = prepare_batch(session, provider, skip=skipped)
                 except (ModelError, ModelLimitError) as exc:
                     print(str(exc), flush=True)  # Sanitized messages only; never question/key.
                     time.sleep(30)
