@@ -48,7 +48,6 @@ const GROUPS: { title: string; items: NavItem[] }[] = [
     title: "Insights",
     items: [
       { label: "SEC filings", to: "/filings", icon: icon("M4 4h11l5 5v11H4V4Zm4 8h8M8 16h5") },
-      { label: "Filings Q&A", soon: true, icon: icon("M4 4h16v13H8l-4 4V4Z") },
     ],
   },
   {
@@ -64,7 +63,7 @@ const GROUPS: { title: string; items: NavItem[] }[] = [
 ];
 
 const base =
-  "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13.5px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  "orbit-nav-link flex items-center gap-2.5 rounded-full px-2.5 py-2 text-[13.5px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 export function Sidebar({
   email,
@@ -76,11 +75,11 @@ export function Sidebar({
   onNavigate?: () => void;
 }) {
   return (
-    <div className="flex h-full flex-col gap-6 p-4">
-      <div className="flex items-center gap-2.5 px-1.5 pt-1">
+    <div className="orbit-sidebar flex h-full flex-col gap-6 p-4">
+      <div className="orbit-brand flex items-center gap-2.5 px-1.5 pt-1">
         <span
           className="grid h-8 w-8 flex-none place-items-center rounded-lg text-white"
-          style={{ background: "linear-gradient(150deg, var(--accent), #1f5fb0)" }}
+          style={{ background: "var(--accent)", color: "var(--accent-foreground)" }}
           aria-hidden="true"
         >
           <svg
@@ -95,14 +94,14 @@ export function Sidebar({
         </span>
         <span className="flex flex-col leading-tight">
           <span className="text-[15px] font-semibold tracking-tight">{APP_NAME}</span>
-          <span className="text-[10.5px] text-faint">Risk intelligence</span>
+          <span className="orbit-brand-caption text-[10.5px] text-faint">Risk intelligence</span>
         </span>
       </div>
 
       <nav className="flex flex-col gap-5">
         {GROUPS.map((group) => (
           <div key={group.title} className="flex flex-col gap-0.5">
-            <span className="px-2.5 pb-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.13em] text-faint">
+            <span className="orbit-nav-group px-2.5 pb-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.13em] text-faint">
               {group.title}
             </span>
             {group.items.map((item) =>
@@ -111,8 +110,8 @@ export function Sidebar({
                   key={item.label}
                   className={cn(base, "cursor-default text-muted-foreground opacity-55")}
                 >
-                  {item.icon}
-                  {item.label}
+                  <span className="orbit-nav-symbol">{item.icon}</span>
+                  <span>{item.label}</span>
                   <span className="ml-auto rounded-full border border-border px-1.5 font-mono text-[9px] tracking-wider text-faint">
                     SOON
                   </span>
@@ -127,13 +126,13 @@ export function Sidebar({
                     cn(
                       base,
                       isActive
-                        ? "bg-accent/10 font-medium text-accent"
+                        ? "orbit-nav-active font-medium text-foreground"
                         : "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
                     )
                   }
                 >
-                  {item.icon}
-                  {item.label}
+                  <span className="orbit-nav-symbol">{item.icon}</span>
+                  <span>{item.label}</span>
                 </NavLink>
               ),
             )}
@@ -149,7 +148,10 @@ export function Sidebar({
           >
             {email.slice(0, 2)}
           </span>
-          <span className="min-w-0 truncate text-xs text-muted-foreground" title={email}>
+          <span
+            className="orbit-account-email min-w-0 truncate text-xs text-muted-foreground"
+            title={email}
+          >
             {email}
           </span>
         </div>

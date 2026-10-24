@@ -23,7 +23,7 @@ const data: PortfolioStress = {
 describe("Stress impact charts", () => {
   it("shows a zero-based bridge with correctly proportional loss and remaining bars", () => {
     render(<StressImpactChart data={data} />);
-    expect(screen.getByRole("img")).toHaveAccessibleName(
+    expect(screen.getByRole("img", { name: /Starting value/ })).toHaveAccessibleName(
       /Starting value \$1,500.00, estimated loss \$300.00, remaining value \$1,200.00/,
     );
     const baseline = Number(
@@ -53,9 +53,12 @@ describe("Stress impact charts", () => {
     ).getAllByRole("listitem");
     expect(rows[0]).toHaveTextContent("AAPL");
     expect(rows[1]).toHaveTextContent("MSFT");
-    const first = Number(rows[0].querySelector("svg rect:last-child")?.getAttribute("width"));
-    const second = Number(rows[1].querySelector("svg rect:last-child")?.getAttribute("width"));
-    expect(second / first).toBeCloseTo(0.5);
+    const bars = screen
+      .getByRole("img", { name: /Loss by holding/ })
+      .querySelectorAll("rect[data-bar]");
+    expect(
+      Number(bars[1].getAttribute("height")) / Number(bars[0].getAttribute("height")),
+    ).toBeCloseTo(0.5);
     expect(data.positions[0].ticker).toBe("MSFT");
   });
 

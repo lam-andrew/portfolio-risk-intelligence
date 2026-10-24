@@ -402,3 +402,102 @@ export async function addWatch(ticker: string): Promise<void> {
 export async function removeWatch(ticker: string): Promise<void> {
   await api.delete(`/watchlist/${encodeURIComponent(ticker)}`);
 }
+
+export interface QuestionStatus {
+  configured: boolean;
+  total_passages: number;
+  ready_passages: number;
+  ready: boolean;
+  /** Where questions are processed (ADR 0029): Google's Gemini or the owner's Ollama server. */
+  generator: "gemini" | "ollama";
+}
+
+export interface FilingAnswer {
+  status: "answered" | "insufficient_evidence";
+  question: string;
+  message: string;
+  coverage: string;
+  limitation: string;
+  claims: {
+    text: string;
+    citations: {
+      passage_id: number;
+      accession: string;
+      form: string;
+      filed_on: string;
+      section: string;
+      quote: string;
+      source_url: string;
+      start_offset: number;
+      end_offset: number;
+    }[];
+  }[];
+}
+
+export async function getQuestionStatus(ticker: string): Promise<QuestionStatus> {
+  return (await api.get<QuestionStatus>(`/filings/${encodeURIComponent(ticker)}/questions/status`))
+    .data;
+}
+
+export async function askFilingQuestion(ticker: string, question: string): Promise<FilingAnswer> {
+  return (
+    await api.post<FilingAnswer>(`/filings/${encodeURIComponent(ticker)}/questions`, { question })
+  ).data;
+}
+
+/** Atlas reader: bounded pages of safe text, never raw SEC HTML. */
+export interface ReaderPassage {
+  id: number;
+  ordinal: number;
+  section: string;
+  text: string;
+  start_offset: number;
+  end_offset: number;
+}
+export interface FilingDocument {
+  ticker: string;
+  accession: string;
+  form: string;
+  filed_on: string;
+  source_url: string;
+  revision: string;
+  content_kind: "indexed_passages";
+  total_passages: number;
+  offset: number;
+  next_offset: number | null;
+  passages: ReaderPassage[];
+}
+export interface ConversationTurn {
+  accession: string;
+  question: string;
+  answer: string;
+}
+const documentPath = (ticker: string, accession: string) =>
+  `/filings/${encodeURIComponent(ticker)}/documents/${encodeURIComponent(accession)}`;
+export async function getFilingDocument(
+  ticker: string,
+  accession: string,
+  params: { offset?: number; passage_id?: number } = {},
+  signal?: AbortSignal,
+): Promise<FilingDocument> {
+  return (await api.get<FilingDocument>(documentPath(ticker, accession), { params, signal })).data;
+}
+export async function getDocumentQuestionStatus(
+  ticker: string,
+  accession: string,
+  signal?: AbortSignal,
+): Promise<QuestionStatus> {
+  return (
+    await api.get<QuestionStatus>(documentPath(ticker, accession) + "/questions/status", { signal })
+  ).data;
+}
+export async function askDocumentQuestion(
+  ticker: string,
+  accession: string,
+  body: { question: string; revision: string; history: ConversationTurn[] },
+  signal?: AbortSignal,
+): Promise<FilingAnswer> {
+  return (
+    await api.post<FilingAnswer>(documentPath(ticker, accession) + "/questions", body, { signal })
+  ).data;
+}

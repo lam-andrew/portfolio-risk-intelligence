@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { AxiosError, type AxiosResponse } from "axios";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -13,6 +14,7 @@ vi.mock("@/api/client", async (original) => ({
   getFilings: vi.fn(),
   ingestFilings: vi.fn(),
   searchFilings: vi.fn(),
+  getQuestionStatus: vi.fn(),
 }));
 const source = {
   accession: "0000000001-26-000001",
@@ -48,6 +50,13 @@ function show() {
 }
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.mocked(api.getQuestionStatus).mockResolvedValue({
+    configured: false,
+    total_passages: 0,
+    ready_passages: 0,
+    ready: false,
+    generator: "gemini",
+  });
   vi.mocked(api.getFilingCompanies).mockResolvedValue({
     configured: true,
     companies: [
@@ -131,6 +140,34 @@ describe("SEC filings", () => {
       "Something went wrong. Please try again.",
     );
     expect(screen.getByRole("link", { name: /10-K.*View SEC source/ })).toBeInTheDocument();
+  });
+  it("keeps a refresh cooldown visible while status polling continues", async () => {
+    const detail = "Please wait before refreshing these filings.";
+    vi.mocked(api.ingestFilings).mockRejectedValue(
+      new AxiosError("Too Many Requests", "ERR_BAD_REQUEST", undefined, undefined, {
+        status: 429,
+        data: { detail },
+      } as AxiosResponse),
+    );
+    vi.useFakeTimers();
+    try {
+      await act(async () => {
+        show();
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByRole("button", { name: "Refresh filings" }));
+      });
+      expect(screen.getByRole("alert")).toHaveTextContent(detail);
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(25000);
+      });
+      // Initial load plus two successful 10-second polls.
+      expect(api.getFilings).toHaveBeenCalledTimes(3);
+      expect(screen.getByRole("alert")).toHaveTextContent(detail);
+      expect(screen.queryByRole("button", { name: "Refresh status" })).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
   it("ignores results for a holding after selection changes", async () => {
     let resolve!: (value: api.FilingHit[]) => void;

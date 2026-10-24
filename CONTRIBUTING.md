@@ -171,3 +171,20 @@ Regular pytest is network-free. The integration workflow also runs
 `APP_TEST_POSTGRES=1 pytest tests/test_filings_postgres.py` against its disposable migrated
 PostgreSQL database. Do not point this opt-in test at production. Live SEC UAT is separate
 from synthetic tests; see [US-11 specifications](docs/us11-filing-tests.md).
+
+## Grounded question development (US-12)
+
+Use the keyless configuration for automated tests. `QuestionProvider` is the model contract;
+`question_factory.py` is its single composition point. The Gemini adapter is optional, and
+the embedding worker runs the same backend image. The core risk engine has no dependency
+on it. Credentials stay server-side; never put a key in `VITE_*` or the browser.
+
+Live setup requires a billing-disabled AI Studio project and the environment variables in
+`.env.example`. Do not enable billing or a paid fallback. Migration 0007 adds versioned
+pgvector rows and shared request budgets. For native verification, use a disposable database:
+`APP_TEST_POSTGRES=1 pytest tests/test_questions_postgres.py`. CI includes this suite.
+
+Model changes require an embedding-version decision, evaluation and living-documentation
+updates. Follow [ADR 0022](docs/adr/0022-grounded-filing-questions.md) and
+[the US-12 procedures](docs/us12-question-tests.md). Fake-provider tests do not establish
+live model quality; do not close #12 without the documented live evaluation and UAT.

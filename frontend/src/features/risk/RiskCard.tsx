@@ -17,7 +17,7 @@ export function RiskCard({ risk }: { risk: PortfolioRisk }) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-baseline justify-between gap-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
           <CardTitle>Portfolio volatility</CardTitle>
           <span className="flex items-baseline gap-3">
             <span className="font-mono text-xs text-faint">

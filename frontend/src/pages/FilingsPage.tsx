@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import {
   getFilings,
@@ -30,7 +30,8 @@ const statusLabels: Record<FilingSync["status"], string> = {
 
 export function FilingsPage() {
   const [tracked, setTracked] = useState<TrackedCompanies | null>(null);
-  const [ticker, setTicker] = useState("");
+  const [params] = useSearchParams();
+  const [ticker, setTicker] = useState(params.get("ticker") ?? "");
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [input, setInput] = useState("");
@@ -138,7 +139,7 @@ export function FilingsPage() {
       )}
       {!tracked && !error && <p role="status">Loading companies…</p>}
       {tracked && (
-        <>
+        <div className="atlas-company-grid">
           <Card>
             <CardHeader>
               <CardTitle>Filings that follow your interests</CardTitle>
@@ -267,7 +268,7 @@ export function FilingsPage() {
             </CardContent>
           </Card>
           {selected && (
-            <>
+            <div className="flex min-w-0 flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <label htmlFor="filing-company" className="text-sm font-medium">
                   Company
@@ -276,7 +277,7 @@ export function FilingsPage() {
                   id="filing-company"
                   value={selected}
                   onChange={(event) => setTicker(event.target.value)}
-                  className="max-w-sm rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  className="max-w-sm rounded-xl border border-input bg-background px-3 py-2 text-sm"
                 >
                   {companies.map((c) => (
                     <option key={c.ticker} value={c.ticker}>
@@ -287,9 +288,9 @@ export function FilingsPage() {
                 </select>
               </div>
               <HoldingFilings key={selected} ticker={selected} />
-            </>
+            </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );
@@ -300,6 +301,7 @@ function HoldingFilings({ ticker }: { ticker: string }) {
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [starting, setStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<FilingHit[] | null>(null);
   const [searching, setSearching] = useState(false);
@@ -341,7 +343,7 @@ function HoldingFilings({ ticker }: { ticker: string }) {
 
   async function start() {
     setStarting(true);
-    setError(null);
+    setStartError(null);
     try {
       const sync = await ingestFilings(ticker);
       if (mounted.current) {
@@ -349,7 +351,8 @@ function HoldingFilings({ ticker }: { ticker: string }) {
         setAttempt((n) => n + 1);
       }
     } catch (err) {
-      if (mounted.current) setError(toErrorMessage(err));
+      // Kept apart from status-read errors so background polling cannot clear a cooldown notice.
+      if (mounted.current) setStartError(toErrorMessage(err));
     } finally {
       if (mounted.current) setStarting(false);
     }
@@ -408,6 +411,11 @@ function HoldingFilings({ ticker }: { ticker: string }) {
                   {overview.indexed_count} indexed filings
                 </span>
               </div>
+              {startError && (
+                <p role="alert" className="text-sm text-down">
+                  {startError}
+                </p>
+              )}
               <div role="status" aria-live="polite" className="flex flex-col gap-2">
                 <p className="text-sm">
                   {sync.status === "idle" && overview.configured
@@ -443,6 +451,7 @@ function HoldingFilings({ ticker }: { ticker: string }) {
               </p>
             </CardContent>
           </Card>
+
           {overview.filings.length > 0 && (
             <>
               <section aria-label="Indexed sources" className="flex flex-col gap-3">
@@ -459,6 +468,12 @@ function HoldingFilings({ ticker }: { ticker: string }) {
                       key={f.accession}
                       className="flex flex-wrap items-baseline justify-between gap-2 py-3"
                     >
+                      <Link
+                        className="rounded-xl bg-accent px-4 py-3 text-sm text-white"
+                        to={`/filings/${encodeURIComponent(ticker)}/${f.accession}`}
+                      >
+                        Open filing · {f.form} · {f.filed_on}
+                      </Link>
                       <a
                         href={f.source_url}
                         target="_blank"
@@ -532,6 +547,12 @@ function HoldingFilings({ ticker }: { ticker: string }) {
                           <p className="my-3 whitespace-pre-wrap break-words text-sm leading-relaxed text-muted-foreground">
                             {hit.text}
                           </p>
+                          <Link
+                            className="mr-4 text-sm underline"
+                            to={`/filings/${encodeURIComponent(ticker)}/${hit.accession}`}
+                          >
+                            Read this filing →
+                          </Link>
                           <a
                             className="text-xs text-accent underline"
                             href={hit.source_url}

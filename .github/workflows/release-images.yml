@@ -1,0 +1,84 @@
+name: Release images
+
+# Builds the production images (ADR 0028), scans them, pushes them to Orbit's own GHCR
+# packages and publishes a digest-pinned release file for deploy/deploy.sh.
+# main = releases; the #92 integration branch = labelled pre-releases until it merges.
+on:
+  push:
+    branches: [main, codex/us12-grounded-questions]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: release-images-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  images:
+    name: Build, scan and push production images
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io/${{ github.repository_owner }}
+      TAG: sha-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build images (linux/amd64)
+        run: |
+          docker buildx build --platform linux/amd64 --target production --load -t "$REGISTRY/orbit-api:$TAG" backend
+          docker buildx build --platform linux/amd64 --target production --load -t "$REGISTRY/orbit-web:$TAG" frontend
+          docker buildx build --platform linux/amd64 --target runtime --load -t "$REGISTRY/orbit-encoder:$TAG" experiments/local_embeddings
+
+      - name: Scan API image (fail on fixable critical)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/orbit-api:${{ env.TAG }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+      - name: Scan web image (fail on fixable critical)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/orbit-web:${{ env.TAG }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+      - name: Scan encoder image (fail on fixable critical)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/orbit-encoder:${{ env.TAG }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+
+      - name: Push and write the release file
+        run: |
+          kind=release; [ "${{ github.ref_name }}" = main ] || kind=pre-release
+          {
+            echo "ORBIT_RELEASE=${{ github.sha }}"
+            echo "ORBIT_RELEASE_KIND=$kind"
+            for name in api web encoder; do
+              # GHCR occasionally answers "unknown blob" on first pushes; retry, then fail.
+              for attempt in 1 2 3; do
+                docker push --quiet "$REGISTRY/orbit-$name:$TAG" >/dev/null && break
+                [ "$attempt" -lt 3 ] || exit 1
+                echo "push of orbit-$name failed (attempt $attempt); retrying" >&2
+                sleep $((attempt * 10))
+              done
+              digest="$(docker buildx imagetools inspect "$REGISTRY/orbit-$name:$TAG" --format '{{json .Manifest}}' | jq -r .digest)"
+              echo "ORBIT_$(echo "$name" | tr '[:lower:]' '[:upper:]')_IMAGE=$REGISTRY/orbit-$name@$digest"
+            done
+          } > release.env
+          { echo "### Orbit $kind images"; echo; echo '```'; cat release.env; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload release file
+        uses: actions/upload-artifact@v7
+        with:
+          name: orbit-release-${{ github.sha }}
+          path: release.env

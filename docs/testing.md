@@ -67,8 +67,7 @@ automated tests themselves are existing tests, not newly written for the report.
 
 ### Not yet covered
 
-FR-14 (grounded Q&A) is a Sprint 3 story whose tests will be
-written with those features. Early US-9 / FR-11 stress-test coverage is recorded in
+FR-14 (grounded Q&A) now has [US-12 offline and native test specifications](us12-question-tests.md); live model evaluation and UAT are pending. It remains a Sprint 3 story. Early US-9 / FR-11 stress-test coverage is recorded in
 [the stress-test specifications](us9-stress-tests.md); its Sprint 3 assignment is unchanged.
 FR-14 in particular needs a **grounding test**:
 every claim in an answer must be traceable to retrieved source text, which is a correctness
@@ -193,3 +192,42 @@ frontend tests**, plus **four native PostgreSQL tests** run separately. Ruff, my
 Prettier, TypeScript and production build pass; existing warnings are unchanged. Desktop
 and 390px mobile controlled browser checks passed with synthetic data. User acceptance
 remains pending; the story has no new sprint assignment or estimate.
+
+## UI/chart refresh — September 26, 2026
+
+The user-approved application sweep is tracked in [#93](https://github.com/lam-andrew/portfolio-risk-intelligence/issues/93).
+See [UI refresh verification](ui-refresh-tests.md) for route coverage, new chart and theme
+cases, mobile keyboard behavior, 99 passing frontend tests, production build/audit results
+and the existing development-tool audit limitations. This does not complete US-12 live
+acceptance or change any sprint assignment.
+
+## Core acceptance closeout — October 10, 2026
+
+[Execution results and reproducible fixture](core-acceptance-2026-10-10.md) record
+14 Sprint 2 browser UAT procedures, five Sprint 1 carryover checks, and W7-19-05.
+Five presentation/navigation defects were fixed with demonstrated failing/passing regressions.
+Final local suites: 316 backend plus seven separate PostgreSQL cases; 101 frontend.
+Required production dependency audits passed; development-tool advisories remain
+explicitly recorded. Board/issue review and integration gates remain open; this is
+agent-executed acceptance, not Andrew's final sign-off or a deployment claim.
+
+## Final-build acceptance — October 23, 2026
+
+[Final-build results](final-build-acceptance-2026-10-23.md) repeat the Sprint 2 procedures
+on the integrated #92 head in an isolated fixture stack, and execute ST-09 and FI-08 on the
+normal stack with live Tiingo/SEC providers, including a live worker interruption. One
+filing-refresh defect was fixed (#106; 123 frontend tests). The US-12 live evaluation and
+Andrew's product review remain open; this is agent-executed evidence, not sign-off.
+
+### Atlas acceptance boundary
+
+See [October 10 Atlas verification](atlas-verification-2026-10-10.md) for the scoped
+reader/chat tests, complete frontend/backend results, native PostgreSQL checks and both-theme
+browser evidence. The disposable browser provider does not establish live model quality.
+
+### US-12 local embeddings — October 10 integration
+
+The opt-in local provider adds HTTP/window validation, atomic preparation, preserved source
+citations, bounded query priority and native pgvector coverage. The [integration evidence](local-embedding-integration.md#recorded-checks--october-10)
+records executed checks and the separate real-model smoke. The 20-case live quality
+assessment and OptiPlex runtime verification remain pending; US-12 is not accepted.

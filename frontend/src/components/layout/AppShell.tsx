@@ -1,7 +1,9 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { getHealth } from "@/api/client";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Sidebar } from "./Sidebar";
 
 function BackendStatus() {
@@ -37,63 +39,167 @@ interface AppShellProps {
   onSignOut: () => Promise<void>;
 }
 
-/** Sidebar + main column. The sidebar is fixed on desktop and collapses to a toggle on
- *  narrow screens, so the dashboard grid never has to compete with it for width. */
+/** Labeled desktop navigation and a keyboard-contained mobile menu. */
 export function AppShell({ title, subtitle, actions, children, email, onSignOut }: AppShellProps) {
+  const location = useLocation();
+  const riskRoutes = [
+    ["/correlation", "Correlation"],
+    ["/concentration", "Concentration"],
+    ["/drawdown", "Drawdown"],
+    ["/stress", "Stress test"],
+  ];
   const [navOpen, setNavOpen] = useState(false);
+  const drawer = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!navOpen) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    drawer.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setNavOpen(false);
+      }
+      if (event.key !== "Tab") return;
+      const controls = drawer.current?.querySelectorAll<HTMLElement>("a, button");
+      if (!controls?.length) return;
+      const first = controls[0],
+        last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = overflow;
+      previous?.focus();
+    };
+  }, [navOpen]);
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[236px_1fr]">
-      <aside className="hidden border-r border-border bg-surface lg:sticky lg:top-0 lg:block lg:h-screen">
-        <Sidebar email={email} onSignOut={onSignOut} />
-      </aside>
-
+    <div className="orbit-shell">
+      <a href="#main-content" className="sr-only focus:not-sr-only">
+        Skip to content
+      </a>
+      <div className="atlas-topbar">
+        <Link to="/" className="atlas-wordmark" aria-label="Orbit home">
+          ◎ orbit
+        </Link>
+        <nav aria-label="Primary navigation" className="atlas-topnav">
+          <NavLink to="/" end>
+            Overview
+          </NavLink>
+          <NavLink to="/holdings">Holdings</NavLink>
+          <details
+            className="atlas-risk-menu"
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.currentTarget.open = false;
+                e.currentTarget.querySelector("summary")?.focus();
+              }
+            }}
+          >
+            <summary>Risk &amp; exposure ▾</summary>
+            <div>
+              {riskRoutes.map(([to, label]) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  onClick={(e) => {
+                    const menu = e.currentTarget.closest("details");
+                    if (menu) menu.open = false;
+                  }}
+                >
+                  {label}
+                </NavLink>
+              ))}
+            </div>
+          </details>
+          <NavLink to="/filings">SEC filings</NavLink>
+          <NavLink to="/methodology">Methodology</NavLink>
+        </nav>
+        <div className="atlas-account flex items-center gap-3">
+          <ThemeToggle />
+          <details className="atlas-risk-menu">
+            <summary>Account ▾</summary>
+            <div className="!left-auto right-0">
+              <span title={email} className="break-all px-2 py-3 text-xs text-muted-foreground">
+                {email}
+              </span>
+              <Button variant="ghost" onClick={() => void onSignOut()}>
+                Sign out
+              </Button>
+            </div>
+          </details>
+        </div>
+        <Button
+          variant="outline"
+          className="atlas-menu-button"
+          aria-label="Open navigation"
+          aria-expanded={navOpen}
+          onClick={() => setNavOpen(true)}
+        >
+          Menu
+        </Button>
+      </div>
       {navOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <button
-            className="absolute inset-0 bg-black/50"
-            aria-label="Close navigation"
-            onClick={() => setNavOpen(false)}
-          />
-          <div className="absolute left-0 top-0 h-full w-64 border-r border-border bg-surface">
+        <div
+          ref={drawer}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation"
+          className="fixed inset-0 z-40 lg:hidden"
+        >
+          <div className="absolute inset-0 overflow-y-auto bg-background p-5">
+            <div className="flex justify-between">
+              <ThemeToggle />
+              <Button
+                variant="outline"
+                aria-label="Close navigation"
+                onClick={() => setNavOpen(false)}
+              >
+                Close menu
+              </Button>
+            </div>
             <Sidebar email={email} onSignOut={onSignOut} onNavigate={() => setNavOpen(false)} />
           </div>
         </div>
       )}
 
-      <main className="min-w-0 px-5 py-6 sm:px-7 lg:px-8">
-        <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <Button
-              variant="outline"
-              size="icon"
-              className="lg:hidden"
-              aria-label="Open navigation"
-              onClick={() => setNavOpen(true)}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                className="h-4 w-4"
-              >
-                <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
-              </svg>
-            </Button>
-            <div>
-              <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
-              {subtitle !== undefined && (
-                <p className="mt-0.5 text-[13px] text-muted-foreground">{subtitle}</p>
-              )}
-            </div>
+      <main id="main-content" className="atlas-main">
+        <header className="atlas-page-header">
+          <div>
+            <h1>{title}</h1>
+            {subtitle !== undefined && <p>{subtitle}</p>}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {actions}
             <BackendStatus />
           </div>
         </header>
+        {riskRoutes.some(([to]) => to === location.pathname) && (
+          <nav aria-label="Risk views" className="atlas-risk-nav">
+            {riskRoutes.map(([to, label]) => (
+              <NavLink key={to} to={to}>
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+        )}
         {children}
+        <footer className="atlas-footer">
+          Historical measurements, not predictions.{" "}
+          <Link to="/methodology" className="underline">
+            Understand the methodology →
+          </Link>
+        </footer>
       </main>
     </div>
   );

@@ -26,6 +26,7 @@ def recover_interrupted(session: Session) -> None:
 
 
 def main() -> None:
+    settings.require_production_ready(api=False)
     if not settings.sec_configured:
         print("SEC ingestion is disabled until APP_SEC_CONTACT_EMAIL is configured.", flush=True)
         # Stay idle so an unconfigured app continues to boot normally.

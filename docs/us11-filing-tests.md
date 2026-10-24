@@ -132,6 +132,10 @@ mapping, semantic search, embedding, LLM answer or full-history claim is permitt
   Live mid-download process interruption, manual comparison against the rendered SEC
   source and user acceptance are still pending; automated recovery was tested under FI-03.
 - Trace: FR-13 → US-11 → FI-08 → reviewer/UAT result required before story Done.
+- October 23 execution (agent-run, integrated #92 head, normal stack): rendered-source
+  comparison, live mid-download interruption/resumption without duplicates, post-cooldown
+  refresh and unsupported issuer passed; a cooldown-notice defect was fixed in #106. See
+  [final-build acceptance](final-build-acceptance-2026-10-23.md). User acceptance pending.
 
 ## Evidence log
 

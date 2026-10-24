@@ -26,7 +26,7 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ['"IBM Plex Sans"', "system-ui", "-apple-system", "sans-serif"],
+        sans: ['"Geist"', "system-ui", "-apple-system", "sans-serif"],
         mono: ['"IBM Plex Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
       },
     },

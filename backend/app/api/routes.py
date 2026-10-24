@@ -22,6 +22,7 @@ from app.api import (
     imports,
     market_data,
     portfolio,
+    questions,
     risk,
     stress,
     watchlist,
@@ -40,6 +41,7 @@ api_router.include_router(risk.router)
 api_router.include_router(exposure.router)
 api_router.include_router(stress.router)
 api_router.include_router(filings.router)
+api_router.include_router(questions.router)
 api_router.include_router(watchlist.router)
 
 

@@ -7,6 +7,8 @@ for the full list of variables.
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -35,6 +37,18 @@ class Settings(BaseSettings):
 
     # Database (PostgreSQL 16 + pgvector). Async-agnostic SQLAlchemy DSN.
     database_url: str = "postgresql+psycopg://orbit:orbit@db:5432/orbit"
+    # Optional password kept out of the URL (production supplies it separately; ADR 0028).
+    database_password: str = Field(default="", repr=False)
+
+    @property
+    def database_dsn(self) -> str:
+        """The connection URL actually used: ``database_url`` plus any separate password."""
+        if not self.database_password:
+            return self.database_url
+        from sqlalchemy.engine import make_url
+
+        url = make_url(self.database_url).set(password=self.database_password)
+        return url.render_as_string(hide_password=False)
 
     # CORS: origins allowed to call the API (the frontend dev server by default).
     cors_origins: list[str] = ["http://localhost:5173"]
@@ -50,6 +64,37 @@ class Settings(BaseSettings):
     # SEC identifies the application operator, not the signed-in user.
     sec_contact_email: str = ""
 
+    # Enable only with a Google AI Studio project whose billing is disabled (ADR 0022).
+    qa_enabled: bool = False
+    # Answer generator: hosted Gemini (default) or the owner's Ollama server (ADR 0029).
+    qa_provider: Literal["gemini", "ollama"] = "gemini"
+    gemini_api_key: str = Field(default="", repr=False)
+    ollama_url: str = ""
+    ollama_model: str = "qwen3:30b-a3b"
+
+    # Orbit's own daily question limits. Defaults keep Gemini's free tier safe; a deployment
+    # using the local generator may raise them (ADR 0029). Spacing between questions remains.
+    qa_user_daily: int = Field(default=10, ge=1, le=1000)
+    qa_deployment_daily: int = Field(default=20, ge=1, le=10000)
+    qa_generation_daily: int = Field(default=40, ge=2, le=20000)
+
+    embedding_provider: Literal["gemini", "local"] = "gemini"
+    local_embedding_url: str = "http://encoder:8081"
+
+    @property
+    def embedding_configured(self) -> bool:
+        return self.qa_enabled and bool(
+            self.local_embedding_url.strip()
+            if self.embedding_provider == "local"
+            else self.gemini_api_key.strip()
+        )
+
+    @property
+    def qa_configured(self) -> bool:
+        return self.qa_enabled and bool(
+            self.ollama_url.strip() if self.qa_provider == "ollama" else self.gemini_api_key.strip()
+        )
+
     @property
     def sec_configured(self) -> bool:
         import re
@@ -61,6 +106,46 @@ class Settings(BaseSettings):
         """Whether a market-data API key is present. Lets the app boot (and /health report)
         without a key, instead of crashing, so the stack runs before US-4 is configured."""
         return bool(self.market_data_api_key.strip())
+
+    def production_problems(self, *, api: bool) -> list[str]:
+        """Names (never values) of settings unsafe or missing for a production start (ADR 0028).
+
+        Development keeps its zero-configuration defaults; production must not silently run on
+        them. Workers pass ``api=False``: they never receive the API's provider credentials.
+        """
+        if self.environment != "production":
+            return []
+        from sqlalchemy.engine import make_url
+
+        problems = []
+        password = make_url(self.database_dsn).password
+        if not password or password == "orbit":
+            problems.append("APP_DATABASE_PASSWORD")
+        if api:
+            if not self.market_data_configured:
+                problems.append("APP_MARKET_DATA_API_KEY")
+            if not self.sec_configured:
+                problems.append("APP_SEC_CONTACT_EMAIL")
+            if self.qa_enabled and not self.qa_configured:
+                problems.append(
+                    "APP_OLLAMA_URL" if self.qa_provider == "ollama" else "APP_GEMINI_API_KEY"
+                )
+            if self.qa_enabled and not self.embedding_configured:
+                missing = (
+                    "APP_LOCAL_EMBEDDING_URL"
+                    if self.embedding_provider == "local"
+                    else "APP_GEMINI_API_KEY"
+                )
+                if missing not in problems:
+                    problems.append(missing)
+        return problems
+
+    def require_production_ready(self, *, api: bool) -> None:
+        problems = self.production_problems(api=api)
+        if problems:
+            raise RuntimeError(
+                "Refusing to start with APP_ENVIRONMENT=production; set: " + ", ".join(problems)
+            )
 
 
 settings = Settings()

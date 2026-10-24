@@ -1,0 +1,273 @@
+- document
+- link "Skip to content":
+  - /url: "#start-of-content"
+- banner "Global navigation menu":
+  - button "Open menu":
+  - link "Homepage (g then d)":
+    - /url: /
+  - navigation "Breadcrumbs":
+    - list:
+      - link "lam-andrew":
+        - /url: /lam-andrew
+        - generic: lam-andrew
+      - link "Projects":
+        - /url: /users/lam-andrew/projects
+        - generic: Projects
+      - link "Orbit":
+        - /url: /users/lam-andrew/projects/2
+        - generic: Orbit
+  - button "Open quick search dialog, type / to search":
+    - text: Type
+    - generic: /
+    - text: to search
+  - link "Chat with Copilot":
+    - /url: /copilot
+  - button "Open Copilot…":
+  - button "Create new...":
+  - link "All issues (g then i)":
+    - /url: /issues
+  - link "All pull requests (g then p)":
+    - /url: /pulls
+  - link "All repositories":
+    - /url: /repos
+  - link "You have no unread notifications (g then n)":
+    - /url: /notifications
+  - button "Open user navigation menu":
+    - img "Andrew Lam"
+- main:
+  - navigation "Project":
+    - heading "Orbit" [level=1]
+    - button "Add status update":
+      - generic: Add status update
+    - link "Insights":
+      - /url: /users/lam-andrew/projects/2/insights
+      - generic: Insights
+    - link "Workflows (6 enabled)":
+      - /url: /users/lam-andrew/projects/2/workflows
+      - generic: Workflows
+      - generic: "6"
+      - generic: (6)
+    - button "Project details":
+    - button "View more options":
+  - navigation "Select view":
+    - tablist:
+      - tab "Sprint 1":
+        - generic: Sprint 1
+      - tab "Kanban" [selected]:
+        - generic: Kanban
+      - tab "New view":
+        - generic: New view
+  - button "View options for Kanban":
+  - tabpanel:
+    - region "View filters":
+      - form "Filter":
+        - generic: Filter
+        - img "Search"
+        - combobox "Filter"
+      - button "View":
+        - generic: View
+    - heading "Backlog" [level=2]:
+      - generic: Backlog
+    - generic: "3"
+    - generic: (3)
+    - 'button "Actions for column: Backlog"':
+    - button "Add item to Backlog":
+    - generic: This item hasn't been started
+    - 'button "US-16 — [Stretch] Regime detection Open issue portfolio-risk-intelligence #16"':
+      - img "Open issue"
+      - generic: "portfolio-risk-intelligence #16"
+      - button "More actions":
+      - button "US-16 — [Stretch] Regime detection":
+        - heading "US-16 — [Stretch] Regime detection" [level=3]
+      - list "Fields":
+        - 'button "Sprint: Backlog"':
+          - generic: Backlog
+      - generic: Click a value to filter the view
+    - 'button "US-17 — [Stretch] Anomaly detection Open issue portfolio-risk-intelligence #17"':
+      - img "Open issue"
+      - generic: "portfolio-risk-intelligence #17"
+      - button "More actions":
+      - button "US-17 — [Stretch] Anomaly detection":
+        - heading "US-17 — [Stretch] Anomaly detection" [level=3]
+      - list "Fields":
+        - 'button "Sprint: Backlog"':
+          - generic: Backlog
+      - generic: Click a value to filter the view
+    - 'button "US-18 — [Stretch] Automated brokerage connection Open issue portfolio-risk-intelligence #18"':
+      - img "Open issue"
+      - generic: "portfolio-risk-intelligence #18"
+      - button "More actions":
+      - button "US-18 — [Stretch] Automated brokerage connection":
+        - heading "US-18 — [Stretch] Automated brokerage connection" [level=3]
+      - list "Fields":
+        - 'button "Sprint: Backlog"':
+          - generic: Backlog
+      - generic: Click a value to filter the view
+    - button "Add item":
+      - generic: Add item
+    - heading "Sprint 1 (To Do)" [level=2]:
+      - generic: Sprint 1 (To Do)
+    - generic: "0"
+    - generic: (0)
+    - 'button "Actions for column: Sprint 1 (To Do)"':
+    - button "Add item to Sprint 1 (To Do)":
+    - generic: This is actively being worked on
+    - button "Add item":
+      - generic: Add item
+    - heading "Sprint 2" [level=2]:
+      - generic: Sprint 2
+    - generic: "0"
+    - generic: (0)
+    - 'button "Actions for column: Sprint 2"':
+    - button "Add item to Sprint 2":
+    - button "Add item":
+      - generic: Add item
+    - heading "Sprint 3 (To Do)" [level=2]:
+      - generic: Sprint 3 (To Do)
+    - generic: "2"
+    - generic: (2)
+    - 'button "Actions for column: Sprint 3 (To Do)"':
+    - button "Add item to Sprint 3 (To Do)":
+    - 'button "US-9 — Run a stress test Open issue portfolio-risk-intelligence #9"':
+      - img "Open issue"
+      - generic: "portfolio-risk-intelligence #9"
+      - button "More actions":
+      - 'figure "Assignees: lam-andrew"':
+        - generic: "Assignees: lam-andrew"
+        - button "lam-andrew":
+          - img "lam-andrew"
+      - button "US-9 — Run a stress test":
+        - heading "US-9 — Run a stress test" [level=3]
+      - list "Fields":
+        - 'button "Points: 8"':
+          - generic: "8"
+        - 'button "Sprint: Sprint 3"':
+          - generic: Sprint 3
+      - generic: Click a value to filter the view
+    - 'button "US-11 — Ingest filings for a holding Open issue portfolio-risk-intelligence #11"':
+      - img "Open issue"
+      - generic: "portfolio-risk-intelligence #11"
+      - button "More actions":
+      - 'figure "Assignees: lam-andrew"':
+        - generic: "Assignees: lam-andrew"
+        - button "lam-andrew":
+          - img "lam-andrew"
+      - button "US-11 — Ingest filings for a holding":
+        - heading "US-11 — Ingest filings for a holding" [level=3]
+      - list "Fields":
+        - 'button "Points: 5"':
+          - generic: "5"
+        - 'button "Sprint: Sprint 3"':
+          - generic: Sprint 3
+      - generic: Click a value to filter the view
+    - button "Add item":
+      - generic: Add item
+    - heading "In Progress" [level=2]:
+      - generic: In Progress
+    - generic: "8"
+    - generic: (8)
+    - 'button "Actions for column: In Progress"':
+    - button "Add item to In Progress":
+    - 'button "US-2 — Upload a portfolio via CSV Open issue portfolio-risk-intelligence #2"':
+      - img "Open issue"
+      - generic: "portfolio-risk-intelligence #2"
+      - button "More actions":
+      - 'figure "Assignees: lam-andrew"':
+        - generic: "Assignees: lam-andrew"
+        - button "lam-andrew":
+          - img "lam-andrew"
+      - button "US-2 — Upload a portfolio via CSV":
+        - heading "US-2 — Upload a portfolio via CSV" [level=3]
+      - list "Fields":
+        - 'button "Points: 3"':
+          - generic: "3"
+        - 'button "Sprint: Sprint 2"':
+          - generic: Sprint 2
+      - generic: Click a value to filter the view
+    - 'button "US-6 — See correlation among holdings Open issue portfolio-risk-intelligence #6"':
+      - img "Open issue"
+      - generic: "portfolio-risk-intelligence #6"
+      - button "More actions":
+      - 'figure "Assignees: lam-andrew"':
+        - generic: "Assignees: lam-andrew"
+        - button "lam-andrew":
+          - img "lam-andrew"
+      - button "US-6 — See correlation among holdings":
+        - heading "US-6 — See correlation among holdings" [level=3]
+      - list "Fields":
+        - 'button "Points: 5"':
+          - generic: "5"
+        - 'button "Sprint: Sprint 2"':
+          - generic: Sprint 2
+      - generic: Click a value to filter the view
+    - 'button "US-7 — See concentration/exposure Open issue portfolio-risk-intelligence #7"':
+      - img "Open issue"
+      - generic: "portfolio-risk-intelligence #7"
+      - button "More actions":
+      - 'figure "Assignees: lam-andrew"':
+        - generic: "Assignees: lam-andrew"
+        - button "lam-andrew":
+          - img "lam-andrew"
+      - button "US-7 — See concentration/exposure":
+        - heading "US-7 — See concentration/exposure" [level=3]
+      - list "Fields":
+        - 'button "Points: 3"':
+          - generic: "3"
+        - 'button "Sprint: Sprint 2"':
+          - generic: Sprint 2
+      - generic: Click a value to filter the view
+    - 'button "US-8 — See historical drawdown Open issue portfolio-risk-intelligence #8"':
+      - img "Open issue"
+      - generic: "portfolio-risk-intelligence #8"
+      - button "More actions":
+      - 'figure "Assignees: lam-andrew"':
+        - generic: "Assignees: lam-andrew"
+        - button "lam-andrew":
+          - img "lam-andrew"
+      - button "US-8 — See historical drawdown":
+        - heading "US-8 — See historical drawdown" [level=3]
+      - list "Fields":
+        - 'button "Points: 2"':
+          - generic: "2"
+        - 'button "Sprint: Sprint 2"':
+          - generic: Sprint 2
+      - generic: Click a value to filter the view
+    - 'button "US-10 — Risk dashboard Open issue portfolio-risk-intelligence #10"':
+      - img "Open issue"
+      - generic: "portfolio-risk-intelligence #10"
+      - button "More actions":
+      - 'figure "Assignees: lam-andrew"':
+        - generic: "Assignees: lam-andrew"
+        - button "lam-andrew":
+          - img "lam-andrew"
+      - button "US-10 — Risk dashboard":
+        - heading "US-10 — Risk dashboard" [level=3]
+      - list "Fields":
+        - 'button "Points: 5"':
+          - generic: "5"
+        - 'button "Sprint: Sprint 2"':
+          - generic: Sprint 2
+      - generic: Click a value to filter the view
+    - button "US-13 — Authenticate lam-andrew/portfolio-risk-intelligence#13" [disabled]
+    - button "US-12 — Ask a grounded question lam-andrew/portfolio-risk-intelligence#12" [disabled]
+    - button "US-19 — Read how my risk analysis is calculated lam-andrew/portfolio-risk-intelligence#62" [disabled]
+    - button "Add item":
+      - generic: Add item
+    - heading "Done" [level=2]:
+      - generic: Done
+    - generic: "6"
+    - generic: (6)
+    - 'button "Actions for column: Done"':
+    - button "Add item to Done":
+    - generic: Completed
+    - button "US-5 — See portfolio and holding volatility lam-andrew/portfolio-risk-intelligence#5" [disabled]
+    - button "US-4 — Retrieve market data lam-andrew/portfolio-risk-intelligence#4" [disabled]
+    - button "US-3 — Manage holdings lam-andrew/portfolio-risk-intelligence#3" [disabled]
+    - button "US-1 — Add a holding manually lam-andrew/portfolio-risk-intelligence#1" [disabled]
+    - button "US-15 — [Architectural] Decoupled analysis engine behind an API lam-andrew/portfolio-risk-intelligence#15" [disabled]
+    - button "US-14 — [Architectural] Containerized, provider-agnostic deployment lam-andrew/portfolio-risk-intelligence#14" [disabled]
+    - button "Add item":
+      - generic: Add item
+    - button "Add a new column to the board":
+- status
+- document

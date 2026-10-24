@@ -17,6 +17,7 @@ import { DashboardPage } from "@/pages/DashboardPage";
 import { DrawdownPage } from "@/pages/DrawdownPage";
 import { MethodologyPage } from "@/pages/MethodologyPage";
 import { HoldingsPage } from "@/pages/HoldingsPage";
+import { FilingReaderPage } from "@/pages/FilingReaderPage";
 import { FilingsPage } from "@/pages/FilingsPage";
 import { StressTestPage } from "@/pages/StressTestPage";
 import { LandingPage } from "@/pages/LandingPage";
@@ -31,7 +32,7 @@ function Loading() {
 
 function LoadError({ message }: { message: string }) {
   return (
-    <Card>
+    <Card role="alert">
       <CardHeader>
         <CardTitle>Could not load your portfolio</CardTitle>
         <CardDescription>{message}</CardDescription>
@@ -81,14 +82,14 @@ export default function App() {
     );
   }
 
-  return <SignedInApp email={auth.user.email} onSignOut={signOut} />;
+  return <SignedInApp key={auth.user.id} email={auth.user.email} onSignOut={signOut} />;
 }
 
 /** The application proper. Split out so portfolio data is only ever fetched once a session
  *  exists — otherwise every request would 401 on the sign-in screen. */
 function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Promise<void> }) {
   const { state, refresh } = usePortfolio();
-  const positions = state.kind === "ready" ? state.data.summary.positions.length : 0;
+  const positions = state.kind === "ready" ? state.data.summary.positions.length : null;
 
   return (
     <Routes>
@@ -99,7 +100,11 @@ function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Pro
             email={email}
             onSignOut={onSignOut}
             title="Risk overview"
-            subtitle={`Personal portfolio · ${positions} ${positions === 1 ? "position" : "positions"}`}
+            subtitle={
+              positions === null
+                ? "Personal portfolio"
+                : `Personal portfolio · ${positions} ${positions === 1 ? "position" : "positions"}`
+            }
           >
             <Loaded state={state}>
               {(data) => <DashboardPage data={data} onChanged={refresh} />}
@@ -195,6 +200,19 @@ function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Pro
         }
       />
       <Route
+        path="/filings/:ticker/:accession"
+        element={
+          <AppShell
+            email={email}
+            onSignOut={onSignOut}
+            title="Filing research"
+            subtitle="Read the disclosure. Inspect the evidence."
+          >
+            <FilingReaderPage />
+          </AppShell>
+        }
+      />
+      <Route
         path="/methodology"
         element={
           <AppShell
@@ -215,7 +233,7 @@ function SignedInApp({ email, onSignOut }: { email: string; onSignOut: () => Pro
             <Card>
               <CardHeader>
                 <CardTitle>That page doesn&apos;t exist</CardTitle>
-                <CardDescription>Pick a destination from the sidebar.</CardDescription>
+                <CardDescription>Pick a destination from the navigation.</CardDescription>
               </CardHeader>
             </Card>
           </AppShell>

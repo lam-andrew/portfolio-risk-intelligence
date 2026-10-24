@@ -38,10 +38,8 @@ export function FaqAccordion() {
             key={item.q}
             className="overflow-hidden rounded-2xl border"
             style={{
-              borderColor: isOpen ? "rgba(74,147,240,0.45)" : "var(--lp-line)",
-              background: isOpen
-                ? "linear-gradient(120deg, rgba(74,147,240,0.9), rgba(18,57,95,0.55))"
-                : "var(--lp-card)",
+              borderColor: isOpen ? "var(--border)" : "var(--lp-line)",
+              background: isOpen ? "var(--surface-2)" : "var(--lp-card)",
             }}
           >
             <h3>
@@ -65,7 +63,7 @@ export function FaqAccordion() {
               </button>
             </h3>
             {isOpen ? (
-              <p className="px-5 pb-5 text-sm leading-relaxed text-white/85">{item.a}</p>
+              <p className="px-5 pb-5 text-sm leading-relaxed text-foreground">{item.a}</p>
             ) : null}
           </div>
         );

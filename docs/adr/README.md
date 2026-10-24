@@ -28,7 +28,7 @@ capture an architecturally significant decision, its context, and its consequenc
 | [0005](0005-scope-tiers.md) | Scope tiers: core / secondary / stretch | Accepted |
 | [0006](0006-portfolio-ingestion-manual-csv.md) | Portfolio ingestion via manual entry + CSV for MVP | Accepted |
 | [0007](0007-quality-gates-and-security-scanning.md) | CI quality gates and security scanning | Accepted |
-| [0008](0008-defer-continuous-deployment.md) | Defer Continuous Deployment until a host is selected | Accepted |
+| [0008](0008-defer-continuous-deployment.md) | Defer Continuous Deployment until a host is selected | Superseded by 0028 |
 | [0009](0009-ui-styling-tailwind-shadcn-tremor.md) | UI styling: Tailwind + shadcn/ui + Tremor | Accepted |
 | [0010](0010-alembic-migrations.md) | Database schema migrations with Alembic | Accepted |
 | [0011](0011-market-data-provider.md) | Market data via Tiingo, behind a provider interface | Accepted |
@@ -42,3 +42,11 @@ capture an architecturally significant decision, its context, and its consequenc
 | [0019](0019-sec-filing-ingestion.md) | Durable, bounded SEC filing ingestion | Accepted |
 | [0020](0020-filing-retrieval-staging.md) | Full-text retrieval before hosted embeddings and generation | Accepted |
 | [0021](0021-automatic-filing-following.md) | Automatically follow filings for holdings and private watchlists | Accepted |
+| [0022](0022-grounded-filing-questions.md) | Portable grounded questions with a free-tier model adapter | Proposed; live evaluation pending |
+| [0023](0023-unified-dashboard-chart-design.md) | Unified dashboard and chart design | Accepted |
+| [0024](0024-local-embedding-homelab-prototype.md) | CPU-only local embedding homelab prototype | Proposed; target-host and quality evaluation pending |
+| [0025](0025-opt-in-local-embedding-integration.md) | Opt-in local embedding integration | Proposed for release; quality and target-host gates pending |
+| [0026](0026-orbit-atlas-interface.md) | Orbit Atlas interface | Accepted direction; implementation under review |
+| [0027](0027-filing-scoped-conversation.md) | Filing-scoped conversation | Proposed implementation; live evaluation pending |
+| [0028](0028-self-hosted-private-deployment.md) | Self-hosted private deployment on a dedicated homelab VM | Accepted; deployment not yet verified |
+| [0029](0029-self-hosted-answer-generation.md) | Optional self-hosted answer generation on the owner's model server | Accepted; option implemented, Gemini default; live evaluation pending |

@@ -5,6 +5,7 @@ Alembic autogeneration and ``create_all`` (tests) can see them.
 from app.models.filings import Filing, FilingPassage, FilingSync
 from app.models.portfolio import Holding, Portfolio
 from app.models.prices import PriceBarRow, PriceCoverageRow
+from app.models.questions import LocalPassageWindow, ModelBudget, PassageEmbedding
 from app.models.user import User, UserSession
 from app.models.watchlist import WatchlistEntry
 
@@ -13,6 +14,9 @@ __all__ = [
     "FilingPassage",
     "FilingSync",
     "Holding",
+    "LocalPassageWindow",
+    "ModelBudget",
+    "PassageEmbedding",
     "Portfolio",
     "PriceBarRow",
     "PriceCoverageRow",
