@@ -64,9 +64,15 @@ jobs:
             echo "ORBIT_RELEASE=${{ github.sha }}"
             echo "ORBIT_RELEASE_KIND=$kind"
             for name in api web encoder; do
-              docker push --quiet "$REGISTRY/orbit-$name:$TAG" >/dev/null
+              # GHCR occasionally answers "unknown blob" on first pushes; retry, then fail.
+              for attempt in 1 2 3; do
+                docker push --quiet "$REGISTRY/orbit-$name:$TAG" >/dev/null && break
+                [ "$attempt" -lt 3 ] || exit 1
+                echo "push of orbit-$name failed (attempt $attempt); retrying" >&2
+                sleep $((attempt * 10))
+              done
               digest="$(docker buildx imagetools inspect "$REGISTRY/orbit-$name:$TAG" --format '{{json .Manifest}}' | jq -r .digest)"
-              echo "ORBIT_$(echo "$name" | tr a-z A-Z)_IMAGE=$REGISTRY/orbit-$name@$digest"
+              echo "ORBIT_$(echo "$name" | tr '[:lower:]' '[:upper:]')_IMAGE=$REGISTRY/orbit-$name@$digest"
             done
           } > release.env
           { echo "### Orbit $kind images"; echo; echo '```'; cat release.env; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
