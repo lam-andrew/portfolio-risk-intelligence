@@ -10,6 +10,7 @@ import {
   type FilingDocument,
   type QuestionStatus,
 } from "@/api/client";
+import { QuestionPrivacy } from "@/components/QuestionPrivacy";
 import { Button } from "@/components/ui/button";
 
 type Citation = FilingAnswer["claims"][number]["citations"][number];
@@ -526,11 +527,11 @@ export function FilingReader({
                   {busy ? "Checking…" : "Send question"}
                 </Button>
               </div>
-              <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-                Your question, limited prior conversation and public filing excerpts are sent to
-                Google’s Gemini service. Google may use free-tier inputs to improve its products.
-                Avoid private information.
-              </p>
+              <QuestionPrivacy
+                generator={status?.generator}
+                withConversation
+                className="mt-3 text-[11px] leading-relaxed text-muted-foreground"
+              />
             </form>
           </aside>
         )}

@@ -8,7 +8,13 @@ vi.mock("../api/client", async (original) => ({
   askFilingQuestion: vi.fn(),
   getQuestionStatus: vi.fn(),
 }));
-const ready = { configured: true, total_passages: 12, ready_passages: 12, ready: true };
+const ready = {
+  configured: true,
+  total_passages: 12,
+  ready_passages: 12,
+  ready: true,
+  generator: "gemini" as const,
+};
 const answer: FilingAnswer = {
   status: "answered",
   question: "What supplier risks are disclosed?",
@@ -50,6 +56,24 @@ async function submit() {
 }
 
 describe("filing questions", () => {
+  it("discloses Google's free tier when Gemini answers", async () => {
+    render(<FilingQuestions ticker="AAPL" />);
+    await waitFor(() => expect(screen.getByLabelText("Your question")).not.toBeDisabled());
+    const note = screen.getByText(/Gemini service/);
+    expect(note).toHaveTextContent("Google may use free-tier submissions");
+    expect(screen.getByLabelText("Your question")).toHaveAccessibleDescription(note.textContent!);
+  });
+
+  it("says questions stay on the owner's model server when Ollama answers", async () => {
+    vi.mocked(getQuestionStatus).mockResolvedValue({ ...ready, generator: "ollama" });
+    render(<FilingQuestions ticker="AAPL" />);
+    await waitFor(() => expect(screen.getByLabelText("Your question")).not.toBeDisabled());
+    expect(screen.getByText(/model server run by this Orbit deployment's owner/)).toHaveTextContent(
+      "not sent to an outside AI service",
+    );
+    expect(screen.queryByText(/Google/)).not.toBeInTheDocument();
+  });
+
   it("shows cited claims, exact quotes and original SEC links", async () => {
     render(<FilingQuestions ticker="AAPL" />);
     await submit();

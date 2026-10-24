@@ -55,6 +55,7 @@ beforeEach(() => {
     total_passages: 0,
     ready_passages: 0,
     ready: false,
+    generator: "gemini",
   });
   vi.mocked(api.getFilingCompanies).mockResolvedValue({
     configured: true,

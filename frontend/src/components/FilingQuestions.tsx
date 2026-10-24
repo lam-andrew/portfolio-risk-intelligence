@@ -6,6 +6,7 @@ import {
   type FilingAnswer,
   type QuestionStatus,
 } from "../api/client";
+import { QuestionPrivacy } from "./QuestionPrivacy";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
@@ -141,11 +142,11 @@ export function FilingQuestions({ ticker }: { ticker: string }) {
             placeholder="What supply chain risks does the company disclose?"
             aria-describedby="question-privacy"
           />
-          <p id="question-privacy" className="text-xs text-muted-foreground">
-            Your question and relevant public filing excerpts are sent to Google’s Gemini service.
-            Google may use free-tier submissions to improve its products. Keep personal or
-            confidential information out of your question.
-          </p>
+          <QuestionPrivacy
+            id="question-privacy"
+            generator={status?.generator}
+            className="text-xs text-muted-foreground"
+          />
           <Button
             className="self-start"
             type="submit"

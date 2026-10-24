@@ -72,6 +72,16 @@ the same SSD and doesn't count as a backup.
 |---|---|---|---|
 | 2026-10-23 | Mac, rehearsal project | See [deployment rehearsal](deployment-rehearsal-2026-10-23.md) | Recorded there |
 
+## Optional model server (ADR 0029)
+
+With `APP_QA_PROVIDER=ollama`, the API sends questions and public excerpts to the owner's
+Ollama server at `APP_OLLAMA_URL`, a tailnet address. Ollama has no authentication, so a
+tailnet access rule must allow only this VM (and the development Mac) to reach port 11434,
+and Ollama must never listen on the LAN. If the Spark is off or unreachable, questions return
+a service error and risk analysis is unaffected. To go back to Gemini, set
+`APP_QA_PROVIDER=gemini` and redeploy the current release. After a model update, rerun
+`experiments/local_generation/benchmark.py` and record the new digest before relying on it.
+
 ## When things go wrong
 
 - **API won't start:** `docker logs orbit-api-1`. A production refusal names the missing setting

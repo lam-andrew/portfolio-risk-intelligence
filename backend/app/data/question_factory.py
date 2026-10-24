@@ -3,7 +3,9 @@
 from app.core.config import settings
 from app.data.gemini import EMBEDDING_VERSION, GeminiProvider
 from app.data.local_embeddings import LOCAL_VERSION, LocalEmbeddings
+from app.data.ollama import OllamaAnswers
 from app.data.question_provider import (
+    AnswerProvider,
     ComposedQuestions,
     EmbeddingProvider,
     ModelError,
@@ -23,7 +25,13 @@ def create_embedding_provider() -> EmbeddingProvider:
     return GeminiProvider(settings.gemini_api_key)
 
 
+def create_answer_provider() -> AnswerProvider:
+    if settings.qa_provider == "ollama":
+        return OllamaAnswers(settings.ollama_url, settings.ollama_model)
+    return GeminiProvider(settings.gemini_api_key)
+
+
 def create_provider() -> QuestionProvider:
     if not settings.qa_configured or not settings.embedding_configured:
         raise ModelError("Filing questions are not configured yet.")
-    return ComposedQuestions(create_embedding_provider(), GeminiProvider(settings.gemini_api_key))
+    return ComposedQuestions(create_embedding_provider(), create_answer_provider())

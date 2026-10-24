@@ -49,3 +49,4 @@ capture an architecturally significant decision, its context, and its consequenc
 | [0026](0026-orbit-atlas-interface.md) | Orbit Atlas interface | Accepted direction; implementation under review |
 | [0027](0027-filing-scoped-conversation.md) | Filing-scoped conversation | Proposed implementation; live evaluation pending |
 | [0028](0028-self-hosted-private-deployment.md) | Self-hosted private deployment on a dedicated homelab VM | Accepted; deployment not yet verified |
+| [0029](0029-self-hosted-answer-generation.md) | Optional self-hosted answer generation on the owner's model server | Accepted; option implemented, Gemini default; live evaluation pending |
