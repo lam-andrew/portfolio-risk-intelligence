@@ -28,7 +28,7 @@ capture an architecturally significant decision, its context, and its consequenc
 | [0005](0005-scope-tiers.md) | Scope tiers: core / secondary / stretch | Accepted |
 | [0006](0006-portfolio-ingestion-manual-csv.md) | Portfolio ingestion via manual entry + CSV for MVP | Accepted |
 | [0007](0007-quality-gates-and-security-scanning.md) | CI quality gates and security scanning | Accepted |
-| [0008](0008-defer-continuous-deployment.md) | Defer Continuous Deployment until a host is selected | Accepted |
+| [0008](0008-defer-continuous-deployment.md) | Defer Continuous Deployment until a host is selected | Superseded by 0028 |
 | [0009](0009-ui-styling-tailwind-shadcn-tremor.md) | UI styling: Tailwind + shadcn/ui + Tremor | Accepted |
 | [0010](0010-alembic-migrations.md) | Database schema migrations with Alembic | Accepted |
 | [0011](0011-market-data-provider.md) | Market data via Tiingo, behind a provider interface | Accepted |
@@ -48,3 +48,4 @@ capture an architecturally significant decision, its context, and its consequenc
 | [0025](0025-opt-in-local-embedding-integration.md) | Opt-in local embedding integration | Proposed for release; quality and target-host gates pending |
 | [0026](0026-orbit-atlas-interface.md) | Orbit Atlas interface | Accepted direction; implementation under review |
 | [0027](0027-filing-scoped-conversation.md) | Filing-scoped conversation | Proposed implementation; live evaluation pending |
+| [0028](0028-self-hosted-private-deployment.md) | Self-hosted private deployment on a dedicated homelab VM | Accepted; deployment not yet verified |

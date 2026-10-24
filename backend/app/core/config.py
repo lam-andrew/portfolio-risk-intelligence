@@ -86,6 +86,36 @@ class Settings(BaseSettings):
         without a key, instead of crashing, so the stack runs before US-4 is configured."""
         return bool(self.market_data_api_key.strip())
 
+    def production_problems(self, *, api: bool) -> list[str]:
+        """Names (never values) of settings unsafe or missing for a production start (ADR 0028).
+
+        Development keeps its zero-configuration defaults; production must not silently run on
+        them. Workers pass ``api=False``: they never receive the API's provider credentials.
+        """
+        if self.environment != "production":
+            return []
+        from sqlalchemy.engine import make_url
+
+        problems = []
+        password = make_url(self.database_url).password
+        if not password or password == "orbit":
+            problems.append("APP_DATABASE_URL")
+        if api:
+            if not self.market_data_configured:
+                problems.append("APP_MARKET_DATA_API_KEY")
+            if not self.sec_configured:
+                problems.append("APP_SEC_CONTACT_EMAIL")
+            if self.qa_enabled and not self.qa_configured:
+                problems.append("APP_GEMINI_API_KEY")
+        return problems
+
+    def require_production_ready(self, *, api: bool) -> None:
+        problems = self.production_problems(api=api)
+        if problems:
+            raise RuntimeError(
+                "Refusing to start with APP_ENVIRONMENT=production; set: " + ", ".join(problems)
+            )
+
 
 settings = Settings()
 """Process-wide settings singleton. Import this rather than instantiating ``Settings``."""

@@ -16,6 +16,7 @@ from app.core.config import settings
 
 def create_app() -> FastAPI:
     """Application factory — builds and configures the FastAPI instance."""
+    settings.require_production_ready(api=True)
     app = FastAPI(
         title=settings.app_name,
         version=__version__,
