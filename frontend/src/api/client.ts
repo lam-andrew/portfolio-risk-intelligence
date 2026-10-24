@@ -408,6 +408,8 @@ export interface QuestionStatus {
   total_passages: number;
   ready_passages: number;
   ready: boolean;
+  /** Where questions are processed (ADR 0029): Google's Gemini or the owner's Ollama server. */
+  generator: "gemini" | "ollama";
 }
 
 export interface FilingAnswer {

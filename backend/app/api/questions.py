@@ -39,6 +39,8 @@ class QuestionStatus(BaseModel):
     total_passages: int
     ready_passages: int
     ready: bool
+    # Where questions are processed, so the UI can disclose it accurately (ADR 0029).
+    generator: Literal["gemini", "ollama"]
 
 
 class Citation(BaseModel):
@@ -87,6 +89,7 @@ def question_status(ticker: str, user: CurrentUser, session: SessionDep) -> Ques
         total_passages=total,
         ready_passages=ready,
         ready=settings.qa_configured and total > 0 and total == ready,
+        generator=settings.qa_provider,
     )
 
 
@@ -125,8 +128,8 @@ def _answer(
         )
     try:
         # Reject known cooldown/exhaustion before spending local CPU or hosted embedding calls.
-        check_available(session, f"questions:user:{user_id}", daily=10)
-        check_available(session, "questions", daily=20)
+        check_available(session, f"questions:user:{user_id}", daily=settings.qa_user_daily)
+        check_available(session, "questions", daily=settings.qa_deployment_daily)
         if not provider.local_embeddings:
             reserve(session, "embeddings", daily=200, seconds=0)
         try:
@@ -143,17 +146,17 @@ def _answer(
         ]
         evidence = [p.evidence(ticker) for p in passages]
         # Preparation/search failures must not consume a user's question allowance.
-        reserve(session, f"questions:user:{user_id}", daily=10, seconds=30)
-        reserve(session, "questions", daily=20, seconds=15)
+        reserve(session, f"questions:user:{user_id}", daily=settings.qa_user_daily, seconds=30)
+        reserve(session, "questions", daily=settings.qa_deployment_daily, seconds=15)
         result = QuestionAnswer(
             status="insufficient_evidence", question=question, message=ABSTENTION
         )
         if evidence:
-            reserve(session, "generation", daily=40, seconds=0)
+            reserve(session, "generation", daily=settings.qa_generation_daily, seconds=0)
             try:
                 draft = provider.answer(prompt, evidence)
                 if citations_match(draft, evidence):
-                    reserve(session, "generation", daily=40, seconds=0)
+                    reserve(session, "generation", daily=settings.qa_generation_daily, seconds=0)
                     verdict = provider.verify(prompt, evidence, draft)
                     if support_passes(draft, verdict):
                         by_id = {p.passage.id: p for p in passages}
@@ -336,6 +339,7 @@ def document_question_status(
         total_passages=total,
         ready_passages=ready,
         ready=settings.qa_configured and total > 0 and total == ready,
+        generator=settings.qa_provider,
     )
 
 

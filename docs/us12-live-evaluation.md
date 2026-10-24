@@ -10,6 +10,15 @@ The smoke checks are not scored evaluation cases. Setup: [free-tier guide](qa-se
 All cases trace to FR-14 / US-12; supported cases exercise AC1 and unsupported cases AC2.
 [Offline results](us12-question-tests.md) are separate evidence.
 
+## Generator selection — October 23 (ADR 0029)
+
+The evaluation runs against the answer generator selected for production: Gemini, or the
+owner's Ollama server (`qwen3:30b-a3b`, thinking on). Record the generator, model name and
+digest with every case. Orbit's daily limits are deployment settings; with the local generator
+the evaluation isn't constrained by Gemini quota, but question spacing still applies. A
+synthetic benchmark ([record](../experiments/local_generation/README.md)) supports choosing the
+local model. It doesn't replace this evaluation.
+
 ## Prepare labels before asking the model
 
 Use at least two held/watched companies with complete preparation. For each answerable case,

@@ -417,6 +417,7 @@ the consequences accepted. The full index is in [`adr/README.md`](adr/README.md)
 | [0007](adr/0007-quality-gates-and-security-scanning.md) | Automated quality gates and security scanning in CI | Engineering rigor is graded; gates make it continuous rather than retrospective. |
 | [0008](adr/0008-defer-continuous-deployment.md) | Defer CD until a host is chosen (superseded by 0028) | Avoided building a pipeline against a provider that might not be used. |
 | [0028](adr/0028-self-hosted-private-deployment.md) | Self-hosted private deployment on a dedicated homelab VM | Private, recoverable hosting with digest-pinned pull deploys; no inbound access from CI. |
+| [0029](adr/0029-self-hosted-answer-generation.md) | Optional self-hosted answer generation (Ollama on the owner's GB10) | Removes the free-tier cap and keeps questions on owner hardware; Gemini stays the default. |
 | [0009](adr/0009-ui-styling-tailwind-shadcn-tremor.md) | Tailwind + shadcn/ui, dark-first | Owned components rather than a dependency on a design-system vendor. |
 | [0010](adr/0010-alembic-migrations.md) | Alembic migrations | Deterministic, reviewable schema evolution. |
 | [0011](adr/0011-market-data-provider.md) | Market-data provider behind an interface | The vendor becomes a configuration choice, not an architectural commitment. |

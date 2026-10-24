@@ -66,24 +66,33 @@ class Settings(BaseSettings):
 
     # Enable only with a Google AI Studio project whose billing is disabled (ADR 0022).
     qa_enabled: bool = False
-    qa_provider: str = "gemini"
+    # Answer generator: hosted Gemini (default) or the owner's Ollama server (ADR 0029).
+    qa_provider: Literal["gemini", "ollama"] = "gemini"
     gemini_api_key: str = Field(default="", repr=False)
+    ollama_url: str = ""
+    ollama_model: str = "qwen3:30b-a3b"
+
+    # Orbit's own daily question limits. Defaults keep Gemini's free tier safe; a deployment
+    # using the local generator may raise them (ADR 0029). Spacing between questions remains.
+    qa_user_daily: int = Field(default=10, ge=1, le=1000)
+    qa_deployment_daily: int = Field(default=20, ge=1, le=10000)
+    qa_generation_daily: int = Field(default=40, ge=2, le=20000)
 
     embedding_provider: Literal["gemini", "local"] = "gemini"
     local_embedding_url: str = "http://encoder:8081"
 
     @property
     def embedding_configured(self) -> bool:
-        return self.qa_enabled and (
-            bool(self.local_embedding_url.strip())
+        return self.qa_enabled and bool(
+            self.local_embedding_url.strip()
             if self.embedding_provider == "local"
-            else self.qa_configured
+            else self.gemini_api_key.strip()
         )
 
     @property
     def qa_configured(self) -> bool:
-        return (
-            self.qa_enabled and self.qa_provider == "gemini" and bool(self.gemini_api_key.strip())
+        return self.qa_enabled and bool(
+            self.ollama_url.strip() if self.qa_provider == "ollama" else self.gemini_api_key.strip()
         )
 
     @property
@@ -118,7 +127,17 @@ class Settings(BaseSettings):
             if not self.sec_configured:
                 problems.append("APP_SEC_CONTACT_EMAIL")
             if self.qa_enabled and not self.qa_configured:
-                problems.append("APP_GEMINI_API_KEY")
+                problems.append(
+                    "APP_OLLAMA_URL" if self.qa_provider == "ollama" else "APP_GEMINI_API_KEY"
+                )
+            if self.qa_enabled and not self.embedding_configured:
+                missing = (
+                    "APP_LOCAL_EMBEDDING_URL"
+                    if self.embedding_provider == "local"
+                    else "APP_GEMINI_API_KEY"
+                )
+                if missing not in problems:
+                    problems.append(missing)
         return problems
 
     def require_production_ready(self, *, api: bool) -> None:

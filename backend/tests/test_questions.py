@@ -157,7 +157,13 @@ def ask(client, question="What supplier risks does the company disclose?"):
 
 def test_answer_links_exact_evidence_for_only_selected_company(client, questions):
     status = client.get("/api/filings/AAPL/questions/status").json()
-    assert status == {"configured": True, "total_passages": 1, "ready_passages": 1, "ready": True}
+    assert status == {
+        "configured": True,
+        "total_passages": 1,
+        "ready_passages": 1,
+        "ready": True,
+        "generator": "gemini",
+    }
     response = ask(client)
     assert response.status_code == 200, response.text
     result = response.json()

@@ -79,6 +79,7 @@ beforeEach(() => {
     total_passages: 1,
     ready_passages: 1,
     ready: true,
+    generator: "gemini",
   });
   vi.spyOn(api, "askDocumentQuestion").mockResolvedValue(answer);
 });
@@ -104,6 +105,28 @@ describe("Atlas filing research", () => {
     fireEvent.click(screen.getByRole("button", { name: /What supplier dependencies/ }));
     expect(screen.getByRole("textbox")).toHaveValue("What supplier dependencies does it disclose?");
     expect(api.askDocumentQuestion).not.toHaveBeenCalled();
+  });
+  it("discloses where chat questions and prior conversation go for each generator", async () => {
+    render(view());
+    await open();
+    expect(await screen.findByText(/limited prior conversation/)).toHaveTextContent(
+      "Google’s Gemini service",
+    );
+  });
+  it("says reader chat stays on the owner's model server when Ollama answers", async () => {
+    vi.mocked(api.getDocumentQuestionStatus).mockResolvedValue({
+      configured: true,
+      total_passages: 1,
+      ready_passages: 1,
+      ready: true,
+      generator: "ollama",
+    });
+    render(view());
+    await open();
+    expect(await screen.findByText(/limited prior conversation/)).toHaveTextContent(
+      "not sent to an outside AI service",
+    );
+    expect(screen.queryByText(/Google/)).not.toBeInTheDocument();
   });
   it("sends the filing revision and bounded prior exchange on a real follow-up", async () => {
     render(view());
@@ -228,6 +251,7 @@ describe("Atlas filing research", () => {
         total_passages: 10,
         ready_passages: 2,
         ready: false,
+        generator: "gemini",
       });
       render(view());
       await open();
