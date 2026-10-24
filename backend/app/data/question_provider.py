@@ -11,6 +11,10 @@ class ModelError(Exception):
     """Sanitized provider failure safe to show in the UI."""
 
 
+class SourceRejected(ModelError):
+    """This passage's own text cannot be prepared; others can (unlike busy/unavailable)."""
+
+
 @dataclass(frozen=True)
 class EmbeddedWindow:
     start: int

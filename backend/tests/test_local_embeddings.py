@@ -10,7 +10,7 @@ from app.core.config import Settings, settings
 from app.data.filing_embeddings import coverage, prepare_batch, retrieve
 from app.data.local_embeddings import LOCAL_VERSION, LocalEmbeddings
 from app.data.question_factory import create_embedding_provider
-from app.data.question_provider import EmbeddedWindow, ModelError
+from app.data.question_provider import EmbeddedWindow, ModelError, SourceRejected
 from app.models import (
     FilingPassage,
     LocalPassageWindow,
@@ -86,6 +86,34 @@ def test_rejects_incomplete_or_malformed_windows_without_embedding(windows):
     with pytest.raises(ModelError):
         provider.embed_passage("risk")
     assert calls == ["/windows"]
+    provider.close()
+
+
+@pytest.mark.parametrize("filler", ["\n​ ​", "​", "﻿⁠ "])
+def test_invisible_format_characters_outside_windows_are_not_missing_text(filler):
+    """SEC text can carry zero-width/format characters the tokenizer drops (October 23 stall)."""
+    text = f"risk factors{filler}more risk{filler}"
+    end_a, start_b = len("risk factors"), len(f"risk factors{filler}")
+
+    def handler(request):
+        if request.url.path == "/windows":
+            return response(windows=[[0, end_a], [start_b, start_b + len("more risk")]])
+        return response(vectors=[LOCAL_VECTOR for _ in json.loads(request.content)["texts"]])
+
+    provider = adapter(handler)
+    try:
+        assert len(provider.embed_passage(text)) == 2
+    finally:
+        provider.close()
+
+
+def test_visible_text_outside_windows_is_still_rejected_as_source():
+    def handler(request):
+        return response(windows=[[0, 4]])
+
+    provider = adapter(handler)
+    with pytest.raises(SourceRejected):
+        provider.embed_passage("risk​ dropped")
     provider.close()
 
 
@@ -179,6 +207,60 @@ def test_local_failure_keeps_passage_missing_and_retryable(client, questions):
         assert coverage(session, "0000000001", LOCAL_VERSION) == (1, 0)
         questions.embed_passage = original
         assert prepare_batch(session, questions) == 1
+
+
+def test_rejected_source_is_set_aside_without_blocking_the_queue(client, questions):
+    """One unpreparable passage must not stall every passage behind it."""
+    localize(questions)
+    original = questions.embed_passage
+    with db() as session:
+        first = session.scalars(
+            select(FilingPassage).where(FilingPassage.accession == "0000000001-26-000001")
+        ).one()
+        session.add(
+            FilingPassage(
+                accession=first.accession,
+                ordinal=99,
+                section="s",
+                start_offset=0,
+                end_offset=4,
+                text="more",
+            )
+        )
+        session.commit()
+        bad_id = first.id
+
+    def reject_first(text):
+        if text == QUOTE:
+            raise SourceRejected("Local filing search returned invalid source windows.")
+        return original(text)
+
+    questions.embed_passage = reject_first
+    skipped: set[int] = set()
+    with db() as session:
+        with pytest.raises(SourceRejected):
+            prepare_batch(session, questions, skip=skipped)
+        assert skipped == {bad_id}
+        assert prepare_batch(session, questions, skip=skipped) == 1
+        assert prepare_batch(session, questions, skip=skipped) == 0
+        assert coverage(session, "0000000001", LOCAL_VERSION) == (2, 1)
+        # A fresh run (worker restart) retries the set-aside passage.
+        questions.embed_passage = original
+        assert prepare_batch(session, questions) == 1
+        assert coverage(session, "0000000001", LOCAL_VERSION) == (2, 2)
+
+
+def test_unavailable_encoder_is_not_set_aside(client, questions):
+    localize(questions)
+
+    def busy(text):
+        raise ModelError("Local filing preparation is busy. Please try again shortly.")
+
+    questions.embed_passage = busy
+    skipped: set[int] = set()
+    with db() as session, pytest.raises(ModelError):
+        prepare_batch(session, questions, skip=skipped)
+    assert skipped == set()
 
 
 @pytest.mark.parametrize("change", ["text", "untracked"])

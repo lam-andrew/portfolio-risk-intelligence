@@ -2,18 +2,28 @@
 
 import json
 import math
+import unicodedata
 from collections.abc import Sequence
 from typing import Any
 
 import httpx
 
-from app.data.question_provider import EmbeddedWindow, ModelError
+from app.data.question_provider import EmbeddedWindow, ModelError, SourceRejected
 
 # Must match the checksum-pinned encoder. A model/tokenizer/window change needs a new version.
 LOCAL_VERSION = (
     "BAAI/bge-small-en-v1.5@5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"
     ":384:cls-l2:window450-overlap32:v1"
 )
+
+
+def _has_text(span: str) -> bool:
+    """Whether a span outside every window holds anything the tokenizer would read.
+
+    Whitespace and invisible format characters (Unicode Cf: zero-width space, BOM, word
+    joiner) are dropped by the encoder; SEC HTML is full of them and `str.strip` keeps them.
+    """
+    return any(not c.isspace() and unicodedata.category(c) != "Cf" for c in span)
 
 
 class LocalEmbeddings:
@@ -85,8 +95,8 @@ class LocalEmbeddings:
             raise ModelError("Local filing search returned invalid embeddings.") from exc
 
     def embed_passage(self, text: str) -> list[EmbeddedWindow]:
-        if not text.strip() or len(text) > 8192:
-            raise ModelError("Local embedding input is outside the supported limits.")
+        if not _has_text(text) or len(text) > 8192:
+            raise SourceRejected("Local embedding input is outside the supported limits.")
         result = self._post("/windows", {"text": text})
         try:
             windows = result["windows"]
@@ -104,16 +114,16 @@ class LocalEmbeddings:
                     or not 0 <= start < end <= len(text)
                 ):
                     raise ValueError("Invalid offsets")
-                if (bounds and (start <= bounds[-1][0] or end <= covered)) or text[
-                    covered:start
-                ].strip():
+                if (bounds and (start <= bounds[-1][0] or end <= covered)) or _has_text(
+                    text[covered:start]
+                ):
                     raise ValueError("Missing or unordered source text")
                 bounds.append((start, end))
                 covered = end
-            if text[covered:].strip():
+            if _has_text(text[covered:]):
                 raise ValueError("Missing source suffix")
         except (KeyError, TypeError, ValueError) as exc:
-            raise ModelError("Local filing search returned invalid source windows.") from exc
+            raise SourceRejected("Local filing search returned invalid source windows.") from exc
         embedded: list[EmbeddedWindow] = []
         for i in range(0, len(bounds), 4):
             batch = bounds[i : i + 4]
