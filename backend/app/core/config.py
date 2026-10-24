@@ -37,6 +37,18 @@ class Settings(BaseSettings):
 
     # Database (PostgreSQL 16 + pgvector). Async-agnostic SQLAlchemy DSN.
     database_url: str = "postgresql+psycopg://orbit:orbit@db:5432/orbit"
+    # Optional password kept out of the URL (production supplies it separately; ADR 0028).
+    database_password: str = Field(default="", repr=False)
+
+    @property
+    def database_dsn(self) -> str:
+        """The connection URL actually used: ``database_url`` plus any separate password."""
+        if not self.database_password:
+            return self.database_url
+        from sqlalchemy.engine import make_url
+
+        url = make_url(self.database_url).set(password=self.database_password)
+        return url.render_as_string(hide_password=False)
 
     # CORS: origins allowed to call the API (the frontend dev server by default).
     cors_origins: list[str] = ["http://localhost:5173"]
@@ -97,9 +109,9 @@ class Settings(BaseSettings):
         from sqlalchemy.engine import make_url
 
         problems = []
-        password = make_url(self.database_url).password
+        password = make_url(self.database_dsn).password
         if not password or password == "orbit":
-            problems.append("APP_DATABASE_URL")
+            problems.append("APP_DATABASE_PASSWORD")
         if api:
             if not self.market_data_configured:
                 problems.append("APP_MARKET_DATA_API_KEY")

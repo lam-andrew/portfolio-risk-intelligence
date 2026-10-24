@@ -1,6 +1,7 @@
 """Production start guard (ADR 0028): unsafe or missing settings refuse to start by name."""
 
 import pytest
+from sqlalchemy.engine import make_url
 
 from app.core.config import Settings
 
@@ -38,7 +39,22 @@ def test_complete_production_settings_start() -> None:
     ],
 )
 def test_default_or_missing_database_password_is_refused(url: str) -> None:
-    assert settings(database_url=url).production_problems(api=False) == ["APP_DATABASE_URL"]
+    assert settings(database_url=url).production_problems(api=False) == ["APP_DATABASE_PASSWORD"]
+
+
+def test_password_supplied_separately_from_the_url() -> None:
+    separate = settings(
+        database_url="postgresql+psycopg://orbit@db:5432/orbit", database_password="p%w/d@x"
+    )
+    assert separate.production_problems(api=True) == []
+    assert make_url(separate.database_dsn).password == "p%w/d@x"
+    assert make_url(separate.database_dsn).host == "db"
+    assert "p%w/d@x" not in repr(separate)
+
+
+def test_development_url_is_used_unchanged_without_a_separate_password() -> None:
+    dev = Settings(_env_file=None)
+    assert dev.database_dsn == dev.database_url
 
 
 @pytest.mark.parametrize(
@@ -67,5 +83,5 @@ def test_refusal_names_settings_without_revealing_values() -> None:
     with pytest.raises(RuntimeError) as raised:
         bad.require_production_ready(api=True)
     message = str(raised.value)
-    assert "APP_DATABASE_URL" in message and "APP_GEMINI_API_KEY" in message
+    assert "APP_DATABASE_PASSWORD" in message and "APP_GEMINI_API_KEY" in message
     assert "orbit@db" not in message and "tiingo-test" not in message

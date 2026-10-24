@@ -17,7 +17,8 @@ from app.core.config import settings
 from app.core.database import Base
 
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# configparser treats "%" as interpolation; escape it in case a password contains one.
+config.set_main_option("sqlalchemy.url", settings.database_dsn.replace("%", "%%"))
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -27,7 +28,7 @@ target_metadata = Base.metadata
 
 def run_migrations_offline() -> None:
     context.configure(
-        url=settings.database_url,
+        url=settings.database_dsn,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
