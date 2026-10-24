@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.data.filing_schedule import tracked_tickers
 from app.data.local_embeddings import LOCAL_VERSION
 from app.data.model_budget import ModelLimitError, pause, reserve
-from app.data.question_provider import EmbeddingProvider, ModelError
+from app.data.question_provider import EmbeddingProvider, ModelError, SourceRejected
 from app.engines.rag.grounding import Evidence
 from app.models import Filing, FilingPassage, FilingSync, LocalPassageWindow, PassageEmbedding
 
@@ -69,10 +69,16 @@ def coverage(
     return total, ready
 
 
-def prepare_batch(session: Session, provider: EmbeddingProvider) -> int:
-    """One batch; missing rows are the queue. Called only by the lock-owning worker."""
+def prepare_batch(
+    session: Session, provider: EmbeddingProvider, *, skip: set[int] | None = None
+) -> int:
+    """One batch; missing rows are the queue. Called only by the lock-owning worker.
+
+    `skip` holds passages whose own text was rejected during this worker run, so one bad
+    passage cannot stall the queue behind it; a restart retries them.
+    """
     if provider.local_embeddings:
-        return prepare_local_passage(session, provider)
+        return prepare_local_passage(session, provider, skip=skip)
     tracked_ciks = select(FilingSync.cik).where(FilingSync.ticker.in_(tracked_tickers()))
     rows = list(
         session.scalars(
@@ -161,7 +167,9 @@ def retrieve(
     return [SourcePassage(p, f) for p, f, _ in ranked[:8]]
 
 
-def prepare_local_passage(session: Session, provider: EmbeddingProvider) -> int:
+def prepare_local_passage(
+    session: Session, provider: EmbeddingProvider, *, skip: set[int] | None = None
+) -> int:
     """One bounded passage, all windows atomic; a restart resumes at the next missing row."""
     tracked_ciks = select(FilingSync.cik).where(FilingSync.ticker.in_(tracked_tickers()))
     already_prepared = select(LocalPassageWindow.passage_id).where(
@@ -170,7 +178,11 @@ def prepare_local_passage(session: Session, provider: EmbeddingProvider) -> int:
     passage = session.scalar(
         select(FilingPassage)
         .join(Filing)
-        .where(Filing.cik.in_(tracked_ciks), FilingPassage.id.not_in(already_prepared))
+        .where(
+            Filing.cik.in_(tracked_ciks),
+            FilingPassage.id.not_in(already_prepared),
+            *([FilingPassage.id.not_in(skip)] if skip else []),
+        )
         .order_by(Filing.filed_on.desc(), FilingPassage.id)
         .limit(1)
     )
@@ -179,7 +191,13 @@ def prepare_local_passage(session: Session, provider: EmbeddingProvider) -> int:
     passage_id, original_text = passage.id, passage.text
     # Release read transaction before CPU/HTTP work. No hosted budget or API key is needed.
     session.rollback()
-    windows = provider.embed_passage(original_text)
+    try:
+        windows = provider.embed_passage(original_text)
+    except SourceRejected as exc:
+        if skip is None:
+            raise
+        skip.add(passage_id)
+        raise SourceRejected(f"{exc} Passage {passage_id} set aside until restart.") from exc
     if not windows:
         raise ModelError("Local filing search returned no source windows.")
     current = session.scalar(
