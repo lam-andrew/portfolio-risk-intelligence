@@ -342,9 +342,14 @@ Recorded in [ADR 0014](adr/0014-authentication.md).
   dependency auditing, static analysis, and secret scanning
   ([ADR 0007](adr/0007-quality-gates-and-security-scanning.md)). The images CI builds and
   tests are the images that would be deployed.
-- **Continuous deployment is deliberately deferred** until a host is chosen, rather than
-  half-built against a provider that may not be used
-  ([ADR 0008](adr/0008-defer-continuous-deployment.md)).
+- **Self-hosted private deployment** ([ADR 0028](adr/0028-self-hosted-private-deployment.md),
+  superseding ADR 0008). `docker-compose.prod.yml` runs production image targets on a
+  dedicated homelab VM. A same-origin Caddy proxy is the only published port, on loopback,
+  exposed over Tailscale Serve. The database and encoder sit on internal networks.
+  `APP_ENVIRONMENT=production` refuses development defaults. CI publishes digest-pinned amd64
+  images; `deploy/deploy.sh` backs up, migrates, starts, verifies health and rolls back.
+  Procedures are in the [operations runbook](operations.md). Status: rehearsed locally
+  ([record](deployment-rehearsal-2026-10-23.md)); not yet deployed to the VM.
 - **Containers run as non-root.**
 
 ---
@@ -410,7 +415,8 @@ the consequences accepted. The full index is in [`adr/README.md`](adr/README.md)
 | [0005](adr/0005-scope-tiers.md) | Core / secondary / stretch tiers | Scope discipline as an explicit, written commitment rather than intention. |
 | [0006](adr/0006-portfolio-ingestion-manual-csv.md) | Manual entry + CSV import; no brokerage connection | Avoids ever handling brokerage credentials. |
 | [0007](adr/0007-quality-gates-and-security-scanning.md) | Automated quality gates and security scanning in CI | Engineering rigor is graded; gates make it continuous rather than retrospective. |
-| [0008](adr/0008-defer-continuous-deployment.md) | Defer CD until a host is chosen | Avoids building a pipeline against a provider that may not be used. |
+| [0008](adr/0008-defer-continuous-deployment.md) | Defer CD until a host is chosen (superseded by 0028) | Avoided building a pipeline against a provider that might not be used. |
+| [0028](adr/0028-self-hosted-private-deployment.md) | Self-hosted private deployment on a dedicated homelab VM | Private, recoverable hosting with digest-pinned pull deploys; no inbound access from CI. |
 | [0009](adr/0009-ui-styling-tailwind-shadcn-tremor.md) | Tailwind + shadcn/ui, dark-first | Owned components rather than a dependency on a design-system vendor. |
 | [0010](adr/0010-alembic-migrations.md) | Alembic migrations | Deterministic, reviewable schema evolution. |
 | [0011](adr/0011-market-data-provider.md) | Market-data provider behind an interface | The vendor becomes a configuration choice, not an architectural commitment. |

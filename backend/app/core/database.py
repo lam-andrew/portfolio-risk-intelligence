@@ -20,7 +20,7 @@ class Base(DeclarativeBase):
 
 # ``pool_pre_ping`` avoids handing out connections that the database has already dropped —
 # important when the DB container restarts independently of the backend.
-engine = create_engine(settings.database_url, pool_pre_ping=True, future=True)
+engine = create_engine(settings.database_dsn, pool_pre_ping=True, future=True)
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 

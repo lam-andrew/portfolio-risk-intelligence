@@ -153,7 +153,7 @@ OptiPlex runtime measurements and homelab deployment remain pending.
 | CI/CD | **GitHub Actions** | Build + test containers on every push |
 | Testing | **pytest** (backend), **Vitest + React Testing Library** (frontend), **Postman** (API/integration) | Runs in CI |
 | LLM (RAG) | **Hosted LLM API** | Abstracted behind an interface so the provider can be swapped |
-| Deployment | Container host (provider-agnostic) | The containerized stack runs on any container-friendly host |
+| Deployment | Self-hosted homelab VM, private over Tailscale ([ADR 0028](docs/adr/0028-self-hosted-private-deployment.md)) | Same images on any container host; runbook in [docs/operations.md](docs/operations.md). Not yet deployed |
 
 Guiding principles: provider-agnostic + container-based (no lock-in), open-source where practical, decoupled architecture, free/public data only.
 

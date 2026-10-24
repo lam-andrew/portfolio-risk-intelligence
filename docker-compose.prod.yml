@@ -1,0 +1,157 @@
+# Orbit production stack (ADR 0028). Not for development: use docker-compose.yml there.
+#
+# Run only through deploy/deploy.sh, which supplies two env files:
+#   /etc/orbit/orbit.env      secrets and settings (root-owned, mode 600; see deploy/orbit.env.example)
+#   a release file            ORBIT_API_IMAGE / ORBIT_WEB_IMAGE / ORBIT_ENCODER_IMAGE pinned by digest
+#
+# Only the web proxy publishes a port, on loopback; Tailscale Serve exposes it over HTTPS.
+# The database and encoder sit on internal networks with no route out. No `name:` here:
+# deploy.sh sets the project (default `orbit`), so a stray command from a development
+# checkout can never attach to a production project by accident.
+
+x-logging: &logging
+  driver: json-file
+  options: { max-size: "10m", max-file: "3" }
+
+# The password never appears in a URL: the app takes it as APP_DATABASE_PASSWORD.
+x-db-url: &db-url postgresql+psycopg://orbit@db:5432/orbit
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: orbit
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: orbit
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    networks: [data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orbit -d orbit"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    mem_limit: 1536m
+    restart: unless-stopped
+    logging: *logging
+
+  # One-shot: deploy.sh runs it after a pre-deploy backup; the API waits for it to succeed.
+  migrate:
+    image: ${ORBIT_API_IMAGE:?}
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      APP_ENVIRONMENT: production
+      APP_DATABASE_URL: *db-url
+      APP_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?}
+    depends_on:
+      db: { condition: service_healthy }
+    networks: [data]
+    healthcheck: { disable: true }
+    restart: "no"
+    logging: *logging
+
+  api:
+    image: ${ORBIT_API_IMAGE:?}
+    environment:
+      APP_ENVIRONMENT: production
+      APP_DATABASE_URL: *db-url
+      APP_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?}
+      APP_CORS_ORIGINS: "[]"
+      APP_MARKET_DATA_PROVIDER: tiingo
+      APP_MARKET_DATA_API_KEY: ${APP_MARKET_DATA_API_KEY:-}
+      APP_SEC_CONTACT_EMAIL: ${APP_SEC_CONTACT_EMAIL:-}
+      APP_QA_ENABLED: ${APP_QA_ENABLED:-false}
+      APP_QA_PROVIDER: gemini
+      APP_GEMINI_API_KEY: ${APP_GEMINI_API_KEY:-}
+      APP_EMBEDDING_PROVIDER: local
+      APP_LOCAL_EMBEDDING_URL: http://encoder:8081
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      encoder: { condition: service_healthy }
+    networks: [data, inference, egress]
+    mem_limit: 512m
+    restart: unless-stopped
+    logging: *logging
+
+  filing-worker:
+    image: ${ORBIT_API_IMAGE:?}
+    command: ["python", "-m", "app.filing_worker"]
+    environment:
+      APP_ENVIRONMENT: production
+      APP_DATABASE_URL: *db-url
+      APP_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?}
+      APP_SEC_CONTACT_EMAIL: ${APP_SEC_CONTACT_EMAIL:-}
+    depends_on:
+      api: { condition: service_healthy }
+    networks: [data, egress]
+    healthcheck: { disable: true }
+    mem_limit: 512m
+    restart: unless-stopped
+    logging: *logging
+
+  embedding-worker:
+    image: ${ORBIT_API_IMAGE:?}
+    command: ["python", "-m", "app.embedding_worker"]
+    environment:
+      APP_ENVIRONMENT: production
+      APP_DATABASE_URL: *db-url
+      APP_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?}
+      APP_QA_ENABLED: ${APP_QA_ENABLED:-false}
+      APP_EMBEDDING_PROVIDER: local
+      APP_LOCAL_EMBEDDING_URL: http://encoder:8081
+      # This worker has no reason to receive the generator's secret.
+      APP_GEMINI_API_KEY: ""
+    depends_on:
+      api: { condition: service_healthy }
+    networks: [data, inference]
+    healthcheck: { disable: true }
+    mem_limit: 768m
+    restart: unless-stopped
+    logging: *logging
+
+  encoder:
+    image: ${ORBIT_ENCODER_IMAGE:?}
+    environment:
+      EMBEDDING_THREADS: "1"
+    volumes: ["encoder_models:/models:ro"]
+    networks: [inference]
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpus: 1.0
+    pids_limit: 64
+    read_only: true
+    tmpfs: ["/tmp:size=16m"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    logging: *logging
+
+  # Explicit, one-time model download: deploy/deploy.sh --provision-model.
+  provision-encoder:
+    image: ${ORBIT_ENCODER_IMAGE:?}
+    command: ["python", "download_model.py"]
+    profiles: ["model-setup"]
+    volumes: ["encoder_models:/models"]
+    networks: [egress]
+    healthcheck: { disable: true }
+    restart: "no"
+
+  web:
+    image: ${ORBIT_WEB_IMAGE:?}
+    ports: ["127.0.0.1:${ORBIT_HTTP_PORT:-8080}:8080"]
+    depends_on:
+      api: { condition: service_healthy }
+    networks: [egress]
+    mem_limit: 128m
+    restart: unless-stopped
+    logging: *logging
+
+networks:
+  data: { internal: true }
+  inference: { internal: true }
+  egress: {}
+
+volumes:
+  db_data:
+  encoder_models:
